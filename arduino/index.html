@@ -131,7 +131,7 @@
         <div>
             <span class="card-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981;">FULL CAPSTONE CONTROLLER</span>
             <div class="hero-title">Master Reverse Vending Machine Firmware</div>
-            <div class="hero-desc">Full finite state machine integrating bottle classification (1.5L vs Mismo), empty weight validation, inductive metal rejection, MG996R trapdoor servo, 12V ₱3 coin hopper, and SIM800L SMS bin-full dispatcher.</div>
+            <div class="hero-desc">Full finite state machine integrating non-contact bottle classification (1.5L vs Mismo length via HC-SR04), dielectric plastic verification (LJC18A3), inductive metal rejection (LJ12A3), MG996R trapdoor servo, 12V ₱3 coin hopper, and SIM800L SMS bin-full dispatcher.</div>
         </div>
         <a href="pcbces_arduino_controller/wiring_guide.html" class="btn btn-green">Open Master Guide &rarr;</a>
     </div>
@@ -149,13 +149,13 @@
         </div>
 
         <!-- Test 02 -->
-        <div class="card">
+        <div class="card" style="opacity: 0.75;">
             <div>
-                <span class="card-tag" style="background: rgba(6, 182, 212, 0.15); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.3);">TEST 02</span>
-                <h3>HX711 1kg Load Cell Weight</h3>
-                <p>Validates empty bottle weight verification (~45g for 1.5L, ~22g for Mismo) and catches heavy fraud bottles (>70g) on pins A0/A1.</p>
+                <span class="card-tag" style="background: rgba(100, 116, 139, 0.2); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.4);">TEST 02 (RETIRED)</span>
+                <h3>HX711 1kg Load Cell [Archived]</h3>
+                <p>Retired from active machine in favor of non-contact ultrasonic & dielectric sensing for high durability. Pins A0/A1 are now spare.</p>
             </div>
-            <a href="02_load_cell_hx711_test/wiring_guide.html" class="btn btn-cyan">View Test 02 Guide &rarr;</a>
+            <a href="02_load_cell_hx711_test/wiring_guide.html" class="btn btn-cyan" style="background: #334155; color: #cbd5e1;">View Archived Test &rarr;</a>
         </div>
 
         <!-- Test 03 -->

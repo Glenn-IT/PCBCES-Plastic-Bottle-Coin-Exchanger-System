@@ -1,17 +1,19 @@
 /*
- * PCBCES - Test 02: HX711 Weight Sensor & 1kg Straight Bar Load Cell Test
+ * PCBCES - Test 02: [ARCHIVED / OMITTED IN ACTIVE BUILD]
+ * Note: The load cell weight feature was removed from the active machine in favor of
+ * non-contact ultrasonic & dielectric proximity sensing to increase durability and
+ * eliminate calibration issues. Pins A0 and A1 are now available/spare.
+ *
  * Hardware: Arduino Uno, HX711 24-Bit ADC Module, 1kg Load Cell
  * 
  * Pin Connections:
  * - HX711 VCC -> 5V Rail
  * - HX711 GND -> Common GND Rail
- * - HX711 DT  -> A0
- * - HX711 SCK -> A1
+ * - HX711 DT  -> A0 (Spare in master build)
+ * - HX711 SCK -> A1 (Spare in master build)
  * 
  * Purpose:
- * - Tare scale to 0.00g on boot
- * - Stream realtime gram measurements
- * - Distinguish empty plastic bottles (1.5L: ~45g, Mismo: ~22g) from fraud (water, sand >70g)
+ * - Historical reference for bench scale calibration testing
  */
 
 #include "HX711.h"

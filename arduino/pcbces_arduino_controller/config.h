@@ -6,19 +6,19 @@
 // =============================================================================
 
 // Analog & I2C Pins
-#define PIN_LOADCELL_DT     A0   // HX711 Serial Data
-#define PIN_LOADCELL_SCK    A1   // HX711 Serial Clock
+// A0: SPARE / AVAILABLE (Formerly Load Cell DT - Removed for non-contact sensing)
+// A1: SPARE / AVAILABLE (Formerly Load Cell SCK - Removed for non-contact sensing)
 #define PIN_LED_GREEN       A2   // Green LED (Acceptance / Ready Indicator)
 #define PIN_GSM_TX          A3   // SoftwareSerial TX (To GSM SIM800L RX)
 #define PIN_I2C_SDA         A4   // 16x2 LCD I2C Data
 #define PIN_I2C_SCL         A5   // 16x2 LCD I2C Clock
 
 // Digital Pins
-#define PIN_ULTRASONIC_TRIG  2   // HC-SR04 Trigger Pulse
+#define PIN_ULTRASONIC_TRIG  2   // HC-SR04 Trigger Pulse (Measures bottle length)
 #define PIN_ULTRASONIC_ECHO  3   // HC-SR04 Echo Return Pulse
-#define PIN_IR_ENTRY         4   // IR Obstacle Avoidance Sensor (Active LOW)
-#define PIN_CAP_PLASTIC      5   // LJC18A3 Capacitive Sensor (via 10k/4.7k divider)
-#define PIN_IND_METAL        6   // LJ12A3 Inductive Metal Sensor (via 10k/4.7k divider)
+#define PIN_IR_ENTRY         4   // IR Obstacle Avoidance Sensor (Active LOW entry trigger)
+#define PIN_CAP_PLASTIC      5   // LJC18A3 Capacitive Sensor (Dielectric plastic verify via 10k/4.7k divider)
+#define PIN_IND_METAL        6   // LJ12A3 Inductive Metal Sensor (Metal rejection via 10k/4.7k divider)
 #define PIN_COIN_PULSE       7   // 12V Coin Hopper Counter (via 10k/4.7k divider)
 #define PIN_RELAY_HOPPER     8   // 5V Relay Module (Controls 12V Hopper Motor)
 #define PIN_SERVO_TRAPDOOR   9   // MG996R PWM Trapdoor Flap
@@ -40,15 +40,9 @@
 #define SERVO_ACCEPT_ANGLE      90   // Drop into internal storage bin
 #define SERVO_REJECT_ANGLE      180  // Return chute to user
 
-// HX711 Calibration
-#define LOADCELL_CAL_FACTOR     420.0f
-#define WEIGHT_1_5L_MIN         38.0f // grams
-#define WEIGHT_1_5L_MAX         60.0f
-#define WEIGHT_MISMO_MIN        16.0f
-#define WEIGHT_MISMO_MAX        32.0f
-#define WEIGHT_FRAUD_LIMIT      70.0f // Bottle contains liquid or rocks
-
-// Ultrasonic Height Ranges (cm)
+// Ultrasonic Height / Length Ranges (cm)
+// Measures distance to bottle bottom in horizontal cradle:
+// 1.5L bottle (~30cm length) vs Mismo bottle (~18cm length)
 #define HEIGHT_1_5L_MIN         26
 #define HEIGHT_1_5L_MAX         35
 #define HEIGHT_MISMO_MIN        16

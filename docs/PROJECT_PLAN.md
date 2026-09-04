@@ -11,11 +11,11 @@
 The system logic follows an intuitive sequence:
 1. **Standby / Selection:** The user selects the bottle type (**1.5L** or **Mismo** ~290–300ml) using the push button guided by prompts on the 16x2 I2C LCD.
 2. **Deposit Progress Tracking:** The LCD displays live progress (e.g., `0/5 [1.5L]` or `0/10 [Mismo]`).
-3. **Sensor Verification:**
+3. **Sensor Verification (Non-Contact Classification Architecture):**
    - **Metal Detection (LJ12A3-4-Z/BX):** Rejects metallic cans or foreign objects.
-   - **Plastic / Presence (LJC18A3-B-Z/BX + IR Sensor):** Confirms object entry and dielectric material.
-   - **Weight Verification (HX711 + Load Cell):** Distinguishes between empty plastic bottles and bottles containing liquids, trash, or counterfeit weight.
-   - **Dimension / Height (HC-SR04 Ultrasonic):** Distinguishes a tall 1.5L bottle from a short Mismo bottle.
+   - **Plastic Dielectric Verification (LJC18A3-B-Z/BX):** Confirms bottle material is genuine plastic.
+   - **Insertion Detection (IR Obstacle Sensor):** Detects object placed into the inspection cradle.
+   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Distinguishes a tall 1.5L bottle (~30cm) from a short Mismo bottle (~18cm). *(Note: Weight scale feature omitted in favor of high-speed non-contact classification with zero mechanical wear).*
 4. **Accept / Reject Mechanism (MG996R Servo):**
    - **Valid Bottle:** Servo opens the trapdoor to drop the bottle into the internal bin; count increments (e.g., `1/5`), green light blinks.
    - **Invalid Bottle:** Servo blocks insertion or ejects to return tray; buzzer beeps alert, red light blinks, LCD prompts `"Pls try again"`.
@@ -38,7 +38,7 @@ The system logic follows an intuitive sequence:
 | **LJC18A3-B-Z/BX Capacitive Sensor** | Available | 12V powered, detects plastic presence |
 | **LJ12A3-4-Z/BX Inductive Sensor** | Available | 12V powered, detects & rejects metal |
 | **IR Obstacle Avoidance Sensor** | Available | Bottle chute entry trigger or bin level check |
-| **HX711 Load Cell + 1kg Bar** | Available | Bottle weight verification |
+| **HX711 Load Cell + 1kg Bar** | **Omitted / Retired** | Omitted in favor of high-reliability non-contact classification |
 | **HC-SR04+ Ultrasonic Sensor** | Available | Bottle height differentiation or bin depth check |
 | **MG996R Servo Motor** | Available | Flap / trapdoor sorting mechanism |
 | **DIYMORE 2315 Active Buzzer** | Available | Audible error and success alerts |
@@ -83,8 +83,8 @@ Every pin on the Arduino Uno is carefully budgeted:
 | **D11** | GSM SIM Module TX -> Arduino RX | SoftwareSerial RX | Receives AT response from SIM module |
 | **D12** | Active Buzzer | Digital Out | High = Beep, Low = Silent |
 | **D13** | Red LED / Bulb | Digital Out | Rejection / Error |
-| **A0 (DT)** | HX711 Load Cell | Digital In | Weight reading |
-| **A1 (SCK)** | HX711 Load Cell | Digital Out | Weight clock |
+| **A0** | Reserved / Spare | N/A | Available for future expansion (Formerly HX711 DT) |
+| **A1** | Reserved / Spare | N/A | Available for future expansion (Formerly HX711 SCK) |
 | **A2** | Green LED / Bulb | Digital Out | Acceptance / Ready |
 | **A3** | Arduino TX -> GSM SIM Module RX | SoftwareSerial TX | Sends AT commands to SIM module |
 | **A4 (SDA)** | 16x2 LCD (I2C Backpack) | I2C Data | 5V Logic |

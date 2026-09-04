@@ -1,30 +1,33 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
- * Plastic Bottle Coin Exchanger System with GSM Bin Full SMS Telemetry
+ * Plastic Bottle Coin Exchanger System with Non-Contact Sensing & GSM Telemetry
  * 
- * Hardware:
+ * Hardware Architecture:
  * - Arduino Uno R3
  * - 16x2 I2C LCD (PCF8574)
  * - Single Smart Push Button & Active Buzzer
- * - HX711 + 1kg Straight Bar Load Cell
- * - HC-SR04+ Ultrasonic & IR Entry Sensor
- * - LJ12A3 (Metal Reject) & LJC18A3 (Plastic Verify) via 10k/4.7k dividers
- * - MG996R Metal Gear Servo (Accept/Reject Trapdoor)
+ * - HC-SR04+ Ultrasonic (Bottle Length / Size Discrimination)
+ * - IR Obstacle Avoidance (Bottle Insertion Beam Trigger)
+ * - LJC18A3 Capacitive Sensor (Dielectric Plastic Material Verification)
+ * - LJ12A3 Inductive Sensor (Metallic Object Rejection)
+ * - MG996R Metal Gear Servo (Accept/Reject Trapdoor Flap)
  * - 12V Coin Hopper & 5V Relay (3.00 PHP Payout)
- * - SIM800L GSM Module (Bin Full SMS Dispatcher)
+ * - SIM800L GSM Module (Storage Bin Full SMS Telemetry)
+ * 
+ * Note: Mechanical load cell / HX711 was removed in favor of a rigid,
+ * non-contact optical/dielectric classification architecture for high durability
+ * and zero mechanical fatigue. Pins A0 and A1 are reserved/spare.
  */
 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <Servo.h>
 #include <SoftwareSerial.h>
-#include "HX711.h"
 #include "config.h"
 
 // Hardware Instances
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo trapdoor;
-HX711 scale;
 SoftwareSerial gsm(PIN_GSM_RX, PIN_GSM_TX);
 
 // State Machine Definition
@@ -150,7 +153,7 @@ void setup() {
   pinMode(PIN_ULTRASONIC_ECHO, INPUT);
   
   pinMode(PIN_RELAY_HOPPER, OUTPUT);
-  digitalWrite(PIN_RELAY_HOPPER, HIGH); // Relay OFF
+  digitalWrite(PIN_RELAY_HOPPER, HIGH); // Relay OFF (Active LOW relay)
 
   pinMode(PIN_BUZZER, OUTPUT);
   pinMode(PIN_LED_RED, OUTPUT);
@@ -160,7 +163,7 @@ void setup() {
   digitalWrite(PIN_LED_RED, LOW);
   digitalWrite(PIN_LED_GREEN, LOW);
 
-  // Attach Interrupt for Hopper
+  // Attach Interrupt for Coin Hopper
   attachInterrupt(digitalPinToInterrupt(PIN_COIN_PULSE), onCoinPulse, FALLING);
 
   // Servo Setup
@@ -176,14 +179,9 @@ void setup() {
   lcd.print(" Capstone Ready ");
   soundBeep(120);
 
-  // HX711 Setup
-  scale.begin(PIN_LOADCELL_DT, PIN_LOADCELL_SCK);
-  scale.set_scale(LOADCELL_CAL_FACTOR);
-  scale.tare();
-
   delay(1200);
   showMenuLCD();
-  Serial.println(F("[MASTER] PCBCES Fully Initialized."));
+  Serial.println(F("[MASTER] PCBCES Fully Initialized (Non-Contact Sensing Active)."));
 }
 
 void loop() {
@@ -228,53 +226,54 @@ void loop() {
         lcd.print("BOTTLE DETECTED");
         lcd.setCursor(0, 1);
         lcd.print("Scanning Sensors");
-        delay(800); // Allow bottle to settle on tray
+        delay(600); // Allow bottle to settle on cradle
         currentState = STATE_VALIDATE_BOTTLE;
       }
       break;
     }
 
     case STATE_VALIDATE_BOTTLE: {
-      // 1. Metal Check (LJ12A3)
+      Serial.println(F("[VALIDATION] Commencing multi-sensor verification..."));
+
+      // 1. Metal Rejection Check (LJ12A3 Inductive Sensor)
+      // Active LOW when metal is detected
       bool isMetal = (digitalRead(PIN_IND_METAL) == LOW);
       if (isMetal) {
-        Serial.println(F("[VALIDATION] REJECT: Metal detected!"));
+        Serial.println(F("[VALIDATION] REJECT: Metallic object detected!"));
         currentState = STATE_REJECT_EJECT;
         break;
       }
 
-      // 2. Weight Check (HX711)
-      float weight = scale.get_units(5);
-      Serial.print(F("[VALIDATION] Measured Weight: "));
-      Serial.print(weight);
-      Serial.println(F(" g"));
-
-      if (weight > WEIGHT_FRAUD_LIMIT || weight < 10.0) {
-        Serial.println(F("[VALIDATION] REJECT: Weight out of valid empty range!"));
+      // 2. Plastic Dielectric Check (LJC18A3 Capacitive Sensor)
+      // Active LOW when plastic dielectric material is present
+      bool isPlastic = (digitalRead(PIN_CAP_PLASTIC) == LOW);
+      if (!isPlastic) {
+        Serial.println(F("[VALIDATION] REJECT: Plastic material not confirmed!"));
         currentState = STATE_REJECT_EJECT;
         break;
       }
 
-      // 3. Height Check (HC-SR04)
+      // 3. Dimensional Length / Distance Check (HC-SR04 Ultrasonic)
       long height = readChamberDistance();
-      Serial.print(F("[VALIDATION] Chamber Height: "));
+      Serial.print(F("[VALIDATION] Ultrasonic Distance: "));
       Serial.print(height);
       Serial.println(F(" cm"));
 
-      bool validHeight = false;
+      bool validDimensions = false;
       if (selectedType == TYPE_1_5L && height >= HEIGHT_1_5L_MIN && height <= HEIGHT_1_5L_MAX) {
-        validHeight = true;
+        validDimensions = true;
       } else if (selectedType == TYPE_MISMO && height >= HEIGHT_MISMO_MIN && height <= HEIGHT_MISMO_MAX) {
-        validHeight = true;
+        validDimensions = true;
       }
 
-      if (!validHeight) {
-        Serial.println(F("[VALIDATION] REJECT: Bottle height mismatch!"));
+      if (!validDimensions) {
+        Serial.println(F("[VALIDATION] REJECT: Bottle dimensions mismatch!"));
         currentState = STATE_REJECT_EJECT;
         break;
       }
 
-      // All verified!
+      // All criteria passed!
+      Serial.println(F("[VALIDATION] PASSED: Valid plastic bottle verified."));
       currentState = STATE_ACCEPT_DROP;
       break;
     }
@@ -288,7 +287,7 @@ void loop() {
       soundSuccess();
 
       trapdoor.write(SERVO_ACCEPT_ANGLE);
-      delay(1500);
+      delay(1500); // Allow bottle to slide into lower collection bin
       trapdoor.write(SERVO_STANDBY_ANGLE);
       delay(500);
 
@@ -311,7 +310,7 @@ void loop() {
     }
 
     case STATE_REJECT_EJECT: {
-      Serial.println(F("[TRAPDOOR] Opening flap (180 deg) to return bottle..."));
+      Serial.println(F("[TRAPDOOR] Rejection sequence triggered (Trapdoor remains closed)."));
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("BOTTLE REJECTED!");
@@ -319,10 +318,9 @@ void loop() {
       lcd.print("Pls Try Again");
       soundError();
 
-      trapdoor.write(SERVO_REJECT_ANGLE);
-      delay(2000);
+      // Optional pulse or tilt; keeps flap at 0 to prevent drop into bin
       trapdoor.write(SERVO_STANDBY_ANGLE);
-      delay(500);
+      delay(2000);
 
       showProgressLCD();
       currentState = STATE_WAIT_INSERTION;
@@ -381,7 +379,7 @@ void loop() {
 
       sendBinFullSMS();
 
-      // Lock until admin clears and presses button for 5 seconds
+      // Lock until admin clears bin and presses button for 5 seconds
       while (true) {
         if (digitalRead(PIN_BUTTON_MENU) == LOW) {
           unsigned long holdStart = millis();

@@ -14,7 +14,7 @@ You have two main power rails + dedicated supply for the GSM module:
 2. **5V DC Rail (Regulated)**: Supplied by **LM2596 Buck Converter** output (tuned with a multimeter to **5.0V**).
    - Powers **Arduino Uno** (into `5V` pin).
    - Powers **MG996R Servo Motor** (MUST NOT be powered from Arduino 5V board pin; use the 5V bus).
-   - Powers **16x2 LCD I2C Backpack**, **HX711**, **HC-SR04**, **IR sensor**, **Buzzer**, and **Relay coil**.
+   - Powers **16x2 LCD I2C Backpack**, **HC-SR04**, **IR sensor**, **Buzzer**, and **Relay coil**.
 3. **GSM SIM Module Power (SIM800L: 3.7V – 4.4V)**:
    - **DO NOT** connect to Arduino 5V or 3.3V pin (it will drop network or cause Arduino to reboot during SMS transmit).
    - **Best Method:** From the 5V rail, put a **1N4007 Diode** in series (Anode to 5V, Cathode to SIM800L VCC). This drops ~0.7V, giving a clean ~4.3V.
@@ -47,10 +47,7 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | | GND | Common GND | |
 | | SDA | Arduino **A4** | Hardware I2C SDA |
 | | SCL | Arduino **A5** | Hardware I2C SCL |
-| **HX711 Weight Sensor** | VCC | 5V Bus | |
-| | GND | Common GND | |
-| | DT | Arduino **A0** | Weight Data |
-| | SCK | Arduino **A1** | Weight Clock |
+| **Pins A0 & A1** | Header | Free / Available | Reserved for expansion (Weight sensor removed for durability) |
 | **HC-SR04 Ultrasonic** | VCC | 5V Bus | |
 | | GND | Common GND | |
 | | Trig | Arduino **D2** | Trigger pulse |

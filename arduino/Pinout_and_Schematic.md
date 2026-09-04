@@ -8,7 +8,7 @@
 | Rail / Source | Regulated Voltage | Peak Current Capacity | Connected Modules | Protection Hardware |
 |---|---|---|---|---|
 | **S-120-12 PSU** | **12.00V DC** | **10.0 Amps** | 12V Coin Hopper Motor, LJC18A3 Capacitive, LJ12A3 Inductive, Buck IN | 1N4007 Diode across relay/hopper |
-| **LM2596 Buck** | **5.00V DC** | **3.0 Amps** | Arduino Uno 5V, MG996R Servo, I2C LCD, HX711, HC-SR04, IR, Buzzer | 1000µF 16V Decoupling Capacitor |
+| **LM2596 Buck** | **5.00V DC** | **3.0 Amps** | Arduino Uno 5V, MG996R Servo, I2C LCD, HC-SR04, IR, Buzzer | 1000µF 16V Decoupling Capacitor |
 | **Diode Drop Rail** | **4.30V DC** | **2.0A Burst** | SIM800L GSM Module (VCC & GND) | 1N4007 + 1000µF Low-ESR Capacitor |
 | **Star Ground Rail**| **0.00V (GND)** | N/A | PSU (V-), Buck (OUT-), Arduino (GND), All Sensor Grounds | Single-point common star topology |
 
@@ -31,8 +31,8 @@
 | **D11** | SoftwareSerial RX | SIM800L TX Pin | 5V / 4V Logic | Receives AT responses |
 | **D12** | Digital Output | DIYMORE Active Buzzer | 5V Logic | High = Beep, Low = Silent |
 | **D13** | Digital Output | Red Indicator Light | 5V Logic | Visual rejection / fault alert |
-| **A0** | Digital Input (DT) | HX711 24-Bit ADC | 5V Logic | Weight data stream |
-| **A1** | Digital Output (SCK)| HX711 Clock | 5V Logic | Weight clock synchronization |
+| **A0** | Reserved / Spare | Free Header Pin | N/A | Available for expansion (Formerly HX711 DT) |
+| **A1** | Reserved / Spare | Free Header Pin | N/A | Available for expansion (Formerly HX711 SCK) |
 | **A2** | Digital Output | Green Indicator Light | 5V Logic | Visual acceptance / ready alert |
 | **A3** | SoftwareSerial TX | SIM800L RX Pin | 5V / 4V Logic | Sends AT SMS commands |
 | **A4** | Hardware I2C (SDA) | 16x2 LCD (PCF8574) | 5V Logic | Serial Data line |

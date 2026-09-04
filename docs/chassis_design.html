@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCBCES — Machine Chassis Design & Mechanical Blueprint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #080c14;
+            --bg-surface: #0f172a;
+            --bg-card: #151f32;
+            --border-color: #27354f;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-green: #10b981;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.65;
+            padding-bottom: 5rem;
+        }
+
+        .container { max-width: 1320px; margin: 0 auto; padding: 0 1.5rem; }
+
+        header {
+            padding: 3rem 0 2rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2.5rem;
+            text-align: center;
+            position: relative;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+        }
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 820px;
+            margin: 0 auto 1.5rem;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            background: rgba(6, 182, 212, 0.25);
+            color: #fff;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem;
+            margin-bottom: 3.5rem;
+        }
+        .col-4 { grid-column: span 4; }
+        .col-8 { grid-column: span 8; }
+        .col-6 { grid-column: span 6; }
+        .col-12 { grid-column: span 12; }
+
+        @media (max-width: 1024px) {
+            .col-4, .col-8, .col-6 { grid-column: span 12; }
+        }
+
+        .render-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s, border-color 0.25s;
+        }
+        .render-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+        }
+        .render-image-wrap {
+            position: relative;
+            background: #05080f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .render-image-wrap img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        .render-image-wrap:hover img {
+            transform: scale(1.02);
+        }
+        .render-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(8, 12, 20, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .render-content {
+            padding: 1.75rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .render-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .render-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+
+        .spec-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.88rem;
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+        .spec-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: #cbd5e1;
+        }
+        .spec-list li strong {
+            color: var(--accent-cyan);
+            min-width: 140px;
+        }
+
+        .section-header {
+            text-align: left;
+            margin-bottom: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+        }
+        .section-icon {
+            width: 38px;
+            height: 38px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3.5rem;
+        }
+        .tier-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            position: relative;
+        }
+        .tier-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+        .tier-top::before { background: var(--accent-green); }
+        .tier-mid::before { background: var(--accent-cyan); }
+        .tier-bot::before { background: var(--accent-amber); }
+
+        .tier-number {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+        .tier-top .tier-number { color: var(--accent-green); }
+        .tier-mid .tier-number { color: var(--accent-cyan); }
+        .tier-bot .tier-number { color: var(--accent-amber); }
+
+        .tier-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        .tier-card p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .bom-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 3.5rem;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+        th {
+            background-color: #0b111e;
+            color: var(--text-secondary);
+            text-align: left;
+            padding: 0.85rem 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border-color);
+        }
+        td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: #e2e8f0;
+        }
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .tag {
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .tag-metal { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .tag-wood { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .tag-sensor { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3.5rem;
+        }
+        .step-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            position: relative;
+        }
+        .step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            color: #080c14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        .step-box h4 {
+            font-size: 1.15rem;
+            color: #fff;
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+        .step-box p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            border: 1px solid var(--border-color);
+        }
+        .close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--accent-rose); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="badge">Mechanical & Industrial Design Specifications</div>
+        <h1>PCBCES Machine Chassis Concept & Blueprint</h1>
+        <p class="subtitle">Full 3D visualization, internal cutaway anatomy, structural frame blueprint, and fabrication specifications for the Plastic Bottle Coin Exchanger Reverse Vending Kiosk.</p>
+        
+        <div class="nav-links">
+            <a href="../index.html" class="nav-link">&larr; Back to System Hub</a>
+            <a href="wiring_guide.html" class="nav-link">Electrical Wiring Guide</a>
+            <a href="PROJECT_PLAN.md" class="nav-link">Project Plan Document</a>
+            <a href="../arduino/index.html" class="nav-link">Arduino Test Suite</a>
+        </div>
+    </header>
+
+    <div class="section-header">
+        <div class="section-icon">&#128293;</div>
+        <h2>Machine Visual Presentations & 3D Concepts</h2>
+    </div>
+
+    <div class="gallery-grid">
+        <div class="render-card col-4">
+            <div class="render-image-wrap" onclick="openModal('images/pcbces_kiosk_render_1788544402479.jpg')">
+                <span class="render-badge">Finished Aesthetic</span>
+                <img src="images/pcbces_kiosk_render_1788544402479.jpg" alt="PCBCES Kiosk Exterior 3D Render">
+            </div>
+            <div class="render-content">
+                <div>
+                    <div class="render-title">1. Exterior Kiosk Enclosure</div>
+                    <p class="render-desc">Sleek freestanding smart recycling kiosk with dual-tone matte charcoal and brushed aluminum finish. Fitted with eco-friendly LED ring indicators, user prompt screen, and coin retrieval receptacle.</p>
+                </div>
+                <ul class="spec-list">
+                    <li><strong>Overall Size:</strong> 120cm (H) &times; 50cm (W) &times; 45cm (D)</li>
+                    <li><strong>Display:</strong> 16&times;2 I2C Backlit LCD Screen</li>
+                    <li><strong>Input Control:</strong> 16mm Momentary Stainless Steel Button</li>
+                    <li><strong>Intake Ring:</strong> 110mm Circular Transparent Port</li>
+                    <li><strong>Payout Port:</strong> Stainless Steel Coin Well</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="render-card col-4">
+            <div class="render-image-wrap" onclick="openModal('images/pcbces_chassis_cutaway_1788544580664.jpg')">
+                <span class="render-badge">Internal Anatomy</span>
+                <img src="images/pcbces_chassis_cutaway_1788544580664.jpg" alt="PCBCES Chassis Cutaway Internal Mechanical View">
+            </div>
+            <div class="render-content">
+                <div>
+                    <div class="render-title">2. Internal Mechanical Cutaway</div>
+                    <p class="render-desc">Transparent cross-section demonstrating the exact spatial placement of the rigid bottle cradle, non-contact proximity probes, ultrasonic length sensor, MG996R servo trapdoor flap, 12V coin hopper, and controller board.</p>
+                </div>
+                <ul class="spec-list">
+                    <li><strong>Upper Chamber:</strong> Non-Contact Sensor Cradle (Length, Metal, Plastic)</li>
+                    <li><strong>Sorting Flap:</strong> MG996R 180&deg; High-Torque Servo Trapdoor</li>
+                    <li><strong>Coin Dispenser:</strong> 12V Motorized Coin Hopper (&#8369;1 Coins)</li>
+                    <li><strong>Controller:</strong> Arduino Uno + LM2596 5V/4V Buck</li>
+                    <li><strong>Lower Chamber:</strong> 30-Bottle High-Capacity Removable Bin</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="render-card col-4">
+            <div class="render-image-wrap" onclick="openModal('images/pcbces_chassis_frame_1788544600156.jpg')">
+                <span class="render-badge">Structural CAD</span>
+                <img src="images/pcbces_chassis_frame_1788544600156.jpg" alt="PCBCES Chassis Frame Blueprint">
+            </div>
+            <div class="render-content">
+                <div>
+                    <div class="render-title">3. Structural Frame & Blueprint</div>
+                    <p class="render-desc">Modular 2020 aluminum T-slot extrusion frame blueprint with laser-cut mounting plates, lockable swivel caster wheels, and front hinged maintenance service door with key cam lock.</p>
+                </div>
+                <ul class="spec-list">
+                    <li><strong>Frame Material:</strong> 2020 Aluminum T-Slot / 1/2" Marine Plywood</li>
+                    <li><strong>Service Access:</strong> Full-Height Front Hinged Door</li>
+                    <li><strong>Mobility:</strong> 4&times; 2-inch Lockable Swivel Casters</li>
+                    <li><strong>Modular Shelves:</strong> 3-Tier Separation Plates</li>
+                    <li><strong>Cable Trays:</strong> Rear Slotted Wire Ducting</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <div class="section-icon">&#128230;</div>
+        <h2>Modular 3-Tier Chassis Architecture</h2>
+    </div>
+
+    <div class="tier-grid">
+        <div class="tier-card tier-top">
+            <div class="tier-number">Tier 1 &bull; Top Level (Height: 80cm &ndash; 120cm)</div>
+            <h3 class="tier-title">Bottle Inspection Cradle & User Interface</h3>
+            <p>Ergonomically positioned at natural waist-to-chest level for intuitive user operation and clear visibility of the 16&times;2 instruction screen.</p>
+            <ul class="spec-list">
+                <li><strong>Bottle Cradle:</strong> 35cm &times; 12cm horizontal chute with V-groove cradle to centralize bottles automatically.</li>
+                <li><strong>Rigid Cradle Mount:</strong> Bolted directly to shelf frame with zero fragile deflection points, eliminating mechanical fatigue.</li>
+                <li><strong>Proximity Probes:</strong> LJC18A3 (Capacitive plastic) and LJ12A3 (Inductive metal) mounted 8mm from bottle flank.</li>
+                <li><strong>HC-SR04 Ultrasonic:</strong> Mounted at the rear end-stop facing the bottle bottom to measure bottle height (Mismo ~18cm vs 1.5L ~30cm).</li>
+                <li><strong>MG996R Servo Flap:</strong> Hinged bottom flap. Tilts 90&deg; down to drop accepted bottle into lower bin, or tilts reverse/pushes forward to reject.</li>
+            </ul>
+        </div>
+
+        <div class="tier-card tier-mid">
+            <div class="tier-number">Tier 2 &bull; Mid Level (Height: 45cm &ndash; 80cm)</div>
+            <h3 class="tier-title">Coin Hopper & Electronics Control Bay</h3>
+            <p>Secure, dry compartment physically isolated from the bottle dropping path to protect sensitive electronics and coin inventory.</p>
+            <ul class="spec-list">
+                <li><strong>12V Coin Hopper:</strong> Bolted to mid-shelf with dedicated 45&deg; smooth coin chute feeding down into front retrieval cup.</li>
+                <li><strong>Controller Board:</strong> Arduino Uno on DIN-rail or standoff mounts with quick-disconnect terminal blocks.</li>
+                <li><strong>Dual-Rail Power:</strong> S-120-12 (12V 10A PSU) + LM2596 buck converter supplying stable 5.0V (logic) and 4.0V (SIM800L).</li>
+                <li><strong>GSM SIM800L Bay:</strong> Positioned with external stub antenna away from power transformers to prevent RF noise.</li>
+            </ul>
+        </div>
+
+        <div class="tier-card tier-bot">
+            <div class="tier-number">Tier 3 &bull; Base Level (Height: 0cm &ndash; 45cm)</div>
+            <h3 class="tier-title">High-Capacity Bottle Collection Bin</h3>
+            <p>Spacious, easily serviceable collection chamber designed to store up to 30&ndash;50 empty plastic bottles before requiring emptying.</p>
+            <ul class="spec-list">
+                <li><strong>Removable Tub:</strong> Standard 50-liter plastic tote container with integrated side handles for rapid removal.</li>
+                <li><strong>Full Bin Sensing:</strong> Upper IR obstacle beam detects when bottles stack up to the ceiling threshold.</li>
+                <li><strong>Safety Limit:</strong> Firmware software counter halts operation at 30 bottles and triggers SMS alert to the technician.</li>
+                <li><strong>Mobility Base:</strong> 4&times; heavy-duty polyurethane caster wheels with dual-locking foot brakes.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <div class="section-icon">&#128203;</div>
+        <h2>Chassis Fabrication Bill of Materials (BOM)</h2>
+    </div>
+
+    <div class="bom-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item / Material</th>
+                    <th>Specifications / Dimensions</th>
+                    <th>Qty</th>
+                    <th>Category</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>2020 Aluminum T-Slot Extrusions</strong></td>
+                    <td>20mm &times; 20mm Anodized (12&times; 120cm, 8&times; 50cm, 8&times; 45cm)</td>
+                    <td>~14 meters</td>
+                    <td><span class="tag tag-metal">Structural Frame</span></td>
+                    <td>Main structural skeleton for lightweight rigid chassis.</td>
+                </tr>
+                <tr>
+                    <td><strong>Alternative: 1/2" Marine Plywood / MDF</strong></td>
+                    <td>12mm thickness, 4ft &times; 8ft sheet (pre-cut panels)</td>
+                    <td>1 Sheet</td>
+                    <td><span class="tag tag-wood">Budget Option</span></td>
+                    <td>Affordable, easy to cut with jigsaw or table saw for school thesis.</td>
+                </tr>
+                <tr>
+                    <td><strong>Cast Acrylic Sheet (Clear & Smoked)</strong></td>
+                    <td>4mm / 5mm thickness, laser cut or hand routed</td>
+                    <td>1 Sheet</td>
+                    <td><span class="tag tag-metal">Observation & UI</span></td>
+                    <td>Front window, cradle guide plates, and inspection tunnel.</td>
+                </tr>
+                <tr>
+                    <td><strong>Continuous Piano Hinge or Butt Hinges</strong></td>
+                    <td>Stainless steel, 60cm length or 3&times; 3-inch hinges</td>
+                    <td>1 Set</td>
+                    <td><span class="tag tag-metal">Hardware</span></td>
+                    <td>Hinges the front service door for easy maintenance.</td>
+                </tr>
+                <tr>
+                    <td><strong>Keyed Cam Lock / Flush Latch</strong></td>
+                    <td>Standard arcade / vending cabinet zinc-alloy cam lock</td>
+                    <td>1 Unit</td>
+                    <td><span class="tag tag-metal">Hardware</span></td>
+                    <td>Secures internal coin hopper and electronics from tampering.</td>
+                </tr>
+                <tr>
+                    <td><strong>Lockable Swivel Caster Wheels</strong></td>
+                    <td>2-inch / 50mm Polyurethane wheels with brake lever</td>
+                    <td>4 Units</td>
+                    <td><span class="tag tag-metal">Hardware</span></td>
+                    <td>Allows effortless rolling during thesis defense demonstrations.</td>
+                </tr>
+                <tr>
+                    <td><strong>Stainless Steel Coin Cup Bezel</strong></td>
+                    <td>Arcade coin return chute cup (80mm &times; 60mm &times; 45mm)</td>
+                    <td>1 Unit</td>
+                    <td><span class="tag tag-metal">UI Hardware</span></td>
+                    <td>Catches dispensed &#8369;1 coins from the 12V hopper chute.</td>
+                </tr>
+                <tr>
+                    <td><strong>V-Groove Bottle Cradle Plates</strong></td>
+                    <td>3D Printed (PETG) or 5mm bent acrylic cradle</td>
+                    <td>1 Assembly</td>
+                    <td><span class="tag tag-sensor">Sensor Rig</span></td>
+                    <td>Rigidly aligns bottles with capacitive, inductive, and ultrasonic sensors.</td>
+                </tr>
+                <tr>
+                    <td><strong>50-Liter Collection Bin</strong></td>
+                    <td>Standard heavy-duty plastic storage tote (45cm &times; 35cm &times; 38cm)</td>
+                    <td>1 Unit</td>
+                    <td><span class="tag tag-wood">Storage</span></td>
+                    <td>Catches accepted bottles falling from the servo trapdoor.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-header">
+        <div class="section-icon">&#128736;</div>
+        <h2>Chassis Fabrication & Assembly Sequence</h2>
+    </div>
+
+    <div class="steps-grid">
+        <div class="step-box">
+            <div class="step-num">1</div>
+            <h4>Frame Assembly</h4>
+            <p>Cut aluminum extrusions (or plywood frame panels). Assemble the rectangular tower box (120cm &times; 50cm &times; 45cm) using corner brackets and M5 T-nuts. Bolt the 4 caster wheels to the bottom base plate.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-num">2</div>
+            <h4>Partition Shelves</h4>
+            <p>Install the two horizontal dividing shelves: Upper shelf (at 80cm height) for the bottle testing cradle and servo flap; Mid shelf (at 45cm height) for the coin hopper and electronics enclosure.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-num">3</div>
+            <h4>Sensor Cradle Rig</h4>
+            <p>Firmly bolt the V-groove bottle cradle to the top shelf. Mount the LJC18 capacitive and LJ12 inductive probes at 8mm distance from the bottle side wall, and the HC-SR04 ultrasonic sensor at the rear stop.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-num">4</div>
+            <h4>Servo Trapdoor & Chute</h4>
+            <p>Attach the MG996R metal-gear servo horn to the acrylic trapdoor flap. Verify that when rotating from 0&deg; to 90&deg;, the flap drops the bottle straight into the lower bin without jamming.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-num">5</div>
+            <h4>Coin Hopper & Payout</h4>
+            <p>Firmly mount the 12V Coin Hopper. Fasten an inclined PVC or sheet metal coin ramp leading directly from the hopper exit snout down to the front-panel coin retrieval cup.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-num">6</div>
+            <h4>Front Panel & UI</h4>
+            <p>Mount the 16&times;2 I2C LCD, the 16mm metal momentary push button, and green/red LED lamps into precision laser-cut front door bezels. Connect wiring harnesses with Dupont strain relief.</p>
+        </div>
+    </div>
+</div>
+
+<div id="imageModal" class="modal" onclick="closeModal()">
+    <span class="close-btn">&times;</span>
+    <img id="modalImg" class="modal-content" src="" alt="Fullscreen Render">
+</div>
+
+<script>
+    function openModal(src) {
+        document.getElementById('modalImg').src = src;
+        document.getElementById('imageModal').classList.add('active');
+    }
+    function closeModal() {
+        document.getElementById('imageModal').classList.remove('active');
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "Escape") closeModal();
+    });
+</script>
+
+</body>
+</html>
+
