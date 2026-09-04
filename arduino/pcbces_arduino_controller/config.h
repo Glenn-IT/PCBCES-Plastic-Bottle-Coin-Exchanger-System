@@ -5,9 +5,12 @@
 // PCBCES PIN CONFIGURATION MATRIX (Arduino Uno ATmega328P)
 // =============================================================================
 
+// Dedicated 3-Button User Interface Pins (INPUT_PULLUP to GND)
+#define PIN_BTN_GREEN       10   // Button Green: Select 1.5L Bottle Mode (5 pcs = 3 PHP)
+#define PIN_BTN_BLUE        A0   // Button Blue:  Select Mismo Bottle Mode (10 pcs = 3 PHP)
+#define PIN_BTN_RED         A1   // Button Red:   System Restart / Cancel Transaction
+
 // Analog & I2C Pins
-// A0: SPARE / AVAILABLE (Formerly Load Cell DT - Removed for non-contact sensing)
-// A1: SPARE / AVAILABLE (Formerly Load Cell SCK - Removed for non-contact sensing)
 #define PIN_LED_GREEN       A2   // Green LED (Acceptance / Ready Indicator)
 #define PIN_GSM_TX          A3   // SoftwareSerial TX (To GSM SIM800L RX)
 #define PIN_I2C_SDA         A4   // 16x2 LCD I2C Data
@@ -22,7 +25,6 @@
 #define PIN_COIN_PULSE       7   // 12V Coin Hopper Counter (via 10k/4.7k divider)
 #define PIN_RELAY_HOPPER     8   // 5V Relay Module (Controls 12V Hopper Motor)
 #define PIN_SERVO_TRAPDOOR   9   // MG996R PWM Trapdoor Flap
-#define PIN_BUTTON_MENU     10   // Momentary Push Button (INPUT_PULLUP)
 #define PIN_GSM_RX          11   // SoftwareSerial RX (From GSM SIM800L TX)
 #define PIN_BUZZER          12   // DIYMORE Active 5V Buzzer
 #define PIN_LED_RED         13   // Red LED (Rejection / Fault Indicator)

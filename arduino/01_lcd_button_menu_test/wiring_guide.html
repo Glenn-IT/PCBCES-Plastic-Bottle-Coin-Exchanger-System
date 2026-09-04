@@ -131,9 +131,9 @@
 </head>
 <body>
 <div class="container">    <header>
-        <span class="badge">Component Test 01</span>
-        <h1>16x2 I2C LCD & Push Button Smart Menu</h1>
-        <p class="subtitle">Hardware: 16x2 Character LCD (PCF8574 Backpack) &bull; Momentary Horn Push Button (D10) &bull; Active Buzzer (D12)</p>
+        <span class="badge">Hardware Test 01</span>
+        <h1>16x2 I2C LCD & 3-Button Dedicated Interface</h1>
+        <p class="subtitle">Arduino Uno &bull; 16x2 I2C Display (PCF8574) &bull; Green (1.5L), Blue (Mismo), Red (Cancel/Reset) &bull; Active Buzzer</p>
     </header><div class="nav-bar"><a href="../index.html" class="nav-link">🏠 Master Hub</a><a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link active">Test 01: LCD & Button</a><a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (HX711)</a><a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a><a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a><a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a><a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a><a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a><a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a></div>    <div class="card">
         <div class="card-title">
             <div class="icon">📟</div>
@@ -236,16 +236,28 @@
                     <td>I2C Serial Clock</td>
                 </tr>
                 <tr>
-                    <td><span class="pin-tag tag-bb">Button Pin 1</span></td>
-                    <td>Cyan / Blue</td>
+                    <td><span class="pin-tag tag-bb">Button Green (1.5L)</span></td>
+                    <td>Green Wire</td>
                     <td><span class="pin-tag tag-uno">Arduino D10</span></td>
-                    <td>Internal Pullup Input (LOW when pressed)</td>
+                    <td>Selects 1.5L Mode (5 pcs quota, INPUT_PULLUP to GND)</td>
                 </tr>
                 <tr>
-                    <td><span class="pin-tag tag-bb">Button Pin 2</span></td>
-                    <td>Black</td>
+                    <td><span class="pin-tag tag-bb">Button Blue (Mismo)</span></td>
+                    <td>Blue Wire</td>
+                    <td><span class="pin-tag tag-uno">Arduino A0</span></td>
+                    <td>Selects Mismo Mode (10 pcs quota, INPUT_PULLUP to GND)</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">Button Red (Restart)</span></td>
+                    <td>Red Wire</td>
+                    <td><span class="pin-tag tag-uno">Arduino A1</span></td>
+                    <td>Cancels current transaction, resets count & returns to start</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">All Buttons Common</span></td>
+                    <td>Black Wire</td>
                     <td>Common GND Rail</td>
-                    <td>Ground Return</td>
+                    <td>Common Ground Return for all 3 buttons</td>
                 </tr>
                 <tr>
                     <td><span class="pin-tag tag-bb">Buzzer (+)</span></td>
@@ -266,12 +278,14 @@
     <div class="card">
         <div class="card-title">
             <div class="icon">💡</div>
-            Calibration & Testing Tips
+            3-Button Operation & Testing Tips
         </div>
         <ul>
-            <li><strong>LCD Contrast Knob:</strong> If nothing appears on the screen when powered, turn the small blue potentiometer on the back of the I2C backpack using a small screwdriver until letters become sharp and visible.</li>
-            <li><strong>Single Button Interaction:</strong> Quick click cycles between 1.5L and Mismo. Hold for 1.5 seconds until a longer beep sounds to enter deposit mode!</li>
-            <li><strong>Serial Monitor:</strong> Open Arduino Serial Monitor at <code>115200 baud</code> to view realtime state output.</li>
+            <li><strong>LCD Standby Screen:</strong> Displays <code>GRN:1.5L BLU:MIS</code> on Line 1, and <code>RED:Cancel/Reset</code> on Line 2.</li>
+            <li><strong>GREEN Button (D10):</strong> Instantly selects 1.5L Mode (Quota: 5 bottles = ₱3).</li>
+            <li><strong>BLUE Button (A0):</strong> Instantly selects Mismo Mode (Quota: 10 bottles = ₱3).</li>
+            <li><strong>RED Button (A1):</strong> Press at ANY time to abort/cancel transaction, reset count to 0, and return to Standby.</li>
+            <li><strong>Serial Monitor:</strong> Open Arduino Serial Monitor at <code>115200 baud</code> to view real-time state outputs.</li>
         </ul>
     </div>
 </div>

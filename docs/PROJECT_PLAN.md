@@ -9,8 +9,12 @@
 **Yes, absolutely.** The proposed Reverse Vending Machine (RVM) concept with **GSM/SMS Notification** is a classic, high-scoring undergraduate capstone thesis project.
 
 The system logic follows an intuitive sequence:
-1. **Standby / Selection:** The user selects the bottle type (**1.5L** or **Mismo** ~290–300ml) using the push button guided by prompts on the 16x2 I2C LCD.
-2. **Deposit Progress Tracking:** The LCD displays live progress (e.g., `0/5 [1.5L]` or `0/10 [Mismo]`).
+1. **Standby / Selection (Dedicated 3-Button Control):**
+   - **Button Green:** Direct selection for **1.5L Mode** (5 bottles = ₱3.00).
+   - **Button Blue:** Direct selection for **Mismo Mode** (10 bottles = ₱3.00).
+   - **Button Red:** System Restart / Cancel current transaction at any time.
+   - The 16x2 LCD displays: `GRN:1.5L BLU:MIS` / `RED:Cancel/Reset`.
+2. **Deposit Progress Tracking:** The LCD displays live progress (e.g., `1.5L [0/5]` or `Mismo [0/10]`). User can press Red at any point to cancel.
 3. **Sensor Verification (Non-Contact Classification Architecture):**
    - **Metal Detection (LJ12A3-4-Z/BX):** Rejects metallic cans or foreign objects.
    - **Plastic Dielectric Verification (LJC18A3-B-Z/BX):** Confirms bottle material is genuine plastic.
@@ -48,7 +52,7 @@ The system logic follows an intuitive sequence:
 | **Voltage Divider Resistors (10k, 4.7k, 2k)** | Available | Safely steps down 12V sensor/hopper signals to ~3.8V |
 | **1000µF Capacitor & 1N4007 Diode** | Available | Power rail stabilization (vital for GSM bursts & servo) |
 | **Breadboard & Power Distribution Block** | Available | Common 5V & GND distribution |
-| **Metal Momentary Push Button** | Available | Single-button smart menu control |
+| **Dedicated Buttons (Green, Blue, Red)** | Available | Green (1.5L), Blue (Mismo), Red (Cancel/Reset) |
 
 ---
 
@@ -79,12 +83,12 @@ Every pin on the Arduino Uno is carefully budgeted:
 | **D7** | Coin Hopper Pulse Line | Digital In (INT) | Via 10k/4.7k voltage divider (Counts ₱1 pulses) |
 | **D8** | 5V Relay Module | Digital Out | Turns ON/OFF 12V Hopper motor |
 | **D9 (PWM)** | MG996R Servo Motor | PWM Out | Trapdoor accept/reject |
-| **D10** | Push Button | Digital In (PULLUP)| Click = toggle, Hold = select |
+| **D10** | Button Green (1.5L) | Digital In (PULLUP)| Selects 1.5L bottle mode (5 pcs quota) |
 | **D11** | GSM SIM Module TX -> Arduino RX | SoftwareSerial RX | Receives AT response from SIM module |
 | **D12** | Active Buzzer | Digital Out | High = Beep, Low = Silent |
 | **D13** | Red LED / Bulb | Digital Out | Rejection / Error |
-| **A0** | Reserved / Spare | N/A | Available for future expansion (Formerly HX711 DT) |
-| **A1** | Reserved / Spare | N/A | Available for future expansion (Formerly HX711 SCK) |
+| **A0** | Button Blue (Mismo) | Digital In (PULLUP)| Selects Mismo bottle mode (10 pcs quota) |
+| **A1** | Button Red (Restart/Cancel) | Digital In (PULLUP)| Cancels active transaction / resets system |
 | **A2** | Green LED / Bulb | Digital Out | Acceptance / Ready |
 | **A3** | Arduino TX -> GSM SIM Module RX | SoftwareSerial TX | Sends AT commands to SIM module |
 | **A4 (SDA)** | 16x2 LCD (I2C Backpack) | I2C Data | 5V Logic |

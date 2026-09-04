@@ -412,11 +412,11 @@
                     <rect x="490" y="320" width="165" height="270" rx="6" fill="#111c30" stroke="#334155"/>
                     <text x="500" y="338" fill="#94a3b8" font-size="10" font-weight="700">ANALOG / DIGITAL PINS</text>
 
-                    <circle cx="490" cy="370" r="6" fill="#64748b" class="term-dot"/>
-                    <text x="505" y="374" fill="#94a3b8" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A0: FREE / SPARE</text>
+                    <circle cx="490" cy="370" r="6" fill="#3b82f6" class="term-dot"/>
+                    <text x="505" y="374" fill="#60a5fa" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A0: BTN BLUE (Mismo)</text>
 
-                    <circle cx="490" cy="410" r="6" fill="#64748b" class="term-dot"/>
-                    <text x="505" y="414" fill="#94a3b8" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A1: FREE / SPARE</text>
+                    <circle cx="490" cy="410" r="6" fill="#ef4444" class="term-dot"/>
+                    <text x="505" y="414" fill="#f87171" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A1: BTN RED (Restart)</text>
 
                     <circle cx="490" cy="450" r="6" fill="#10b981" class="term-dot"/>
                     <text x="505" y="454" fill="#34d399" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A2: Green LED</text>
@@ -498,11 +498,11 @@
                     <rect x="930" y="225" width="510" height="30" rx="4" fill="#1f2937"/>
                     <text x="1185" y="245" fill="#67e8f9" font-size="13" font-weight="800" text-anchor="middle">MULTI-SENSOR BOTTLE CLASSIFIER CHAMBER</text>
 
-                    <!-- Spare A0/A1 Pins -->
-                    <rect x="930" y="270" width="240" height="60" rx="6" fill="#1e293b" stroke="#475569"/>
-                    <text x="1050" y="290" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle">SPARE ANALOG PINS</text>
-                    <circle cx="930" cy="310" r="6" fill="#64748b" class="term-dot"/>
-                    <text x="945" y="314" fill="#94a3b8" font-size="9.5" font-family="JetBrains Mono">A0 / A1 (Available / Free)</text>
+                    <!-- 3x Dedicated Control Buttons -->
+                    <rect x="930" y="270" width="240" height="60" rx="6" fill="#1e293b" stroke="#3b82f6"/>
+                    <text x="1050" y="290" fill="#93c5fd" font-size="11" font-weight="700" text-anchor="middle">3x DEDICATED CONTROL BUTTONS</text>
+                    <circle cx="930" cy="310" r="6" fill="#10b981" class="term-dot"/>
+                    <text x="945" y="314" fill="#67e8f9" font-size="9.5" font-family="JetBrains Mono">GRN(D10) | BLU(A0) | RED(A1)</text>
 
                     <!-- HC-SR04 Ultrasonic -->
                     <rect x="1190" y="270" width="250" height="60" rx="6" fill="#065f46" stroke="#10b981"/>
@@ -676,9 +676,9 @@
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D10</span></td>
-                        <td>Push Button Switch</td>
+                        <td>Button Green (1.5L)</td>
                         <td>Digital In (PULLUP)</td>
-                        <td>Click = Toggle Mode, Hold 1.5s = Confirm Start</td>
+                        <td>Direct selection for 1.5L Mode (5 pcs quota)</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D11</span></td>
@@ -700,15 +700,15 @@
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">A0</span></td>
-                        <td>Available / Spare</td>
-                        <td>Free Pin</td>
-                        <td>Reserved for future expansion (Weight feature removed)</td>
+                        <td>Button Blue (Mismo)</td>
+                        <td>Digital In (PULLUP)</td>
+                        <td>Direct selection for Mismo Mode (10 pcs quota)</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">A1</span></td>
-                        <td>Available / Spare</td>
-                        <td>Free Pin</td>
-                        <td>Reserved for future expansion (Weight feature removed)</td>
+                        <td>Button Red (Cancel/Reset)</td>
+                        <td>Digital In (PULLUP)</td>
+                        <td>Cancels current transaction, resets count & restarts</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">A2</span></td>

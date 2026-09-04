@@ -1,11 +1,15 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
- * Plastic Bottle Coin Exchanger System with Non-Contact Sensing & GSM Telemetry
+ * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
  * - 16x2 I2C LCD (PCF8574)
- * - Single Smart Push Button & Active Buzzer
+ * - 3 Dedicated Control Buttons (INPUT_PULLUP):
+ *     * Button Green (Pin 10): 1.5L Bottle Mode (5 pcs = 3 PHP)
+ *     * Button Blue  (Pin A0): Mismo Bottle Mode (10 pcs = 3 PHP)
+ *     * Button Red   (Pin A1): System Restart / Cancel Transaction
+ * - Active 5V Buzzer & Green/Red Status LEDs
  * - HC-SR04+ Ultrasonic (Bottle Length / Size Discrimination)
  * - IR Obstacle Avoidance (Bottle Insertion Beam Trigger)
  * - LJC18A3 Capacitive Sensor (Dielectric Plastic Material Verification)
@@ -13,10 +17,6 @@
  * - MG996R Metal Gear Servo (Accept/Reject Trapdoor Flap)
  * - 12V Coin Hopper & 5V Relay (3.00 PHP Payout)
  * - SIM800L GSM Module (Storage Bin Full SMS Telemetry)
- * 
- * Note: Mechanical load cell / HX711 was removed in favor of a rigid,
- * non-contact optical/dielectric classification architecture for high durability
- * and zero mechanical fatigue. Pins A0 and A1 are reserved/spare.
  */
 
 #include <Wire.h>
@@ -49,10 +49,6 @@ int currentDepositCount = 0;
 int requiredQuota = BOTTLE_1_5L_QUOTA;
 int totalBinBottles = 0;
 volatile int coinsDispensed = 0;
-
-// Button timing
-unsigned long btnPressStartTime = 0;
-bool lastBtnState = HIGH;
 
 // Coin Pulse Counter ISR
 void onCoinPulse() {
@@ -119,32 +115,60 @@ void sendBinFullSMS() {
 void showMenuLCD() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("SELECT BOTTLE:");
+  lcd.print("GRN:1.5L BLU:MIS");
   lcd.setCursor(0, 1);
-  if (selectedType == TYPE_1_5L) {
-    lcd.print("> 1.5L  (5 pcs)");
-  } else {
-    lcd.print("> Mismo (10pcs)");
-  }
+  lcd.print("RED:Cancel/Reset");
 }
 
 void showProgressLCD() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print(selectedType == TYPE_1_5L ? "1.5L PET Deposit" : "Mismo Deposit   ");
+  if (selectedType == TYPE_1_5L) {
+    lcd.print("1.5L PET (5 pcs)");
+  } else {
+    lcd.print("Mismo PET (10pcs)");
+  }
   lcd.setCursor(0, 1);
-  lcd.print("Progress: ");
+  lcd.print("Count: ");
   lcd.print(currentDepositCount);
   lcd.print("/");
   lcd.print(requiredQuota);
+  lcd.print(" [RED:X]");
+}
+
+// Red Button: Cancel Transaction & Return to Standby
+bool checkCancelButton() {
+  if (digitalRead(PIN_BTN_RED) == LOW) {
+    delay(50); // debounce
+    if (digitalRead(PIN_BTN_RED) == LOW) {
+      Serial.println(F("[SYSTEM] Red Button Pressed: Transaction Cancelled / Restarting..."));
+      soundBeep(250);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print(" TRANSACTION    ");
+      lcd.setCursor(0, 1);
+      lcd.print(" CANCELLED / RST");
+      delay(1500);
+      currentDepositCount = 0;
+      currentState = STATE_STANDBY_MENU;
+      showMenuLCD();
+      while (digitalRead(PIN_BTN_RED) == LOW); // wait for release
+      return true;
+    }
+  }
+  return false;
 }
 
 void setup() {
   Serial.begin(115200);
   gsm.begin(9600);
 
-  // Pin Modes
-  pinMode(PIN_BUTTON_MENU, INPUT_PULLUP);
+  // 3 Dedicated Buttons (Internal Pullups to GND)
+  pinMode(PIN_BTN_GREEN, INPUT_PULLUP);
+  pinMode(PIN_BTN_BLUE, INPUT_PULLUP);
+  pinMode(PIN_BTN_RED, INPUT_PULLUP);
+
+  // Sensors & Actuators
   pinMode(PIN_IR_ENTRY, INPUT);
   pinMode(PIN_CAP_PLASTIC, INPUT);
   pinMode(PIN_IND_METAL, INPUT);
@@ -176,12 +200,15 @@ void setup() {
   lcd.setCursor(0, 0);
   lcd.print(" PCBCES SYSTEM  ");
   lcd.setCursor(0, 1);
-  lcd.print(" Capstone Ready ");
+  lcd.print(" 3-Button Ready ");
   soundBeep(120);
 
   delay(1200);
   showMenuLCD();
-  Serial.println(F("[MASTER] PCBCES Fully Initialized (Non-Contact Sensing Active)."));
+  Serial.println(F("[MASTER] PCBCES Fully Initialized with 3 Dedicated Buttons:"));
+  Serial.println(F(" - GREEN (D10): 1.5L Mode"));
+  Serial.println(F(" - BLUE  (A0):  Mismo Mode"));
+  Serial.println(F(" - RED   (A1):  System Restart / Cancel"));
 }
 
 void loop() {
@@ -189,41 +216,80 @@ void loop() {
     case STATE_STANDBY_MENU: {
       digitalWrite(PIN_LED_GREEN, HIGH);
       digitalWrite(PIN_LED_RED, LOW);
-      
-      bool btn = digitalRead(PIN_BUTTON_MENU);
-      if (lastBtnState == HIGH && btn == LOW) {
-        btnPressStartTime = millis();
+
+      // 1. GREEN BUTTON -> Select 1.5L Mode
+      if (digitalRead(PIN_BTN_GREEN) == LOW) {
         delay(50);
-      }
-      if (lastBtnState == LOW && btn == HIGH) {
-        unsigned long dur = millis() - btnPressStartTime;
-        if (dur < 1000) {
-          // Toggle
-          selectedType = (selectedType == TYPE_1_5L) ? TYPE_MISMO : TYPE_1_5L;
-          requiredQuota = (selectedType == TYPE_1_5L) ? BOTTLE_1_5L_QUOTA : BOTTLE_MISMO_QUOTA;
-          soundBeep(50);
-          showMenuLCD();
+        if (digitalRead(PIN_BTN_GREEN) == LOW) {
+          selectedType = TYPE_1_5L;
+          requiredQuota = BOTTLE_1_5L_QUOTA;
+          currentDepositCount = 0;
+          soundBeep(100);
+          Serial.println(F("[MENU] GREEN pressed: 1.5L Mode Selected (5 pcs)"));
+          
+          lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("MODE: 1.5L PET  ");
+          lcd.setCursor(0, 1);
+          lcd.print("Target: 5 Pcs   ");
+          delay(1000);
+          
+          currentState = STATE_WAIT_INSERTION;
+          showProgressLCD();
+          while (digitalRead(PIN_BTN_GREEN) == LOW);
+          break;
         }
       }
-      // Hold 1.5s to confirm
-      if (btn == LOW && (millis() - btnPressStartTime >= 1500)) {
-        soundBeep(200);
-        currentDepositCount = 0;
-        currentState = STATE_WAIT_INSERTION;
-        showProgressLCD();
-        while (digitalRead(PIN_BUTTON_MENU) == LOW);
+
+      // 2. BLUE BUTTON -> Select Mismo Mode
+      if (digitalRead(PIN_BTN_BLUE) == LOW) {
+        delay(50);
+        if (digitalRead(PIN_BTN_BLUE) == LOW) {
+          selectedType = TYPE_MISMO;
+          requiredQuota = BOTTLE_MISMO_QUOTA;
+          currentDepositCount = 0;
+          soundBeep(100);
+          Serial.println(F("[MENU] BLUE pressed: Mismo Mode Selected (10 pcs)"));
+          
+          lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("MODE: MISMO PET ");
+          lcd.setCursor(0, 1);
+          lcd.print("Target: 10 Pcs  ");
+          delay(1000);
+          
+          currentState = STATE_WAIT_INSERTION;
+          showProgressLCD();
+          while (digitalRead(PIN_BTN_BLUE) == LOW);
+          break;
+        }
       }
-      lastBtnState = btn;
+
+      // 3. RED BUTTON -> Reset Standby Menu
+      if (digitalRead(PIN_BTN_RED) == LOW) {
+        delay(50);
+        if (digitalRead(PIN_BTN_RED) == LOW) {
+          soundBeep(150);
+          currentDepositCount = 0;
+          Serial.println(F("[MENU] RED pressed: Standby Refreshed / Reset."));
+          showMenuLCD();
+          while (digitalRead(PIN_BTN_RED) == LOW);
+          break;
+        }
+      }
       break;
     }
 
     case STATE_WAIT_INSERTION: {
+      // Check if user pressed RED button to cancel/restart transaction
+      if (checkCancelButton()) break;
+
       // Check IR Entry Sensor
       if (digitalRead(PIN_IR_ENTRY) == LOW) {
         // Bottle detected in entry chute!
         lcd.clear();
         lcd.setCursor(0, 0);
-        lcd.print("BOTTLE DETECTED");
+        lcd.print("BOTTLE DETECTED ");
         lcd.setCursor(0, 1);
         lcd.print("Scanning Sensors");
         delay(600); // Allow bottle to settle on cradle
@@ -310,15 +376,15 @@ void loop() {
     }
 
     case STATE_REJECT_EJECT: {
-      Serial.println(F("[TRAPDOOR] Rejection sequence triggered (Trapdoor remains closed)."));
+      Serial.println(F("[TRAPDOOR] Rejection sequence triggered (Hatch remains closed)."));
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("BOTTLE REJECTED!");
       lcd.setCursor(0, 1);
-      lcd.print("Pls Try Again");
+      lcd.print("Pls Try Again   ");
       soundError();
 
-      // Optional pulse or tilt; keeps flap at 0 to prevent drop into bin
+      // Flap remains at 0 to prevent drop into bin
       trapdoor.write(SERVO_STANDBY_ANGLE);
       delay(2000);
 
@@ -331,7 +397,7 @@ void loop() {
       Serial.println(F("[PAYOUT] Quota reached! Dispensing 3.00 PHP..."));
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("QUOTA REACHED!");
+      lcd.print("QUOTA REACHED!  ");
       lcd.setCursor(0, 1);
       lcd.print("Dispensing 3 PHP");
 
@@ -374,27 +440,33 @@ void loop() {
       lcd.setCursor(0, 0);
       lcd.print("BIN IS FULL!    ");
       lcd.setCursor(0, 1);
-      lcd.print("SYSTEM PAUSED   ");
+      lcd.print("RED: System Rst ");
       soundError();
 
       sendBinFullSMS();
 
-      // Lock until admin clears bin and presses button for 5 seconds
+      // Press RED button for 2 seconds to restart after emptying bin
       while (true) {
-        if (digitalRead(PIN_BUTTON_MENU) == LOW) {
+        if (digitalRead(PIN_BTN_RED) == LOW) {
           unsigned long holdStart = millis();
-          while (digitalRead(PIN_BUTTON_MENU) == LOW) {
-            if (millis() - holdStart >= 5000) {
+          while (digitalRead(PIN_BTN_RED) == LOW) {
+            if (millis() - holdStart >= 2000) {
               totalBinBottles = 0;
               currentDepositCount = 0;
               soundSuccess();
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("SYSTEM RESET OK ");
+              lcd.setCursor(0, 1);
+              lcd.print("Resuming Normal ");
+              delay(1500);
               currentState = STATE_STANDBY_MENU;
               showMenuLCD();
               return;
             }
           }
         }
-        delay(100);
+        delay(50);
       }
       break;
     }

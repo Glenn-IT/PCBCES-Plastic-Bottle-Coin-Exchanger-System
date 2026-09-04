@@ -27,12 +27,12 @@
 | **D7** | Digital Input (INT) | Coin Hopper Pulse Line | Scaled to ~3.8V | Interrupt counter for dispensed ₱1 coins |
 | **D8** | Digital Output | 5V Relay Module | 5V Logic | Switches 12V power to Coin Hopper |
 | **D9** | Digital Output (PWM)| MG996R Servo Motor | 5V Logic | 0° Standby, 90° Accept, 180° Reject |
-| **D10** | Digital Input (PULL)| Momentary Push Button | 5V Logic | Short click = toggle, 1.5s hold = select |
+| **D10** | Digital Input (PULL)| Button Green (1.5L) | 5V Logic | Selects 1.5L bottle mode (5 pcs quota) |
 | **D11** | SoftwareSerial RX | SIM800L TX Pin | 5V / 4V Logic | Receives AT responses |
 | **D12** | Digital Output | DIYMORE Active Buzzer | 5V Logic | High = Beep, Low = Silent |
 | **D13** | Digital Output | Red Indicator Light | 5V Logic | Visual rejection / fault alert |
-| **A0** | Reserved / Spare | Free Header Pin | N/A | Available for expansion (Formerly HX711 DT) |
-| **A1** | Reserved / Spare | Free Header Pin | N/A | Available for expansion (Formerly HX711 SCK) |
+| **A0** | Digital Input (PULL)| Button Blue (Mismo) | 5V Logic | Selects Mismo bottle mode (10 pcs quota) |
+| **A1** | Digital Input (PULL)| Button Red (Restart/Cancel)| 5V Logic | Cancels current transaction / resets machine |
 | **A2** | Digital Output | Green Indicator Light | 5V Logic | Visual acceptance / ready alert |
 | **A3** | SoftwareSerial TX | SIM800L RX Pin | 5V / 4V Logic | Sends AT SMS commands |
 | **A4** | Hardware I2C (SDA) | 16x2 LCD (PCF8574) | 5V Logic | Serial Data line |
