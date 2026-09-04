@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 01: 16x2 I2C LCD & Single Button Smart Menu — PCBCES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-purple: #8b5cf6;
+            --accent-yellow: #eab308;
+            --active-accent: #10b981;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--active-accent);
+            border: 1px solid var(--active-accent);
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p.subtitle { color: var(--text-secondary); font-size: 1.05rem; }
+        .nav-bar {
+            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem;
+        }
+        .nav-link {
+            font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); background: var(--bg-card);
+            padding: 0.5rem 0.9rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff; background: var(--active-accent); border-color: var(--active-accent);
+        }
+        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        .card {
+            background-color: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 1.75rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+        .card-title {
+            font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; display: flex;
+            align-items: center; gap: 0.75rem; color: var(--text-primary);
+        }
+        .card-title .icon {
+            width: 32px; height: 32px; border-radius: 0.5rem; background: rgba(59, 130, 246, 0.2);
+            color: var(--active-accent); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+        }
+        .svg-container {
+            width: 100%; overflow-x: auto; background: #090d16; border-radius: 0.75rem;
+            padding: 1.5rem 1rem; border: 1px solid #1e293b;
+        }
+        svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+        .wire {
+            stroke-dasharray: 8; animation: dash 30s linear infinite;
+            transition: stroke-width 0.2s ease, stroke 0.2s ease; cursor: pointer;
+        }
+        .wire:hover { stroke-width: 4.5px !important; filter: drop-shadow(0 0 6px currentColor); }
+        @keyframes dash { to { stroke-dashoffset: -1000; } }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; }
+        th {
+            background-color: #0f172a; color: var(--text-secondary); font-weight: 600;
+            padding: 0.85rem 1rem; border-bottom: 2px solid var(--border-color);
+            text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
+        }
+        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+        tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+        .pin-tag {
+            font-family: 'JetBrains Mono', monospace; padding: 0.2rem 0.5rem; border-radius: 0.35rem;
+            font-size: 0.82rem; font-weight: 600; display: inline-block;
+        }
+        .tag-uno { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .tag-bb { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .tag-pwr { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+        .tag-gsm { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+        .note-box {
+            background: rgba(244, 63, 94, 0.1); border-left: 4px solid var(--accent-rose);
+            padding: 1.25rem; border-radius: 0 0.5rem 0.5rem 0; margin-top: 1.5rem;
+        }
+        .note-box h4 {
+            color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.5rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .note-box p, .note-box li { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.4rem; }
+        .note-box ul { padding-left: 1.25rem; }
+        .code-box {
+            font-family: 'JetBrains Mono', monospace; background: #090d16;
+            border: 1px solid #1e293b; padding: 1rem; border-radius: 0.5rem;
+            font-size: 0.85rem; color: #38bdf8; overflow-x: auto; margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">    <header>
+        <span class="badge">Component Test 01</span>
+        <h1>16x2 I2C LCD & Push Button Smart Menu</h1>
+        <p class="subtitle">Hardware: 16x2 Character LCD (PCF8574 Backpack) &bull; Momentary Horn Push Button (D10) &bull; Active Buzzer (D12)</p>
+    </header><div class="nav-bar"><a href="../index.html" class="nav-link">🏠 Master Hub</a><a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link active">Test 01: LCD & Button</a><a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (HX711)</a><a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a><a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a><a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a><a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a><a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a><a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a></div>    <div class="card">
+        <div class="card-title">
+            <div class="icon">📟</div>
+            Interactive Wiring Schematic (16x2 I2C LCD & Smart Navigation Button)
+        </div>
+        <div class="svg-container">
+            <svg viewBox="0 0 1000 480" width="1000" height="480" xmlns="http://www.w3.org/2000/svg">
+                <rect width="1000" height="480" fill="#090d16" rx="8"/>
+                
+                <!-- Arduino Uno Box -->
+                <rect x="60" y="60" width="300" height="360" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
+                <text x="210" y="100" fill="#60a5fa" font-size="16" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
+                
+                <!-- Uno Pins -->
+                <circle cx="360" cy="150" r="6" fill="#10b981"/>
+                <text x="345" y="154" fill="#34d399" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">A4 (SDA)</text>
+
+                <circle cx="360" cy="190" r="6" fill="#10b981"/>
+                <text x="345" y="194" fill="#34d399" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">A5 (SCL)</text>
+
+                <circle cx="360" cy="240" r="6" fill="#38bdf8"/>
+                <text x="345" y="244" fill="#7dd3fc" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">D10 (Button In)</text>
+
+                <circle cx="360" cy="290" r="6" fill="#f59e0b"/>
+                <text x="345" y="294" fill="#fbbf24" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">D12 (Buzzer Out)</text>
+
+                <circle cx="360" cy="340" r="6" fill="#f97316"/>
+                <text x="345" y="344" fill="#fb923c" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">5V Power Out</text>
+
+                <circle cx="360" cy="380" r="6" fill="#64748b"/>
+                <text x="345" y="384" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">GND (Common)</text>
+
+                <!-- LCD 16x2 Box -->
+                <rect x="580" y="60" width="360" height="170" rx="10" fill="#111827" stroke="#10b981" stroke-width="2"/>
+                <rect x="610" y="80" width="300" height="70" rx="6" fill="#042f2e" stroke="#14b8a6"/>
+                <text x="760" y="110" fill="#2dd4bf" font-family="JetBrains Mono" font-size="13" font-weight="700" text-anchor="middle">> 1.5L (5 pcs)</text>
+                <text x="760" y="135" fill="#5eead4" font-family="JetBrains Mono" font-size="11" text-anchor="middle">HOLD 1.5s TO START</text>
+                <text x="760" y="180" fill="#9ca3af" font-size="11" text-anchor="middle">16x2 LCD with PCF8574 I2C Backpack</text>
+
+                <!-- Push Button Box -->
+                <rect x="580" y="260" width="160" height="80" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+                <circle cx="660" cy="300" r="18" fill="#0284c7"/>
+                <text x="660" y="330" fill="#93c5fd" font-size="10" font-weight="700" text-anchor="middle">PUSH BUTTON</text>
+
+                <!-- Buzzer Box -->
+                <rect x="780" y="260" width="160" height="80" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+                <circle cx="860" cy="295" r="14" fill="#d97706"/>
+                <text x="860" y="325" fill="#fde68a" font-size="10" font-weight="700" text-anchor="middle">ACTIVE BUZZER</text>
+
+                <!-- Wires -->
+                <!-- I2C SDA -->
+                <path class="wire" d="M 360 150 L 480 150 L 480 170 L 580 170" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                <!-- I2C SCL -->
+                <path class="wire" d="M 360 190 L 500 190 L 500 195 L 580 195" stroke="#14b8a6" stroke-width="2.5" fill="none"/>
+                <!-- Button wire -->
+                <path class="wire" d="M 360 240 L 520 240 L 520 290 L 580 290" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+                <!-- Buzzer wire -->
+                <path class="wire" d="M 360 290 L 540 290 L 540 310 L 780 310" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">📋</div>
+            Breadboard Wiring Table
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Component Pin</th>
+                    <th>Wire Color</th>
+                    <th>Connects To</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="pin-tag tag-bb">LCD VCC</span></td>
+                    <td>Red</td>
+                    <td>5V Power Rail</td>
+                    <td>Display Logic Power</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">LCD GND</span></td>
+                    <td>Black</td>
+                    <td>Common GND Rail</td>
+                    <td>Ground Reference</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">LCD SDA</span></td>
+                    <td>Green</td>
+                    <td><span class="pin-tag tag-uno">Arduino A4</span></td>
+                    <td>I2C Serial Data</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">LCD SCL</span></td>
+                    <td>Yellow / Blue</td>
+                    <td><span class="pin-tag tag-uno">Arduino A5</span></td>
+                    <td>I2C Serial Clock</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">Button Pin 1</span></td>
+                    <td>Cyan / Blue</td>
+                    <td><span class="pin-tag tag-uno">Arduino D10</span></td>
+                    <td>Internal Pullup Input (LOW when pressed)</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">Button Pin 2</span></td>
+                    <td>Black</td>
+                    <td>Common GND Rail</td>
+                    <td>Ground Return</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">Buzzer (+)</span></td>
+                    <td>Orange</td>
+                    <td><span class="pin-tag tag-uno">Arduino D12</span></td>
+                    <td>Active High 5V Beep Output</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">Buzzer (-)</span></td>
+                    <td>Black</td>
+                    <td>Common GND Rail</td>
+                    <td>Ground Return</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">💡</div>
+            Calibration & Testing Tips
+        </div>
+        <ul>
+            <li><strong>LCD Contrast Knob:</strong> If nothing appears on the screen when powered, turn the small blue potentiometer on the back of the I2C backpack using a small screwdriver until letters become sharp and visible.</li>
+            <li><strong>Single Button Interaction:</strong> Quick click cycles between 1.5L and Mismo. Hold for 1.5 seconds until a longer beep sounds to enter deposit mode!</li>
+            <li><strong>Serial Monitor:</strong> Open Arduino Serial Monitor at <code>115200 baud</code> to view realtime state output.</li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCBCES — Master Hardware Wiring & Circuit Schematic Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: #111827;
+            --bg-card-hover: #1f2937;
+            --border-color: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-purple: #a855f7;
+            --accent-yellow: #eab308;
+            --wire-12v: #ef4444;
+            --wire-5v: #f97316;
+            --wire-gsm: #eab308;
+            --wire-gnd: #64748b;
+            --wire-sig: #06b6d4;
+            --wire-i2c: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2.5rem 1rem;
+        }
+        .container { max-width: 1520px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p.subtitle { color: var(--text-secondary); font-size: 1.05rem; max-width: 900px; margin: 0 auto; }
+
+        /* Hero Status Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 1.25rem;
+            padding: 1.75rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+        }
+        .hero-title { font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-bottom: 0.3rem; }
+        .hero-desc { color: #94a3b8; font-size: 0.95rem; max-width: 850px; }
+        .hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .pill {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            font-size: 0.78rem; font-weight: 700; padding: 0.3rem 0.75rem;
+            border-radius: 9999px; background: #0f172a; border: 1px solid var(--border-color);
+        }
+
+        /* Filter Control Panel */
+        .filter-panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+        .filter-header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .filter-header .title-left { display: flex; align-items: center; gap: 0.75rem; }
+        .filter-title-text { font-size: 1.15rem; font-weight: 800; color: var(--text-primary); }
+        .filter-subtitle { font-size: 0.85rem; color: var(--text-secondary); }
+        .filter-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .preset-btn {
+            font-size: 0.8rem; font-weight: 700; padding: 0.45rem 0.85rem;
+            border-radius: 0.4rem; border: 1px solid var(--border-color);
+            background: #090d16; color: var(--text-secondary); cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .preset-btn:hover { color: var(--text-primary); border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.1); }
+        .btn-primary-preset { border-color: rgba(16, 185, 129, 0.6); background: rgba(16, 185, 129, 0.18); color: var(--accent-green); }
+        .btn-primary-preset:hover { background: var(--accent-green); color: #090d16; box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); }
+        .btn-reset { border-color: rgba(59, 130, 246, 0.4); color: #60a5fa; }
+        .btn-reset:hover { background: rgba(59, 130, 246, 0.2); color: #ffffff; }
+
+        .filter-options-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 0.75rem; margin-bottom: 0.75rem;
+        }
+        .filter-chip {
+            display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.85rem;
+            background: #090d16; border: 1px solid var(--border-color);
+            border-radius: 0.5rem; cursor: pointer; user-select: none; transition: all 0.2s ease;
+        }
+        .filter-chip:hover { border-color: #64748b; }
+        .filter-chip.checked { border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.1); }
+        .filter-chip input[type="checkbox"] { accent-color: var(--accent-green); width: 17px; height: 17px; cursor: pointer; }
+        .chip-color { width: 12px; height: 12px; border-radius: 50%; }
+        .chip-text { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); }
+        .filter-status-bar { font-size: 0.8rem; color: var(--text-secondary); text-align: right; }
+
+        /* Main Schematic Card */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+        .card-title {
+            font-size: 1.25rem; font-weight: 800; margin-bottom: 1.25rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .card-title .title-left { display: flex; align-items: center; gap: 0.75rem; }
+        .card-title .icon {
+            width: 32px; height: 32px; border-radius: 0.5rem;
+            background: rgba(59, 130, 246, 0.2); color: var(--accent-blue);
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+        }
+        .svg-container {
+            width: 100%; overflow-x: auto; background: #050811;
+            border-radius: 0.75rem; border: 1px solid #1e293b; padding: 0.5rem;
+        }
+        svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+
+        /* Wire Path Styles */
+        .wire { fill: none; stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.3s ease; }
+        .wire-12v-path { stroke: #ef4444; stroke-width: 3.5; }
+        .wire-5v-path { stroke: #f97316; stroke-width: 3.5; }
+        .wire-gsm-path { stroke: #eab308; stroke-width: 3; stroke-dasharray: 6 3; }
+        .wire-gnd-path { stroke: #475569; stroke-width: 3; }
+        .wire-sig-path { stroke: #06b6d4; stroke-width: 2.5; }
+        .wire-i2c-path { stroke: #10b981; stroke-width: 2.5; }
+        .wire-pulse-path { stroke: #a855f7; stroke-width: 2.5; }
+        .wire-relay-path { stroke: #ec4899; stroke-width: 3; }
+        .wire-btn-path { stroke: #38bdf8; stroke-width: 2.2; }
+        .term-dot { stroke: #ffffff; stroke-width: 1.5; cursor: pointer; }
+
+        /* Interactive Circuit Highlighting */
+        .subsystem-group { transition: opacity 0.35s ease, filter 0.35s ease; }
+        .subsystem-group.dimmed { opacity: 0.12; filter: grayscale(80%); }
+
+        /* Tables & Information Grids */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
+        th {
+            background-color: #0c1220; color: var(--text-secondary); font-weight: 700;
+            padding: 0.85rem 1rem; border-bottom: 2px solid var(--border-color);
+            text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.06em;
+        }
+        td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-primary); }
+        tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+        .pin-tag {
+            font-family: 'JetBrains Mono', monospace; padding: 0.2rem 0.5rem;
+            border-radius: 0.35rem; font-size: 0.8rem; font-weight: 700; display: inline-block;
+        }
+        .tag-uno { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .tag-12v { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .tag-5v { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+        .tag-gsm { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+        .tag-gnd { background: rgba(100, 116, 139, 0.25); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.4); }
+
+        /* Warning & Callout Box */
+        .callout {
+            border-radius: 0.75rem; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+            display: flex; gap: 1rem; align-items: flex-start;
+        }
+        .callout-amber { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fde68a; }
+        .callout-rose { background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); color: #fecdd3; }
+        .callout-cyan { background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); color: #a5f3fc; }
+        .callout-icon { font-size: 1.4rem; line-height: 1; }
+        .callout-text h4 { font-weight: 800; margin-bottom: 0.25rem; }
+        .callout-text p { font-size: 0.88rem; line-height: 1.5; color: #cbd5e1; }
+
+        /* Step-by-Step Checklist */
+        .step-list { list-style: none; counter-reset: step-counter; }
+        .step-item {
+            position: relative; padding-left: 2.75rem; margin-bottom: 1.25rem;
+        }
+        .step-item::before {
+            counter-increment: step-counter; content: counter(step-counter);
+            position: absolute; left: 0; top: 0; width: 2rem; height: 2rem;
+            border-radius: 50%; background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace;
+        }
+        .step-item h4 { font-size: 0.98rem; font-weight: 700; color: #ffffff; margin-bottom: 0.25rem; }
+        .step-item p { font-size: 0.87rem; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <span class="badge">Capstone Hardware Engineering Reference</span>
+        <h1>PCBCES Full System Hardware Wiring & Schematic Hub</h1>
+        <p class="subtitle">Plastic Bottle Coin Exchanger System with 12V High-Torque Hopper, Multi-Sensor Bottle Classifier, Single-Button Smart Menu, and SIM800L GSM Bin-Full SMS Dispatcher.</p>
+    </header>
+
+    <!-- Hero Status Banner -->
+    <div class="hero-banner">
+        <div>
+            <div class="hero-title">⚡ Master Dual-Rail (12V & 5V) Power & Star Ground Architecture</div>
+            <div class="hero-desc">
+                High-current inductive loads (Coin Hopper motor & MG996R servo) are strictly isolated with dedicated 1000µF decoupling capacitors and a 1N4007 flyback diode. Sensor inputs from 12V proximity switches are scaled via 10kΩ/4.7kΩ voltage dividers to safeguard the Arduino Uno's ATmega328P.
+            </div>
+        </div>
+        <div class="hero-badges">
+            <span class="pill" style="border-color: #ef4444; color: #f87171;">🔴 12V 10A Main PSU</span>
+            <span class="pill" style="border-color: #f97316; color: #fb923c;">🟠 LM2596 5.00V Buck</span>
+            <span class="pill" style="border-color: #eab308; color: #fde047;">🟡 4.3V Diode/Cap GSM Rail</span>
+            <span class="pill" style="border-color: #10b981; color: #34d399;">🟢 I2C LCD (2 Pins Only)</span>
+            <span class="pill" style="border-color: #3b82f6; color: #60a5fa;">🔵 100% Star Ground</span>
+        </div>
+    </div>
+
+    <!-- Filter Control Panel -->
+    <div class="filter-panel">
+        <div class="filter-header">
+            <div class="title-left">
+                <div class="icon" style="width:34px; height:34px; border-radius:0.5rem; background:rgba(6,182,212,0.2); color:var(--accent-cyan); display:flex; align-items:center; justify-content:center; font-size:1.1rem;">🎛️</div>
+                <div>
+                    <span class="filter-title-text">Interactive Circuit Subsystem Filter</span>
+                    <p class="filter-subtitle">Select subsystems to highlight or isolate specific wires, components, and signal paths on the master schematic below.</p>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button type="button" class="preset-btn btn-primary-preset" id="btn-sensors-only">🔬 Bottle Sensors Only</button>
+                <button type="button" class="preset-btn" id="btn-payout-only">🪙 Coin Hopper & Relay</button>
+                <button type="button" class="preset-btn" id="btn-gsm-only">📱 GSM & Bin Full Alert</button>
+                <button type="button" class="preset-btn btn-reset" id="btn-show-all">✨ Show All (Reset)</button>
+            </div>
+        </div>
+        <div class="filter-options-grid">
+            <label class="filter-chip checked">
+                <input type="checkbox" id="chk-power" checked>
+                <span class="chip-color" style="background: #ef4444;"></span>
+                <span class="chip-text">⚡ 12V & 5V Dual Power Rails</span>
+            </label>
+            <label class="filter-chip checked">
+                <input type="checkbox" id="chk-sensors" checked>
+                <span class="chip-color" style="background: #06b6d4;"></span>
+                <span class="chip-text">🔬 Bottle Sensors (HX711, HC-SR04, IR, Proximity)</span>
+            </label>
+            <label class="filter-chip checked">
+                <input type="checkbox" id="chk-hopper" checked>
+                <span class="chip-color" style="background: #a855f7;"></span>
+                <span class="chip-text">🪙 12V Coin Hopper & 5V Relay</span>
+            </label>
+            <label class="filter-chip checked">
+                <input type="checkbox" id="chk-servo" checked>
+                <span class="chip-color" style="background: #ec4899;"></span>
+                <span class="chip-text">⚙️ MG996R Trapdoor Sorting Servo</span>
+            </label>
+            <label class="filter-chip checked">
+                <input type="checkbox" id="chk-gsm" checked>
+                <span class="chip-color" style="background: #eab308;"></span>
+                <span class="chip-text">📱 SIM800L GSM SMS Module</span>
+            </label>
+            <label class="filter-chip checked">
+                <input type="checkbox" id="chk-ui" checked>
+                <span class="chip-color" style="background: #10b981;"></span>
+                <span class="chip-text">📟 16x2 I2C LCD, Button, Buzzer & LEDs</span>
+            </label>
+        </div>
+        <div class="filter-status-bar">
+            <span id="filter-counter-text">Showing 6 of 6 Active Subsystems</span>
+        </div>
+    </div>
+    <!-- Master Schematic Card -->
+    <div class="card">
+        <div class="card-title">
+            <div class="title-left">
+                <div class="icon">📐</div>
+                <span>Full System Circuit Schematic Diagram (High-Visibility Vector SVG)</span>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">Arduino Uno R3 &bull; 20 Total Pins Utilized</span>
+        </div>
+
+        <div class="svg-container">
+            <svg viewBox="0 0 1500 1060" width="1500" height="1060" xmlns="http://www.w3.org/2000/svg">
+                <!-- Background Grid -->
+                <defs>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.75" opacity="0.6"/>
+                    </pattern>
+                </defs>
+                <rect width="1500" height="1060" fill="#050811"/>
+                <rect width="1500" height="1060" fill="url(#grid)"/>
+
+                <!-- 1A. S-120-12 12V 10A SWITCHING POWER SUPPLY -->
+                <g id="grp-power-psu" class="subsystem-group" data-module="power">
+                    <rect x="40" y="40" width="260" height="170" rx="10" fill="#111827" stroke="#ef4444" stroke-width="2.5"/>
+                    <rect x="55" y="55" width="230" height="30" rx="4" fill="#1f2937"/>
+                    <text x="170" y="75" fill="#f87171" font-size="13" font-weight="800" text-anchor="middle">S-120-12 SWITCHING PSU</text>
+                    <text x="170" y="100" fill="#9ca3af" font-size="10.5" text-anchor="middle">AC 110V/220V &rarr; DC 12V @ 10A (120W)</text>
+                    
+                    <circle cx="280" cy="130" r="7" fill="#ef4444" class="term-dot"/>
+                    <text x="265" y="134" fill="#f87171" font-size="11" font-family="JetBrains Mono" font-weight="700" text-anchor="end">+12V (V+)</text>
+                    
+                    <circle cx="280" cy="170" r="7" fill="#475569" class="term-dot"/>
+                    <text x="265" y="174" fill="#cbd5e1" font-size="11" font-family="JetBrains Mono" font-weight="700" text-anchor="end">GND (V-)</text>
+                </g>
+
+                <!-- 1B. LM2596 BUCK CONVERTER (12V -> 5.00V) -->
+                <g id="grp-power-buck" class="subsystem-group" data-module="power">
+                    <rect x="40" y="240" width="260" height="160" rx="10" fill="#111827" stroke="#f97316" stroke-width="2.5"/>
+                    <rect x="55" y="255" width="230" height="30" rx="4" fill="#1f2937"/>
+                    <text x="170" y="275" fill="#fb923c" font-size="13" font-weight="800" text-anchor="middle">LM2596 BUCK CONVERTER</text>
+                    <text x="170" y="300" fill="#9ca3af" font-size="10" text-anchor="middle">Tuned with Multimeter to Exactly 5.00V</text>
+
+                    <circle cx="40" cy="330" r="6" fill="#ef4444" class="term-dot"/>
+                    <text x="55" y="334" fill="#f87171" font-size="10" font-family="JetBrains Mono" font-weight="700">IN+ (12V)</text>
+                    <circle cx="40" cy="365" r="6" fill="#475569" class="term-dot"/>
+                    <text x="55" y="369" fill="#cbd5e1" font-size="10" font-family="JetBrains Mono" font-weight="700">IN- (GND)</text>
+
+                    <circle cx="300" cy="330" r="7" fill="#f97316" class="term-dot"/>
+                    <text x="285" y="334" fill="#fb923c" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">OUT+ (5.00V)</text>
+                    <circle cx="300" cy="365" r="7" fill="#475569" class="term-dot"/>
+                    <text x="285" y="369" fill="#cbd5e1" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">OUT- (Common GND)</text>
+                </g>
+
+                <!-- 1C. GSM POWER BUFFER STAGE -->
+                <g id="grp-gsm-power" class="subsystem-group" data-module="gsm">
+                    <rect x="40" y="430" width="260" height="150" rx="10" fill="#111827" stroke="#eab308" stroke-width="2"/>
+                    <rect x="55" y="445" width="230" height="28" rx="4" fill="#1f2937"/>
+                    <text x="170" y="464" fill="#fde047" font-size="11.5" font-weight="800" text-anchor="middle">SIM800L POWER STABILIZER</text>
+                    <text x="170" y="488" fill="#9ca3af" font-size="9.5" text-anchor="middle">1N4007 Diode (Drops 5V &rarr; 4.3V) + 1000µF Cap</text>
+                    
+                    <circle cx="40" cy="520" r="6" fill="#f97316" class="term-dot"/>
+                    <text x="55" y="524" fill="#fb923c" font-size="10" font-family="JetBrains Mono">From 5V Bus</text>
+
+                    <circle cx="300" cy="520" r="7" fill="#eab308" class="term-dot"/>
+                    <text x="285" y="524" fill="#fde047" font-size="10" font-family="JetBrains Mono" font-weight="700" text-anchor="end">To SIM VCC (4.3V / 2A)</text>
+                    <circle cx="300" cy="550" r="6" fill="#475569" class="term-dot"/>
+                    <text x="285" y="554" fill="#cbd5e1" font-size="10" font-family="JetBrains Mono" text-anchor="end">SIM GND</text>
+                </g>
+
+                <!-- 1D. CENTRAL STAR POWER RAILS -->
+                <g id="grp-star-rails" class="subsystem-group" data-module="power">
+                    <rect x="360" y="40" width="16" height="400" rx="4" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="368" y="240" fill="#fca5a5" font-size="11" font-family="JetBrains Mono" font-weight="800" text-anchor="middle" transform="rotate(-90 368 240)">12V HIGH CURRENT RAIL (+)</text>
+
+                    <rect x="390" y="40" width="16" height="400" rx="4" fill="#7c2d12" stroke="#f97316" stroke-width="1.5"/>
+                    <text x="398" y="240" fill="#fdba74" font-size="11" font-family="JetBrains Mono" font-weight="800" text-anchor="middle" transform="rotate(-90 398 240)">5.00V REGULATED RAIL (+)</text>
+
+                    <rect x="420" y="40" width="16" height="980" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+                    <text x="428" y="530" fill="#cbd5e1" font-size="12" font-family="JetBrains Mono" font-weight="800" text-anchor="middle" transform="rotate(-90 428 530)">COMMON STAR GROUND (0V RETURN RAIL)</text>
+                </g>
+
+                <!-- 2. ARDUINO UNO R3 -->
+                <g id="grp-arduino" class="subsystem-group">
+                    <rect x="470" y="80" width="380" height="900" rx="16" fill="#0c1322" stroke="#3b82f6" stroke-width="3"/>
+                    
+                    <rect x="495" y="100" width="330" height="45" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1"/>
+                    <text x="660" y="128" fill="#60a5fa" font-size="17" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
+                    <text x="660" y="158" fill="#94a3b8" font-size="11" text-anchor="middle">ATmega328P Central System Controller</text>
+
+                    <rect x="575" y="65" width="170" height="24" rx="4" fill="#0284c7" stroke="#38bdf8"/>
+                    <text x="660" y="81" fill="#ffffff" font-size="9.5" font-family="JetBrains Mono" font-weight="700" text-anchor="middle">USB SERIAL (DEBUG / MONITOR)</text>
+
+                    <!-- POWER PINS -->
+                    <rect x="490" y="180" width="165" height="110" rx="6" fill="#111c30" stroke="#334155"/>
+                    <text x="500" y="198" fill="#94a3b8" font-size="10" font-weight="700">POWER IN / OUT</text>
+                    
+                    <circle cx="490" cy="225" r="6" fill="#f97316" class="term-dot"/>
+                    <text x="505" y="229" fill="#fb923c" font-size="10.5" font-family="JetBrains Mono" font-weight="700">5V Pin (From Buck)</text>
+
+                    <circle cx="490" cy="265" r="6" fill="#64748b" class="term-dot"/>
+                    <text x="505" y="269" fill="#cbd5e1" font-size="10.5" font-family="JetBrains Mono" font-weight="700">GND (To Star GND)</text>
+
+                    <!-- ANALOG PINS -->
+                    <rect x="490" y="320" width="165" height="270" rx="6" fill="#111c30" stroke="#334155"/>
+                    <text x="500" y="338" fill="#94a3b8" font-size="10" font-weight="700">ANALOG / DIGITAL PINS</text>
+
+                    <circle cx="490" cy="370" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="505" y="374" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A0: HX711 (DT)</text>
+
+                    <circle cx="490" cy="410" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="505" y="414" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A1: HX711 (SCK)</text>
+
+                    <circle cx="490" cy="450" r="6" fill="#10b981" class="term-dot"/>
+                    <text x="505" y="454" fill="#34d399" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A2: Green LED</text>
+
+                    <circle cx="490" cy="490" r="6" fill="#eab308" class="term-dot"/>
+                    <text x="505" y="494" fill="#fde047" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A3: GSM TX (SoftSerial)</text>
+
+                    <circle cx="490" cy="530" r="6" fill="#10b981" class="term-dot"/>
+                    <text x="505" y="534" fill="#34d399" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A4: LCD SDA (I2C)</text>
+
+                    <circle cx="490" cy="570" r="6" fill="#10b981" class="term-dot"/>
+                    <text x="505" y="574" fill="#34d399" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A5: LCD SCL (I2C)</text>
+
+                    <!-- DIGITAL PINS -->
+                    <rect x="665" y="180" width="165" height="520" rx="6" fill="#111c30" stroke="#334155"/>
+                    <text x="675" y="198" fill="#94a3b8" font-size="10" font-weight="700">DIGITAL I/O</text>
+
+                    <circle cx="830" cy="225" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="815" y="229" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D2: Ultrasonic Trig</text>
+
+                    <circle cx="830" cy="265" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="815" y="269" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D3: Ultrasonic Echo</text>
+
+                    <circle cx="830" cy="305" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="815" y="309" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D4: IR Bottle Entry</text>
+
+                    <circle cx="830" cy="345" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="815" y="349" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D5: LJC18A3 (Capacitive)</text>
+
+                    <circle cx="830" cy="385" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="815" y="389" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D6: LJ12A3 (Inductive)</text>
+
+                    <circle cx="830" cy="425" r="6" fill="#a855f7" class="term-dot"/>
+                    <text x="815" y="429" fill="#c084fc" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D7: Hopper Pulse In</text>
+
+                    <circle cx="830" cy="465" r="6" fill="#ec4899" class="term-dot"/>
+                    <text x="815" y="469" fill="#f472b6" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D8: Relay Trigger</text>
+
+                    <circle cx="830" cy="505" r="6" fill="#ec4899" class="term-dot"/>
+                    <text x="815" y="509" fill="#f472b6" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D9: Servo PWM</text>
+
+                    <circle cx="830" cy="545" r="6" fill="#38bdf8" class="term-dot"/>
+                    <text x="815" y="549" fill="#7dd3fc" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D10: Menu Push Button</text>
+
+                    <circle cx="830" cy="585" r="6" fill="#eab308" class="term-dot"/>
+                    <text x="815" y="589" fill="#fde047" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D11: GSM RX (SoftSerial)</text>
+
+                    <circle cx="830" cy="625" r="6" fill="#f59e0b" class="term-dot"/>
+                    <text x="815" y="629" fill="#fbbf24" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D12: Active Buzzer</text>
+
+                    <circle cx="830" cy="665" r="6" fill="#ef4444" class="term-dot"/>
+                    <text x="815" y="669" fill="#f87171" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D13: Red LED</text>
+                </g>
+                <!-- 3A. 12V COIN HOPPER & 5V RELAY MODULE -->
+                <g id="grp-actuator-hopper" class="subsystem-group" data-module="hopper">
+                    <rect x="910" y="40" width="550" height="150" rx="10" fill="#111827" stroke="#a855f7" stroke-width="2.5"/>
+                    <rect x="930" y="55" width="510" height="30" rx="4" fill="#1f2937"/>
+                    <text x="1185" y="75" fill="#c084fc" font-size="13" font-weight="800" text-anchor="middle">12V COIN HOPPER & 5V RELAY PAYOUT STAGE</text>
+
+                    <!-- Relay Box -->
+                    <rect x="930" y="95" width="220" height="80" rx="6" fill="#1e1b4b" stroke="#6366f1"/>
+                    <text x="1040" y="115" fill="#a5b4fc" font-size="10.5" font-weight="700" text-anchor="middle">5V RELAY MODULE</text>
+                    <circle cx="930" cy="135" r="6" fill="#ec4899" class="term-dot"/>
+                    <text x="945" y="139" fill="#f472b6" font-size="10" font-family="JetBrains Mono">IN (D8)</text>
+                    <circle cx="930" cy="160" r="5" fill="#f97316" class="term-dot"/>
+                    <text x="945" y="164" fill="#fb923c" font-size="9" font-family="JetBrains Mono">VCC (5V)</text>
+
+                    <!-- Hopper Motor Box -->
+                    <rect x="1180" y="95" width="260" height="80" rx="6" fill="#2e1065" stroke="#a855f7"/>
+                    <text x="1310" y="115" fill="#e9d5ff" font-size="11" font-weight="700" text-anchor="middle">12V COIN HOPPER MOTOR</text>
+                    <text x="1310" y="132" fill="#c084fc" font-size="9.5" text-anchor="middle">Switched via Relay COM & NO Contacts</text>
+                    <circle cx="1180" cy="155" r="6" fill="#a855f7" class="term-dot"/>
+                    <text x="1195" y="159" fill="#e9d5ff" font-size="10" font-family="JetBrains Mono">Coin Pulse Line (via 10k/4.7k &rarr; D7)</text>
+                </g>
+
+                <!-- 3B. BOTTLE SENSORS CLUSTER -->
+                <g id="grp-sensors-cluster" class="subsystem-group" data-module="sensors">
+                    <rect x="910" y="210" width="550" height="340" rx="10" fill="#111827" stroke="#06b6d4" stroke-width="2.5"/>
+                    <rect x="930" y="225" width="510" height="30" rx="4" fill="#1f2937"/>
+                    <text x="1185" y="245" fill="#67e8f9" font-size="13" font-weight="800" text-anchor="middle">MULTI-SENSOR BOTTLE CLASSIFIER CHAMBER</text>
+
+                    <!-- HX711 Load Cell -->
+                    <rect x="930" y="270" width="240" height="60" rx="6" fill="#164e63" stroke="#06b6d4"/>
+                    <text x="1050" y="290" fill="#a5f3fc" font-size="11" font-weight="700" text-anchor="middle">HX711 1KG LOAD CELL</text>
+                    <circle cx="930" cy="310" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="945" y="314" fill="#67e8f9" font-size="9.5" font-family="JetBrains Mono">DT (A0) | SCK (A1)</text>
+
+                    <!-- HC-SR04 Ultrasonic -->
+                    <rect x="1190" y="270" width="250" height="60" rx="6" fill="#065f46" stroke="#10b981"/>
+                    <text x="1315" y="290" fill="#a7f3d0" font-size="11" font-weight="700" text-anchor="middle">HC-SR04 ULTRASONIC (HEIGHT)</text>
+                    <circle cx="1190" cy="310" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="1205" y="314" fill="#a7f3d0" font-size="9.5" font-family="JetBrains Mono">Trig (D2) | Echo (D3)</text>
+
+                    <!-- IR Obstacle Entry -->
+                    <rect x="930" y="345" width="240" height="60" rx="6" fill="#1f2937" stroke="#64748b"/>
+                    <text x="1050" y="365" fill="#f8fafc" font-size="11" font-weight="700" text-anchor="middle">IR ENTRY SENSOR</text>
+                    <circle cx="930" cy="385" r="6" fill="#06b6d4" class="term-dot"/>
+                    <text x="945" y="389" fill="#cbd5e1" font-size="9.5" font-family="JetBrains Mono">OUT (D4) Active LOW</text>
+
+                    <!-- LJC18A3 Capacitive Sensor -->
+                    <rect x="1190" y="345" width="250" height="60" rx="6" fill="#312e81" stroke="#818cf8"/>
+                    <text x="1315" y="365" fill="#c7d2fe" font-size="11" font-weight="700" text-anchor="middle">LJC18A3 CAPACITIVE (PLASTIC)</text>
+                    <text x="1315" y="382" fill="#9ca3af" font-size="9" text-anchor="middle">12V Power &rarr; 10k/4.7k Divider &rarr; D5</text>
+
+                    <!-- LJ12A3 Inductive Metal Sensor -->
+                    <rect x="930" y="420" width="510" height="60" rx="6" fill="#450a0a" stroke="#f87171"/>
+                    <text x="1185" y="440" fill="#fecaca" font-size="11" font-weight="700" text-anchor="middle">LJ12A3 INDUCTIVE PROXIMITY SENSOR (METAL CAN REJECT)</text>
+                    <text x="1185" y="460" fill="#fca5a5" font-size="9.5" text-anchor="middle">12V Power &bull; Signal to 10k/4.7k Resistor Divider &rarr; Arduino D6 (~3.8V Logic Safe)</text>
+                    <circle cx="930" cy="450" r="6" fill="#ef4444" class="term-dot"/>
+                </g>
+
+                <!-- 3C. MG996R SORTING TRAPDOOR SERVO -->
+                <g id="grp-actuator-servo" class="subsystem-group" data-module="servo">
+                    <rect x="910" y="570" width="550" height="95" rx="10" fill="#111827" stroke="#ec4899" stroke-width="2.5"/>
+                    <rect x="930" y="585" width="510" height="28" rx="4" fill="#1f2937"/>
+                    <text x="1185" y="604" fill="#f472b6" font-size="12.5" font-weight="800" text-anchor="middle">MG996R HIGH-TORQUE METAL GEAR SERVO (TRAPDOOR)</text>
+                    
+                    <circle cx="910" cy="635" r="6" fill="#ec4899" class="term-dot"/>
+                    <text x="925" y="639" fill="#f472b6" font-size="10" font-family="JetBrains Mono">PWM Signal &rarr; Arduino D9</text>
+                    <text x="1185" y="640" fill="#9ca3af" font-size="9.5" text-anchor="middle">Power: 5V Rail (with 1000µF Decoupling Capacitor across + & -)</text>
+                </g>
+
+                <!-- 3D. SIM800L GSM SMS MODULE -->
+                <g id="grp-module-gsm" class="subsystem-group" data-module="gsm">
+                    <rect x="910" y="685" width="550" height="110" rx="10" fill="#111827" stroke="#eab308" stroke-width="2.5"/>
+                    <rect x="930" y="700" width="510" height="28" rx="4" fill="#1f2937"/>
+                    <text x="1185" y="719" fill="#fde047" font-size="12.5" font-weight="800" text-anchor="middle">SIM800L GSM/GPRS MODULE (BIN FULL SMS NOTIFIER)</text>
+
+                    <circle cx="910" cy="750" r="6" fill="#eab308" class="term-dot"/>
+                    <text x="925" y="754" fill="#fde047" font-size="10" font-family="JetBrains Mono">SIM TX &rarr; Arduino D11 (SoftwareSerial RX)</text>
+
+                    <circle cx="910" cy="775" r="6" fill="#eab308" class="term-dot"/>
+                    <text x="925" y="779" fill="#fde047" font-size="10" font-family="JetBrains Mono">SIM RX &larr; Arduino A3 (SoftwareSerial TX)</text>
+
+                    <text x="1350" y="760" fill="#9ca3af" font-size="9.5" text-anchor="middle">Power: 4.3V @ 2A Peak</text>
+                </g>
+
+                <!-- 3E. USER INTERFACE -->
+                <g id="grp-ui-cluster" class="subsystem-group" data-module="ui">
+                    <rect x="910" y="815" width="550" height="165" rx="10" fill="#111827" stroke="#10b981" stroke-width="2.5"/>
+                    <rect x="930" y="830" width="510" height="28" rx="4" fill="#1f2937"/>
+                    <text x="1185" y="849" fill="#34d399" font-size="12.5" font-weight="800" text-anchor="middle">USER INTERACTION & STATUS DASHBOARD</text>
+
+                    <rect x="930" y="870" width="240" height="50" rx="6" fill="#064e3b" stroke="#10b981"/>
+                    <text x="1050" y="890" fill="#a7f3d0" font-size="10.5" font-weight="700" text-anchor="middle">16x2 LCD (PCF8574 I2C)</text>
+                    <text x="1050" y="908" fill="#6ee7b7" font-size="9" font-family="JetBrains Mono" text-anchor="middle">SDA &rarr; A4 | SCL &rarr; A5</text>
+
+                    <rect x="1190" y="870" width="250" height="50" rx="6" fill="#075985" stroke="#38bdf8"/>
+                    <text x="1315" y="890" fill="#bae6fd" font-size="10.5" font-weight="700" text-anchor="middle">SINGLE SMART BUTTON</text>
+                    <text x="1315" y="908" fill="#7dd3fc" font-size="9" font-family="JetBrains Mono" text-anchor="middle">D10 (Click: Toggle, Hold: Start)</text>
+
+                    <rect x="930" y="930" width="510" height="38" rx="6" fill="#1f2937" stroke="#374151"/>
+                    <text x="1010" y="953" fill="#fbbf24" font-size="9.5" font-family="JetBrains Mono">BUZZER: D12</text>
+                    <text x="1185" y="953" fill="#f87171" font-size="9.5" font-family="JetBrains Mono">RED LED: D13</text>
+                    <text x="1345" y="953" fill="#34d399" font-size="9.5" font-family="JetBrains Mono">GREEN LED: A2</text>
+                </g>
+
+                <!-- 4. WIRES -->
+                <path class="wire wire-12v-path" d="M 280 130 L 368 130"/>
+                <path class="wire wire-gnd-path" d="M 280 170 L 428 170"/>
+
+                <path class="wire wire-12v-path" d="M 368 330 L 40 330"/>
+                <path class="wire wire-gnd-path" d="M 428 365 L 40 365"/>
+
+                <path class="wire wire-5v-path" d="M 300 330 L 398 330"/>
+                <path class="wire wire-gnd-path" d="M 300 365 L 428 365"/>
+
+                <path class="wire wire-5v-path" d="M 398 225 L 490 225"/>
+                <path class="wire wire-gnd-path" d="M 428 265 L 490 265"/>
+
+                <path class="wire wire-i2c-path" d="M 490 530 L 460 530 L 460 885 L 930 885"/>
+                <path class="wire wire-i2c-path" d="M 490 570 L 450 570 L 450 905 L 930 905"/>
+
+                <path class="wire wire-relay-path" d="M 830 465 L 870 465 L 870 135 L 930 135"/>
+                <path class="wire wire-pulse-path" d="M 1180 155 L 885 155 L 885 425 L 830 425"/>
+                <path class="wire wire-relay-path" d="M 830 505 L 890 505 L 890 635 L 910 635"/>
+                <path class="wire wire-btn-path" d="M 830 545 L 900 545 L 900 895 L 1190 895"/>
+
+                <path class="wire wire-gsm-path" d="M 830 585 L 880 585 L 880 750 L 910 750"/>
+                <path class="wire wire-gsm-path" d="M 490 490 L 440 490 L 440 775 L 910 775"/>
+            </svg>
+        </div>
+    </div>
+    <!-- Tables & Practical Guides -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">
+                <div class="title-left">
+                    <div class="icon">📋</div>
+                    <span>Complete Arduino Uno Pin Assignment Matrix</span>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pin</th>
+                        <th>Device / Subsystem</th>
+                        <th>Signal / Voltage</th>
+                        <th>Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D0 / D1</span></td>
+                        <td>USB Hardware Serial</td>
+                        <td>5V TTL / USB</td>
+                        <td>Kept free for PC Debugging & XAMPP serial bridge</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D2</span></td>
+                        <td>HC-SR04 Ultrasonic</td>
+                        <td>Digital Output (5V)</td>
+                        <td>Trig sound pulse</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D3</span></td>
+                        <td>HC-SR04 Ultrasonic</td>
+                        <td>Digital Input (5V)</td>
+                        <td>Echo pulse duration (Height measurement)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D4</span></td>
+                        <td>IR Obstacle Sensor</td>
+                        <td>Digital Input (5V)</td>
+                        <td>Active LOW when bottle is inserted in slot</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D5</span></td>
+                        <td>LJC18A3 Capacitive Sensor</td>
+                        <td>Digital In via 10k/4.7k</td>
+                        <td>Confirms non-metal / dielectric plastic presence</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D6</span></td>
+                        <td>LJ12A3 Inductive Sensor</td>
+                        <td>Digital In via 10k/4.7k</td>
+                        <td>Metal proximity sensor (Triggers instant rejection)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D7</span></td>
+                        <td>12V Coin Hopper Counter</td>
+                        <td>Digital In via 10k/4.7k</td>
+                        <td>Falling pulse counter (1 pulse = 1 dispensed coin)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D8</span></td>
+                        <td>5V Relay Module</td>
+                        <td>Digital Output (5V)</td>
+                        <td>Switches 12V DC power to Hopper motor</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D9</span></td>
+                        <td>MG996R Servo Motor</td>
+                        <td>PWM Output (5V)</td>
+                        <td>Trapdoor sorting gate: 0° Close, 90° Accept, 180° Reject</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D10</span></td>
+                        <td>Push Button Switch</td>
+                        <td>Digital In (PULLUP)</td>
+                        <td>Click = Toggle Mode, Hold 1.5s = Confirm Start</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D11</span></td>
+                        <td>SIM800L GSM Module</td>
+                        <td>SoftwareSerial RX</td>
+                        <td>Receives AT command responses from SIM TX</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D12</span></td>
+                        <td>Active Buzzer Module</td>
+                        <td>Digital Output (5V)</td>
+                        <td>Beeps: Success chime vs Rejection alarm</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">D13</span></td>
+                        <td>Red Indicator LED</td>
+                        <td>Digital Output (5V)</td>
+                        <td>Visual rejection & system error alert</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">A0</span></td>
+                        <td>HX711 Load Cell</td>
+                        <td>Digital In (DT)</td>
+                        <td>Serial data from 24-bit weight ADC</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">A1</span></td>
+                        <td>HX711 Load Cell</td>
+                        <td>Digital Out (SCK)</td>
+                        <td>Clock pulse for weight ADC</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">A2</span></td>
+                        <td>Green Indicator LED</td>
+                        <td>Digital Output (5V)</td>
+                        <td>Visual acceptance & ready status</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">A3</span></td>
+                        <td>SIM800L GSM Module</td>
+                        <td>SoftwareSerial TX</td>
+                        <td>Sends AT SMS dispatch commands to SIM RX</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">A4</span></td>
+                        <td>16x2 LCD (PCF8574)</td>
+                        <td>Hardware I2C SDA</td>
+                        <td>Screen data communication</td>
+                    </tr>
+                    <tr>
+                        <td><span class="pin-tag tag-uno">A5</span></td>
+                        <td>16x2 LCD (PCF8574)</td>
+                        <td>Hardware I2C SCL</td>
+                        <td>Screen clock synchronization</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <div class="title-left">
+                    <div class="icon">🛡️</div>
+                    <span>Safety Checklist & Safe Power-Up Sequence</span>
+                </div>
+            </div>
+
+            <div class="callout callout-rose">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-text">
+                    <h4>Do NOT Power SIM800L or MG996R from Arduino 5V Pin!</h4>
+                    <p>The Arduino Uno onboard 5V regulator can only output ~400mA. The MG996R servo draws up to 1.5A peak and the SIM800L draws 2A bursts during transmission. Always power them from the <strong>LM2596 5V rail</strong> backed by the 1000µF capacitor!</p>
+                </div>
+            </div>
+
+            <div class="callout callout-amber">
+                <div class="callout-icon">⚡</div>
+                <div class="callout-text">
+                    <h4>Voltage Divider Verification Required</h4>
+                    <p>Before connecting D5, D6, and D7 to the Arduino, measure the signal wire with your multimeter. With a 10kΩ and 4.7kΩ divider, the voltage must read between <strong>3.6V and 4.0V</strong> (safe for Arduino). Never feed raw 12V into an Arduino pin.</p>
+                </div>
+            </div>
+
+            <ol class="step-list">
+                <li class="step-item">
+                    <h4>Step 1: Tune LM2596 Output Voltage</h4>
+                    <p>Connect S-120-12 PSU to AC mains. Turn the brass potentiometer screw on the LM2596 until your multimeter reads <strong>exactly 5.00V DC</strong> across OUT+ and OUT-.</p>
+                </li>
+                <li class="step-item">
+                    <h4>Step 2: Establish Central Star Ground</h4>
+                    <p>Tie PSU (V-), Buck (OUT-), GSM GND, and Arduino GND into one solid common breadboard rail. This eliminates floating ground noise.</p>
+                </li>
+                <li class="step-item">
+                    <h4>Step 3: Wire Resistor Dividers for 12V Signals</h4>
+                    <p>Build three identical 10kΩ/4.7kΩ voltage divider pairs on the breadboard for LJC18A3, LJ12A3, and the Coin Hopper pulse wire.</p>
+                </li>
+                <li class="step-item">
+                    <h4>Step 4: Connect I2C LCD & Calibrate Contrast</h4>
+                    <p>Wire SDA to A4 and SCL to A5. Adjust the small blue potentiometer on the back of the I2C backpack until clear white characters appear on the blue screen.</p>
+                </li>
+                <li class="step-item">
+                    <h4>Step 5: Test GSM SMS Dispatch</h4>
+                    <p>Insert active SIM card. Verify that the SIM module netlight transitions from fast blinking (1/s) to slow blinking (every 3s), indicating network registration.</p>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chkPower = document.getElementById('chk-power');
+    const chkSensors = document.getElementById('chk-sensors');
+    const chkHopper = document.getElementById('chk-hopper');
+    const chkServo = document.getElementById('chk-servo');
+    const chkGsm = document.getElementById('chk-gsm');
+    const chkUi = document.getElementById('chk-ui');
+    const allCheckboxes = [chkPower, chkSensors, chkHopper, chkServo, chkGsm, chkUi];
+    const counterText = document.getElementById('filter-counter-text');
+
+    function updateSchematicFilters() {
+        let activeCount = 0;
+        allCheckboxes.forEach(chk => {
+            const moduleName = chk.id.replace('chk-', '');
+            const parentLabel = chk.closest('.filter-chip');
+            if (chk.checked) {
+                activeCount++;
+                parentLabel.classList.add('checked');
+            } else {
+                parentLabel.classList.remove('checked');
+            }
+
+            const elements = document.querySelectorAll(`[data-module="${moduleName}"]`);
+            elements.forEach(el => {
+                if (chk.checked) {
+                    el.classList.remove('dimmed');
+                } else {
+                    el.classList.add('dimmed');
+                }
+            });
+        });
+
+        counterText.textContent = `Showing ${activeCount} of ${allCheckboxes.length} Active Subsystems`;
+    }
+
+    allCheckboxes.forEach(chk => {
+        chk.addEventListener('change', updateSchematicFilters);
+    });
+
+    document.getElementById('btn-sensors-only').addEventListener('click', () => {
+        allCheckboxes.forEach(chk => chk.checked = false);
+        chkSensors.checked = true;
+        chkPower.checked = true;
+        updateSchematicFilters();
+    });
+
+    document.getElementById('btn-payout-only').addEventListener('click', () => {
+        allCheckboxes.forEach(chk => chk.checked = false);
+        chkHopper.checked = true;
+        chkPower.checked = true;
+        updateSchematicFilters();
+    });
+
+    document.getElementById('btn-gsm-only').addEventListener('click', () => {
+        allCheckboxes.forEach(chk => chk.checked = false);
+        chkGsm.checked = true;
+        chkPower.checked = true;
+        updateSchematicFilters();
+    });
+
+    document.getElementById('btn-show-all').addEventListener('click', () => {
+        allCheckboxes.forEach(chk => chk.checked = true);
+        updateSchematicFilters();
+    });
+
+    updateSchematicFilters();
+</script>
+</body>
+</html>

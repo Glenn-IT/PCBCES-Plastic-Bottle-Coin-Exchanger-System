@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCBCES — Plastic Bottle Coin Exchanger System Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: #111827;
+            --border-color: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-purple: #a855f7;
+            --accent-rose: #f43f5e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2.5rem 1rem;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 1.2rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p.subtitle { color: var(--text-secondary); font-size: 1.1rem; max-width: 800px; margin: 0 auto; }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+        }
+        .hero-title { font-size: 1.5rem; font-weight: 800; color: #ffffff; margin-bottom: 0.4rem; }
+        .hero-desc { color: #94a3b8; font-size: 0.95rem; max-width: 760px; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.6rem;
+            border-radius: 0.6rem; font-weight: 700; font-size: 0.95rem; text-decoration: none;
+            transition: all 0.2s ease; cursor: pointer;
+        }
+        .btn-green { background: var(--accent-green); color: #090d16; }
+        .btn-green:hover { background: #059669; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+        .btn-cyan { background: var(--accent-cyan); color: #090d16; }
+        .btn-cyan:hover { background: #0891b2; color: #ffffff; transform: translateY(-2px); }
+
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem; margin-bottom: 2.5rem;
+        }
+        .card {
+            background-color: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 1.75rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;
+        }
+        .card:hover { border-color: var(--accent-blue); transform: translateY(-4px); background-color: #1a2234; }
+        .card-tag {
+            display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; margin-bottom: 0.75rem; width: fit-content;
+        }
+        .card h3 { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .card p { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.5rem; flex-grow: 1; }
+
+        .summary-card {
+            background-color: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 1.75rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .summary-title {
+            font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;
+            display: flex; align-items: center; gap: 0.75rem; color: var(--text-primary);
+        }
+        .icon {
+            width: 32px; height: 32px; border-radius: 0.5rem; background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
+        th {
+            background-color: #0c1220; color: var(--text-secondary); font-weight: 600;
+            padding: 0.85rem 1rem; border-bottom: 2px solid var(--border-color);
+            text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
+        }
+        td { padding: 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+        tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+        .pin-tag {
+            font-family: 'JetBrains Mono', monospace; padding: 0.2rem 0.5rem;
+            border-radius: 0.35rem; font-size: 0.85rem; font-weight: 600;
+        }
+        .tag-uno { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .tag-bb { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .tag-pwr { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="badge">Hardware Engineering & System Hub</span>
+        <h1>PCBCES Engineering Documentation Hub</h1>
+        <p class="subtitle">Plastic Bottle Coin Exchanger System | 12V 10A Dual-Rail Power | Arduino Uno ATmega328P | Multi-Sensor Classifier | GSM SMS Telemetry</p>
+    </header>
+
+    <!-- Master Controller Hero Card -->
+    <div class="hero-card">
+        <div>
+            <span class="card-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981;">INTERACTIVE SCHEMATIC READY</span>
+            <div class="hero-title">Master Circuit Wiring & Breadboard Assembly Guide</div>
+            <div class="hero-desc">Interactive SVG circuit schematic with subsystem filters, dual-voltage rails (12V & 5V), resistor divider protection, flyback diode isolation, and full Arduino Uno 20-pin wiring matrix.</div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="arduino/index.html" class="btn btn-green">Open Arduino Modular Test Hub &rarr;</a>
+            <a href="docs/wiring_guide.html" class="btn btn-cyan">View Master Circuit Guide &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Quick Navigation Grid -->
+    <div class="grid">
+        <div class="card">
+            <div>
+                <span class="card-tag" style="background: rgba(6, 182, 212, 0.15); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.3);">DOCUMENTATION</span>
+                <h3>Project Plan & Feasibility</h3>
+                <p>Comprehensive capstone roadmap, bottle dimension parameters (1.5L vs Mismo), target exchange quotas (₱3 payout), and hardware inventory status.</p>
+            </div>
+            <a href="docs/PROJECT_PLAN.md" class="btn btn-cyan">View Project Plan &rarr;</a>
+        </div>
+
+        <div class="card">
+            <div>
+                <span class="card-tag" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">ELECTRICAL SPECS</span>
+                <h3>Pinout & Power Architecture</h3>
+                <p>Power distribution specs, LM2596 buck tuning, voltage divider formulas (12V to 3.8V logic), and brownout decoupling capacitor guidelines.</p>
+            </div>
+            <a href="docs/WIRING_PINOUT.md" class="btn btn-cyan">View Pinout Guide &rarr;</a>
+        </div>
+
+        <div class="card">
+            <div>
+                <span class="card-tag" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">GSM & TELEMETRY</span>
+                <h3>SIM800L Bin-Full SMS System</h3>
+                <p>SoftwareSerial configuration on pins D11 & A3 with automatic admin text notifications when internal bottle storage reaches capacity.</p>
+            </div>
+            <a href="docs/wiring_guide.html" class="btn btn-cyan">View GSM Circuit &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Master Architecture Reference Table -->
+    <div class="summary-card">
+        <div class="summary-title">
+            <div class="icon">⚡</div>
+            Power Architecture & Hardware Node Summary
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Power / Signal Node</th>
+                    <th>Source / Voltage</th>
+                    <th>Destination Devices</th>
+                    <th>Safety / Protection Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="pin-tag tag-pwr">12V High Current</span></td>
+                    <td>S-120-12 PSU (12V @ 10A)</td>
+                    <td>Coin Hopper Motor, Proximity Sensors (LJC18, LJ12), Buck IN</td>
+                    <td>1N4007 Flyback Diode across motor/relay</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-bb">5.00V Regulated Bus</span></td>
+                    <td>LM2596 Buck Converter</td>
+                    <td>Arduino Uno (5V Pin), MG996R Servo, I2C LCD, HX711, HC-SR04, IR, Buzzer</td>
+                    <td>1000µF 16V Decoupling Capacitor on 5V Bus</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-pwr">4.3V GSM Rail</span></td>
+                    <td>1N4007 Diode from 5V Bus</td>
+                    <td>SIM800L GSM Module (VCC / GND)</td>
+                    <td>Dedicated 1000µF Capacitor for 2A Burst Current</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-uno">Star Ground Rail</span></td>
+                    <td>Common 0V Reference</td>
+                    <td>PSU (V-), Buck (OUT-), Arduino (GND), Sensors (GND)</td>
+                    <td>Eliminates ground loops & false sensor noise</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
