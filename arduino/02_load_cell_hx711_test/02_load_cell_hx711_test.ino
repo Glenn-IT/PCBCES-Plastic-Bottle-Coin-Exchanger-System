@@ -1,16 +1,19 @@
 /*
  * PCBCES - Test 02: [ARCHIVED / OMITTED IN ACTIVE BUILD]
- * Note: The load cell weight feature was removed from the active machine in favor of
+ * Note: The load cell weight feature was archived from the active machine in favor of
  * non-contact ultrasonic & dielectric proximity sensing to increase durability and
- * eliminate calibration issues. Pins A0 and A1 are now available/spare.
+ * eliminate calibration drift. 
+ * IMPORTANT: Pins A0 and A1 are reallocated in the active master machine:
+ *   - Pin A0: Button Blue (Mismo Bottle Mode - 10 pcs = 3 PHP)
+ *   - Pin A1: Button Red  (System Restart / Cancel Transaction)
  *
  * Hardware: Arduino Uno, HX711 24-Bit ADC Module, 1kg Load Cell
  * 
- * Pin Connections:
+ * Bench Test Pin Connections (When testing this isolated module only):
  * - HX711 VCC -> 5V Rail
  * - HX711 GND -> Common GND Rail
- * - HX711 DT  -> A0 (Spare in master build)
- * - HX711 SCK -> A1 (Spare in master build)
+ * - HX711 DT  -> A0 (Reallocated to Button Blue in master build)
+ * - HX711 SCK -> A1 (Reallocated to Button Red in master build)
  * 
  * Purpose:
  * - Historical reference for bench scale calibration testing

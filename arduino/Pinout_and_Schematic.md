@@ -16,27 +16,27 @@
 
 ### 2. Complete Arduino Uno 20-Pin Allocation
 
-| Pin | Type | Device Attached | Voltage Domain | Notes |
-|---|---|---|---|---|
-| **D0 / D1** | Hardware UART | USB Serial | 5V TTL | Reserved for PC Serial Monitor / Debugging |
-| **D2** | Digital Output | HC-SR04 Trigger | 5V Logic | 10µs ultrasonic trigger pulse |
-| **D3** | Digital Input | HC-SR04 Echo | 5V Logic | Echo pulse width corresponds to height |
-| **D4** | Digital Input | IR Obstacle Avoidance | 5V Logic | Active LOW when bottle blocks beam |
-| **D5** | Digital Input | LJC18A3 Capacitive | Scaled to ~3.8V | Connected via 10kΩ/4.7kΩ voltage divider |
-| **D6** | Digital Input | LJ12A3 Inductive Metal | Scaled to ~3.8V | Connected via 10kΩ/4.7kΩ voltage divider |
-| **D7** | Digital Input (INT) | Coin Hopper Pulse Line | Scaled to ~3.8V | Interrupt counter for dispensed ₱1 coins |
-| **D8** | Digital Output | 5V Relay Module | 5V Logic | Switches 12V power to Coin Hopper |
-| **D9** | Digital Output (PWM)| MG996R Servo Motor | 5V Logic | 0° Standby, 90° Accept, 180° Reject |
-| **D10** | Digital Input (PULL)| Button Green (1.5L) | 5V Logic | Selects 1.5L bottle mode (5 pcs quota) |
-| **D11** | SoftwareSerial RX | SIM800L TX Pin | 5V / 4V Logic | Receives AT responses |
-| **D12** | Digital Output | DIYMORE Active Buzzer | 5V Logic | High = Beep, Low = Silent |
-| **D13** | Digital Output | Red Indicator Light | 5V Logic | Visual rejection / fault alert |
-| **A0** | Digital Input (PULL)| Button Blue (Mismo) | 5V Logic | Selects Mismo bottle mode (10 pcs quota) |
-| **A1** | Digital Input (PULL)| Button Red (Restart/Cancel)| 5V Logic | Cancels current transaction / resets machine |
-| **A2** | Digital Output | Green Indicator Light | 5V Logic | Visual acceptance / ready alert |
-| **A3** | SoftwareSerial TX | SIM800L RX Pin | 5V / 4V Logic | Sends AT SMS commands |
-| **A4** | Hardware I2C (SDA) | 16x2 LCD (PCF8574) | 5V Logic | Serial Data line |
-| **A5** | Hardware I2C (SCL) | 16x2 LCD (PCF8574) | 5V Logic | Serial Clock line |
+| Pin | Type | Device Attached | Voltage Domain | Primary Role | Bench Test Reference |
+|---|---|---|---|---|---|
+| **D0 / D1** | Hardware UART | USB Serial | 5V TTL | Reserved for PC Serial Monitor / Web Bridge | [Serial Monitor](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/index.html) |
+| **D2** | Digital Output | HC-SR04 Trigger | 5V Logic | 10µs ultrasonic trigger pulse | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
+| **D3** | Digital Input | HC-SR04 Echo | 5V Logic | Echo return width for bottle length | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
+| **D4** | Digital Input | IR Obstacle Avoidance | 5V Logic | Active LOW bottle insertion beam detector | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
+| **D5** | Digital Input | LJC18A3 Capacitive | Scaled to ~3.8V | Confirms non-metallic dielectric PET plastic | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |
+| **D6** | Digital Input | LJ12A3 Inductive Metal | Scaled to ~3.8V | Detects metallic objects / instant reject | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |
+| **D7** | Digital Input (INT) | Coin Hopper Pulse Line | Scaled to ~3.8V | Optical falling pulse interrupt (1 pulse = ₱1) | [Test 06 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/06_coin_hopper_relay_test/wiring_guide.html) |
+| **D8** | Digital Output | 5V Relay Module | 5V Logic | Switches 12V power to Coin Hopper motor | [Test 06 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/06_coin_hopper_relay_test/wiring_guide.html) |
+| **D9** | Digital Output (PWM)| MG996R Servo Motor | 5V Logic | 0° Standby, 90° Accept (Drop), 180° Reject | [Test 05 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/05_mg996r_servo_trapdoor_test/wiring_guide.html) |
+| **D10** | Digital Input (PULL)| Button Green (1.5L) | 5V Logic | Direct selection for 1.5L Mode (5 pcs quota) | [Test 01 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/01_lcd_button_menu_test/wiring_guide.html) |
+| **D11** | SoftwareSerial RX | SIM800L TX Pin | 4.0V - 4.3V Logic | Receives AT command responses | [Test 07 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/07_sim800l_gsm_sms_test/wiring_guide.html) |
+| **D12** | Digital Output | Active Buzzer | 5V Logic | Audio prompts (Success beep / Alarm tone) | [Test 01 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/01_lcd_button_menu_test/wiring_guide.html) |
+| **D13** | Digital Output | Red Indicator LED | 5V Logic | Visual rejection warning / system fault alert | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |
+| **A0** | Digital Input (PULL)| Button Blue (Mismo) | 5V Logic | Direct selection for Mismo Mode (10 pcs quota)| [Test 01 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/01_lcd_button_menu_test/wiring_guide.html) |
+| **A1** | Digital Input (PULL)| Button Red (Restart/Cancel)| 5V Logic | Cancels transaction, resets count & restarts | [Test 01 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/01_lcd_button_menu_test/wiring_guide.html) |
+| **A2** | Digital Output | Green Indicator LED | 5V Logic | Visual acceptance / ready status | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |
+| **A3** | SoftwareSerial TX | SIM800L RX Pin | 4.0V - 4.3V Logic | Sends AT SMS dispatch commands | [Test 07 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/07_sim800l_gsm_sms_test/wiring_guide.html) |
+| **A4** | Hardware I2C (SDA) | 16x2 LCD (PCF8574) | 5V Logic | Serial Data communication (Addr 0x27) | [Test 01 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/01_lcd_button_menu_test/wiring_guide.html) |
+| **A5** | Hardware I2C (SCL) | 16x2 LCD (PCF8574) | 5V Logic | Serial Clock synchronization | [Test 01 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/01_lcd_button_menu_test/wiring_guide.html) |
 
 ---
 
@@ -49,3 +49,19 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
                                                 │
                                              Common GND
 ```
+
+> **Calculation**: $V_{\text{out}} = 12\text{V} \times \frac{4.7\text{k}\Omega}{10\text{k}\Omega + 4.7\text{k}\Omega} = 12\text{V} \times 0.3197 = 3.836\text{V}$ (Safe for ATmega328P 5V CMOS inputs).
+
+---
+
+### 4. Architectural Notes
+
+1. **Dedicated 3-Button User Interface**:
+   - `Green Button (D10)`: Instantly starts **1.5L Mode** (5 bottles = ₱3.00 payout).
+   - `Blue Button (A0)`: Instantly starts **Mismo Mode** (10 bottles = ₱3.00 payout).
+   - `Red Button (A1)`: Aborts active transaction, resets count to 0, returns trapdoor to standby, and displays reset confirmation.
+2. **Archived Load Cell Feature (Test 02)**:
+   - The HX711 1kg load cell was archived in favor of ultrasonic non-contact length profiling and capacitive dielectric sensing to prevent mechanical wear and calibration drift.
+   - Pins `A0` and `A1` were permanently reallocated to the **Blue** and **Red** control buttons in the production machine.
+3. **Master Interactive Controller**:
+   - Interactive full schematic, wiring step-by-step checklist, and state machine firmware are available at [`arduino/pcbces_arduino_controller/wiring_guide.html`](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/pcbces_arduino_controller/wiring_guide.html).

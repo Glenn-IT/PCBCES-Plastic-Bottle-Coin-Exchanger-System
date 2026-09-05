@@ -131,10 +131,16 @@
 </head>
 <body>
 <div class="container">    <header>
-        <span class="badge">Component Test 02</span>
-        <h1>HX711 Load Cell Weight Calibration</h1>
-        <p class="subtitle">Hardware: 1kg Aluminum Straight Bar Load Cell &bull; HX711 24-Bit ADC Module (A0/A1)</p>
-    </header><div class="nav-bar"><a href="../index.html" class="nav-link">🏠 Master Hub</a><a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & Button</a><a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link active">Test 02: Weight (HX711)</a><a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a><a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a><a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a><a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a><a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a><a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a></div>    <div class="card">
+        <span class="badge" style="background: rgba(244, 63, 94, 0.2); color: #fb7185; border-color: #f43f5e;">ARCHIVED / OMITTED TEST 02</span>
+        <h1>HX711 Load Cell Weight Calibration [Retired]</h1>
+        <p class="subtitle">Hardware: 1kg Aluminum Straight Bar Load Cell &bull; HX711 24-Bit ADC Module (Bench Isolated)</p>
+    </header><div class="nav-bar"><a href="../index.html" class="nav-link">🏠 Master Hub</a><a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & Button</a><a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link active">Test 02: Weight (HX711)</a><a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a><a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a><a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a><a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a><a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a><a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a></div>    
+    <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 0.75rem; padding: 1.25rem 1.5rem; margin-bottom: 2rem; color: #fde68a;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 0.35rem; color: #fbbf24;">⚠️ Architecture Notice: Omitted from Master Machine</h3>
+        <p style="font-size: 0.9rem; line-height: 1.5; color: #cbd5e1;">The HX711 load cell was retired in favor of non-contact ultrasonic bottle height discrimination and capacitive dielectric plastic verification. In the active master machine, <strong>Pin A0</strong> is reallocated to <strong>Button Blue (Mismo Mode - 10 pcs)</strong> and <strong>Pin A1</strong> is reallocated to <strong>Button Red (System Restart / Cancel)</strong>. This guide remains available strictly for bench calibration reference.</p>
+    </div>
+    
+    <div class="card">
         <div class="card-title">
             <div class="icon">⚖️</div>
             Interactive Wiring Schematic (HX711 & 1kg Load Cell)
