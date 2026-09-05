@@ -53,8 +53,8 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | | Leg 2 | Common GND | |
 | **HC-SR04 Ultrasonic** | VCC | 5V Bus | |
 | | GND | Common GND | |
-| | Trig | Arduino **D2** | Trigger pulse |
-| | Echo | Arduino **D3** | Echo return (height) |
+| | Trig | Arduino **D2** | Trigger pulse (Ceiling sensor down into 40cm chamber) |
+| | Echo | Arduino **D3** | Echo from bottle cap: 1.5L near (5-13cm), Mismo far (18-24cm) |
 | **IR Obstacle Sensor** | VCC | 5V Bus | |
 | | GND | Common GND | |
 | | OUT | Arduino **D4** | Active LOW when bottle blocks beam |

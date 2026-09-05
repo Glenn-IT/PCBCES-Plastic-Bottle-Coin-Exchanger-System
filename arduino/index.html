@@ -261,7 +261,7 @@
         <div>
             <div class="hero-title">⚡ Master Reverse Vending Machine Capstone Controller</div>
             <div class="hero-desc">
-                Full finite state machine integrating non-contact bottle classification (1.5L vs Mismo length via HC-SR04), dielectric plastic verification (LJC18A3), inductive metal rejection (LJ12A3), MG996R trapdoor servo gate, 12V ₱3 coin hopper, dedicated 3-button user interface (Green 1.5L / Blue Mismo / Red Reset), and SIM800L SMS bin-full dispatcher.
+                Full finite state machine integrating non-contact vertical bottle classification (40cm vertical chamber: 1.5L vs Mismo ceiling-to-cap distance via HC-SR04), dielectric plastic verification (LJC18A3), inductive metal rejection (LJ12A3), MG996R trapdoor servo gate, 12V ₱3 coin hopper, dedicated 3-button user interface (Green 1.5L / Blue Mismo / Red Reset), and SIM800L SMS bin-full dispatcher.
             </div>
             <div class="hero-badges">
                 <span class="pill" style="border-color: #ef4444; color: #f87171;">🔴 12V 10A Main PSU</span>
@@ -524,7 +524,7 @@
                     <!-- HC-SR04 Ultrasonic -->
                     <rect x="930" y="270" width="245" height="70" rx="6" fill="#064e3b" stroke="#10b981"/>
                     <text x="1052" y="292" fill="#a7f3d0" font-size="10.5" font-weight="700" text-anchor="middle">HC-SR04 ULTRASONIC</text>
-                    <text x="1052" y="308" fill="#6ee7b7" font-size="9" text-anchor="middle">Discriminates 1.5L vs Mismo length</text>
+                    <text x="1052" y="308" fill="#6ee7b7" font-size="9" text-anchor="middle">Ceiling Top-Down: 40cm Vertical Chamber</text>
                     <circle cx="930" cy="320" r="5" fill="#06b6d4" class="term-dot"/>
                     <text x="945" y="324" fill="#67e8f9" font-size="9" font-family="JetBrains Mono">Trig(D2) | Echo(D3)</text>
 
@@ -728,7 +728,7 @@
                     <td><strong>HC-SR04 Ultrasonic</strong></td>
                     <td>Digital Output</td>
                     <td>5V Logic</td>
-                    <td>Sends 10µs ultrasonic trigger pulse along horizontal bottle cradle</td>
+                    <td>Sends 10µs trigger pulse downward from chamber ceiling (40cm vertical chamber)</td>
                     <td><a href="03_ultrasonic_ir_dimension_test/wiring_guide.html" style="color: var(--accent-cyan); font-weight: 700; text-decoration: none;">Test 03 Guide &rarr;</a></td>
                 </tr>
                 <tr>
@@ -736,7 +736,7 @@
                     <td><strong>HC-SR04 Ultrasonic</strong></td>
                     <td>Digital Input</td>
                     <td>5V Logic</td>
-                    <td>Reads echo return pulse width to calculate bottle length (1.5L vs Mismo)</td>
+                    <td>Reads echo from bottle cap: 1.5L near (5-13cm), Mismo far (18-24cm)</td>
                     <td><a href="03_ultrasonic_ir_dimension_test/wiring_guide.html" style="color: var(--accent-cyan); font-weight: 700; text-decoration: none;">Test 03 Guide &rarr;</a></td>
                 </tr>
                 <tr>
@@ -899,7 +899,7 @@
             <div>
                 <span class="card-tag" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">TEST 03</span>
                 <h3>Ultrasonic HC-SR04 & IR Entry</h3>
-                <p>Measures bottle length along horizontal cradle using D2/D3 ultrasonic pulses to differentiate 1.5L (~30cm) from Mismo (~18cm), paired with D4 IR entry beam detection.</p>
+                <p>Measures top-down distance to bottle cap in 40cm vertical chamber using D2/D3 ultrasonic pulses to differentiate 1.5L/1.7L (5-13cm near) from Mismo (18-24cm far), paired with D4 IR entry beam detection.</p>
             </div>
             <a href="03_ultrasonic_ir_dimension_test/wiring_guide.html" class="btn btn-cyan">View Test 03 Guide &rarr;</a>
         </div>

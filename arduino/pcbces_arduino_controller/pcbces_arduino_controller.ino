@@ -82,16 +82,25 @@ void soundSuccess() {
   soundBeep(100); delay(60); soundBeep(180);
 }
 
-// Ultrasonic reading
+// Ultrasonic reading (Vertical Top-Down: Ceiling Sensor to Bottle Cap)
 long readChamberDistance() {
-  digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
-  delayMicroseconds(2);
-  digitalWrite(PIN_ULTRASONIC_TRIG, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
-  long duration = pulseIn(PIN_ULTRASONIC_ECHO, HIGH, 30000);
-  if (duration == 0) return 999;
-  return duration * 0.034 / 2;
+  // Take 3 quick pulses and sort/average to eliminate acoustic flutter
+  long readings[3];
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
+    delayMicroseconds(2);
+    digitalWrite(PIN_ULTRASONIC_TRIG, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
+    long duration = pulseIn(PIN_ULTRASONIC_ECHO, HIGH, 30000);
+    readings[i] = (duration == 0) ? 999 : (duration * 0.034 / 2);
+    delay(10);
+  }
+  // Simple median of 3
+  long a = readings[0], b = readings[1], c = readings[2];
+  if ((a >= b && a <= c) || (a <= b && a >= c)) return a;
+  if ((b >= a && b <= c) || (b <= a && b >= c)) return b;
+  return c;
 }
 
 // GSM SMS Alert
@@ -319,21 +328,25 @@ void loop() {
         break;
       }
 
-      // 3. Dimensional Length / Distance Check (HC-SR04 Ultrasonic)
-      long height = readChamberDistance();
-      Serial.print(F("[VALIDATION] Ultrasonic Distance: "));
-      Serial.print(height);
-      Serial.println(F(" cm"));
+      // 3. Dimensional Vertical Distance Check (HC-SR04 Ultrasonic at Ceiling)
+      long distToCap = readChamberDistance();
+      long computedBottleHeight = (CHAMBER_TOTAL_HEIGHT_CM > distToCap) ? (CHAMBER_TOTAL_HEIGHT_CM - distToCap) : 0;
+      Serial.print(F("[VALIDATION] Top-to-Cap Distance: "));
+      Serial.print(distToCap);
+      Serial.print(F(" cm (Approx Bottle Height: "));
+      Serial.print(computedBottleHeight);
+      Serial.println(F(" cm)"));
 
       bool validDimensions = false;
-      if (selectedType == TYPE_1_5L && height >= HEIGHT_1_5L_MIN && height <= HEIGHT_1_5L_MAX) {
+      if (selectedType == TYPE_1_5L && distToCap >= DIST_1_5L_MIN && distToCap <= DIST_1_5L_MAX) {
         validDimensions = true;
-      } else if (selectedType == TYPE_MISMO && height >= HEIGHT_MISMO_MIN && height <= HEIGHT_MISMO_MAX) {
+      } else if (selectedType == TYPE_MISMO && distToCap >= DIST_MISMO_MIN && distToCap <= DIST_MISMO_MAX) {
         validDimensions = true;
       }
 
       if (!validDimensions) {
-        Serial.println(F("[VALIDATION] REJECT: Bottle dimensions mismatch!"));
+        Serial.print(F("[VALIDATION] REJECT: Bottle dimensions mismatch for "));
+        Serial.println((selectedType == TYPE_1_5L) ? F("1.5L Mode") : F("Mismo Mode"));
         currentState = STATE_REJECT_EJECT;
         break;
       }

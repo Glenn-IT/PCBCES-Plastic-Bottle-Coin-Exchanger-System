@@ -19,8 +19,8 @@
 | Pin | Type | Device Attached | Voltage Domain | Primary Role | Bench Test Reference |
 |---|---|---|---|---|---|
 | **D0 / D1** | Hardware UART | USB Serial | 5V TTL | Reserved for PC Serial Monitor / Web Bridge | [Serial Monitor](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/index.html) |
-| **D2** | Digital Output | HC-SR04 Trigger | 5V Logic | 10µs ultrasonic trigger pulse | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
-| **D3** | Digital Input | HC-SR04 Echo | 5V Logic | Echo return width for bottle length | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
+| **D2** | Digital Output | HC-SR04 Trigger | 5V Logic | 10µs ultrasonic pulse down into 40cm chamber | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
+| **D3** | Digital Input | HC-SR04 Echo | 5V Logic | Top-down echo to bottle cap: 1.5L near (5-13cm), Mismo far (18-24cm) | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
 | **D4** | Digital Input | IR Obstacle Avoidance | 5V Logic | Active LOW bottle insertion beam detector | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
 | **D5** | Digital Input | LJC18A3 Capacitive | Scaled to ~3.8V | Confirms non-metallic dielectric PET plastic | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |
 | **D6** | Digital Input | LJ12A3 Inductive Metal | Scaled to ~3.8V | Detects metallic objects / instant reject | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |

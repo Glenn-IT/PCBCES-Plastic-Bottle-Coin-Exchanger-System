@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --bg-card-hover: #334155;
-            --border-color: #334155;
+            --bg-dark: #090d16;
+            --bg-card: #111827;
+            --bg-surface: #162032;
+            --border-color: #27354f;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --accent-cyan: #06b6d4;
@@ -18,9 +18,9 @@
             --accent-green: #10b981;
             --accent-amber: #f59e0b;
             --accent-rose: #f43f5e;
-            --accent-purple: #8b5cf6;
-            --accent-yellow: #eab308;
             --active-accent: #06b6d4;
+            --radius-lg: 16px;
+            --radius-md: 10px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -28,7 +28,7 @@
             background-color: var(--bg-dark);
             color: var(--text-primary);
             line-height: 1.6;
-            padding: 2rem 1rem;
+            padding: 2.5rem 1rem 5rem;
         }
         .container { max-width: 1280px; margin: 0 auto; }
         header {
@@ -39,19 +39,19 @@
         }
         .badge {
             display: inline-block;
-            padding: 0.35rem 1rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 9999px;
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.82rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background: rgba(16, 185, 129, 0.15);
+            letter-spacing: 0.08em;
+            background: rgba(6, 182, 212, 0.15);
             color: var(--active-accent);
-            border: 1px solid var(--active-accent);
+            border: 1px solid rgba(6, 182, 212, 0.4);
             margin-bottom: 0.75rem;
         }
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 800;
             letter-spacing: -0.025em;
             margin-bottom: 0.5rem;
@@ -61,32 +61,72 @@
         }
         p.subtitle { color: var(--text-secondary); font-size: 1.05rem; }
         .nav-bar {
-            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem;
+            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2.5rem;
         }
         .nav-link {
-            font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); background: var(--bg-card);
-            padding: 0.5rem 0.9rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid var(--border-color);
+            font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); background: var(--bg-card);
+            padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid var(--border-color);
             transition: all 0.2s ease;
         }
         .nav-link:hover, .nav-link.active {
-            color: #ffffff; background: var(--active-accent); border-color: var(--active-accent);
+            color: #ffffff; background: rgba(6, 182, 212, 0.2); border-color: var(--active-accent);
         }
-        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+
+        /* Presentation Cards */
         .card {
             background-color: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 1rem; padding: 1.75rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
+            border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2.5rem;
         }
         .card-title {
-            font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; display: flex;
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 1.25rem; display: flex;
             align-items: center; gap: 0.75rem; color: var(--text-primary);
         }
         .card-title .icon {
-            width: 32px; height: 32px; border-radius: 0.5rem; background: rgba(59, 130, 246, 0.2);
-            color: var(--active-accent); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+            width: 36px; height: 36px; border-radius: 0.5rem; background: rgba(6, 182, 212, 0.2);
+            color: var(--active-accent); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
+
+        /* Visual Workbench Presentation */
+        .visual-container {
+            position: relative;
+            background: #05080f;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+        .visual-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .visual-container:hover img {
+            transform: scale(1.015);
+        }
+        .visual-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(9, 13, 22, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* SVG Schematic */
         .svg-container {
-            width: 100%; overflow-x: auto; background: #090d16; border-radius: 0.75rem;
+            width: 100%; overflow-x: auto; background: #090d16; border-radius: var(--radius-md);
             padding: 1.5rem 1rem; border: 1px solid #1e293b;
         }
         svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
@@ -96,13 +136,15 @@
         }
         .wire:hover { stroke-width: 4.5px !important; filter: drop-shadow(0 0 6px currentColor); }
         @keyframes dash { to { stroke-dashoffset: -1000; } }
+
+        /* Tables */
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; }
         th {
-            background-color: #0f172a; color: var(--text-secondary); font-weight: 600;
+            background-color: #0c1220; color: var(--text-secondary); font-weight: 600;
             padding: 0.85rem 1rem; border-bottom: 2px solid var(--border-color);
             text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
         }
-        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+        td { padding: 0.95rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
         tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
         .pin-tag {
             font-family: 'JetBrains Mono', monospace; padding: 0.2rem 0.5rem; border-radius: 0.35rem;
@@ -111,33 +153,162 @@
         .tag-uno { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .tag-bb { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
         .tag-pwr { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
-        .tag-gsm { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
-        .note-box {
-            background: rgba(244, 63, 94, 0.1); border-left: 4px solid var(--accent-rose);
-            padding: 1.25rem; border-radius: 0 0.5rem 0.5rem 0; margin-top: 1.5rem;
+        .tag-sig { background: rgba(6, 182, 212, 0.2); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.4); }
+
+        /* Grid for Instructions */
+        .step-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem; margin-top: 1rem;
         }
-        .note-box h4 {
-            color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.5rem;
-            display: flex; align-items: center; gap: 0.5rem;
+        .step-box {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 1.25rem;
         }
-        .note-box p, .note-box li { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.4rem; }
-        .note-box ul { padding-left: 1.25rem; }
+        .step-num {
+            width: 30px; height: 30px; border-radius: 50%; background: var(--accent-cyan);
+            color: #090d16; font-weight: 800; display: flex; align-items: center;
+            justify-content: center; margin-bottom: 0.75rem; font-size: 0.9rem;
+        }
+        .step-box h4 { color: #fff; font-size: 1.05rem; margin-bottom: 0.4rem; }
+        .step-box p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; }
+
+        /* Code box */
         .code-box {
-            font-family: 'JetBrains Mono', monospace; background: #090d16;
-            border: 1px solid #1e293b; padding: 1rem; border-radius: 0.5rem;
-            font-size: 0.85rem; color: #38bdf8; overflow-x: auto; margin-top: 1rem;
+            font-family: 'JetBrains Mono', monospace; background: #05080f;
+            border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.5rem;
+            font-size: 0.88rem; color: #38bdf8; overflow-x: auto; line-height: 1.5;
         }
+
+        /* Lightbox modal */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px);
+            align-items: center; justify-content: center; padding: 2rem;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            max-width: 90vw; max-height: 90vh; border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 1px solid var(--border-color);
+        }
+        .close-btn {
+            position: absolute; top: 1.5rem; right: 2rem; color: #fff;
+            font-size: 2.5rem; font-weight: bold; cursor: pointer; transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--accent-rose); }
     </style>
 </head>
 <body>
-<div class="container">    <header>
-        <span class="badge">Component Test 03</span>
-        <h1>Ultrasonic HC-SR04 & IR Entry Classifier</h1>
-        <p class="subtitle">Hardware: HC-SR04+ Ultrasonic Module (D2 Trig, D3 Echo) &bull; IR Obstacle Avoidance Sensor (D4 OUT)</p>
-    </header><div class="nav-bar"><a href="../index.html" class="nav-link">🏠 Master Hub</a><a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & Button</a><a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (HX711)</a><a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link active">Test 03: Height & Entry</a><a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a><a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a><a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a><a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a><a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a></div>    <div class="card">
+<div class="container">
+    <header>
+        <span class="badge">Component Bench Test 03</span>
+        <h1>Ultrasonic HC-SR04 & IR Entry Sensor Test</h1>
+        <p class="subtitle">Hardware: HC-SR04+ Ultrasonic Transceiver (D2/D3) &bull; IR Obstacle Entry Sensor (D4) &bull; Arduino Uno R3</p>
+    </header>
+
+    <div class="nav-bar">
+        <a href="../index.html" class="nav-link">&larr; Master Hub</a>
+        <a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & 3-Buttons</a>
+        <a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (Archived)</a>
+        <a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link active">Test 03: Height & Entry</a>
+        <a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a>
+        <a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a>
+        <a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a>
+        <a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a>
+        <a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">Master Controller</a>
+    </div>
+
+    <!-- 1. 3D Workbench Visual Presentation Card -->
+    <div class="card">
         <div class="card-title">
-            <div class="icon">📏</div>
-            Interactive Wiring Schematic (HC-SR04 & IR Entry Sensor)
+            <div class="icon">&#128065;</div>
+            Visual Workbench Presentation & Real Hardware Setup
+        </div>
+        
+        <div class="visual-container" onclick="openModal('test03_visual.jpg')">
+            <span class="visual-badge">Click to Enlarge 3D Setup</span>
+            <img src="test03_visual.jpg" alt="PCBCES Test 03 Workbench 3D Visual Render">
+        </div>
+
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1rem;">
+            This bench setup validates your <strong>Vertical Drop Chamber (40 cm height from bottom trapdoor to ceiling sensor)</strong>. The <strong>HC-SR04 ultrasonic transceiver</strong> is mounted at the top ceiling looking down at the bottle cap. A tall <strong>1.5L / 1.7L bottle</strong> (~30–33 cm) leaves a short distance of <strong>5 cm to 13 cm</strong> to the ceiling. A shorter <strong>Mismo bottle</strong> (~18–19 cm) sits lower down, measuring <strong>18 cm to 24 cm</strong> to the ceiling. The <strong>IR obstacle sensor</strong> is mounted on the entry wall to immediately wake up scanning when a bottle is inserted.
+        </p>
+    </div>
+
+    <!-- 2. Step-by-Step Breadboard Wiring Table -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#128203;</div>
+            Complete Hardware Pin Connection Matrix
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sensor Module</th>
+                    <th>Module Pin</th>
+                    <th>Arduino Uno Pin</th>
+                    <th>Wire Color</th>
+                    <th>Electrical Signal & Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>HC-SR04 Ultrasonic</strong></td>
+                    <td><span class="pin-tag tag-bb">VCC</span></td>
+                    <td><span class="pin-tag tag-pwr">5V Pin</span></td>
+                    <td>Red</td>
+                    <td>5V DC Power</td>
+                </tr>
+                <tr>
+                    <td><strong>HC-SR04 Ultrasonic</strong></td>
+                    <td><span class="pin-tag tag-bb">GND</span></td>
+                    <td><span class="pin-tag tag-pwr">GND Pin</span></td>
+                    <td>Black</td>
+                    <td>Ground Reference</td>
+                </tr>
+                <tr>
+                    <td><strong>HC-SR04 Ultrasonic</strong></td>
+                    <td><span class="pin-tag tag-sig">Trig</span></td>
+                    <td><span class="pin-tag tag-uno">Arduino D2</span></td>
+                    <td>Yellow</td>
+                    <td>10µs ultrasonic start pulse (Digital Output)</td>
+                </tr>
+                <tr>
+                    <td><strong>HC-SR04 Ultrasonic</strong></td>
+                    <td><span class="pin-tag tag-sig">Echo</span></td>
+                    <td><span class="pin-tag tag-uno">Arduino D3</span></td>
+                    <td>Green</td>
+                    <td>Ceiling-to-bottle cap return pulse (Digital Input)</td>
+                </tr>
+                <tr>
+                    <td><strong>IR Obstacle Sensor</strong></td>
+                    <td><span class="pin-tag tag-bb">VCC</span></td>
+                    <td><span class="pin-tag tag-pwr">5V Pin</span></td>
+                    <td>Red</td>
+                    <td>5V DC Power</td>
+                </tr>
+                <tr>
+                    <td><strong>IR Obstacle Sensor</strong></td>
+                    <td><span class="pin-tag tag-bb">GND</span></td>
+                    <td><span class="pin-tag tag-pwr">GND Pin</span></td>
+                    <td>Black</td>
+                    <td>Ground Reference</td>
+                </tr>
+                <tr>
+                    <td><strong>IR Obstacle Sensor</strong></td>
+                    <td><span class="pin-tag tag-sig">OUT</span></td>
+                    <td><span class="pin-tag tag-uno">Arduino D4</span></td>
+                    <td>White / Purple</td>
+                    <td>Active LOW signal: 0V when bottle enters chamber, 5V when clear</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 3. Interactive Wiring Schematic -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#9889;</div>
+            Interactive Circuit Schematic
         </div>
         <div class="svg-container">
             <svg viewBox="0 0 1000 420" width="1000" height="420" xmlns="http://www.w3.org/2000/svg">
@@ -147,43 +318,141 @@
                 <rect x="60" y="60" width="300" height="300" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
                 <text x="210" y="100" fill="#60a5fa" font-size="16" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
                 
-                <circle cx="360" cy="140" r="6" fill="#06b6d4"/>
-                <text x="345" y="144" fill="#67e8f9" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">D2 (Ultrasonic Trig)</text>
-
-                <circle cx="360" cy="180" r="6" fill="#06b6d4"/>
-                <text x="345" y="184" fill="#67e8f9" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">D3 (Ultrasonic Echo)</text>
-
-                <circle cx="360" cy="220" r="6" fill="#38bdf8"/>
-                <text x="345" y="224" fill="#7dd3fc" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">D4 (IR Entry Out)</text>
-
-                <circle cx="360" cy="270" r="6" fill="#f97316"/>
-                <text x="345" y="274" fill="#fb923c" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">5V Power Rail</text>
-
-                <circle cx="360" cy="310" r="6" fill="#64748b"/>
-                <text x="345" y="314" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">GND Rail</text>
-
+                <!-- Arduino Pins -->
+                <circle cx="360" cy="140" r="5" fill="#3b82f6"/>
+                <text x="345" y="144" fill="#93c5fd" font-family="JetBrains Mono" font-size="11" text-anchor="end">D2 (Trig)</text>
+                
+                <circle cx="360" cy="180" r="5" fill="#3b82f6"/>
+                <text x="345" y="184" fill="#93c5fd" font-family="JetBrains Mono" font-size="11" text-anchor="end">D3 (Echo)</text>
+                
+                <circle cx="360" cy="220" r="5" fill="#3b82f6"/>
+                <text x="345" y="224" fill="#93c5fd" font-family="JetBrains Mono" font-size="11" text-anchor="end">D4 (IR OUT)</text>
+                
+                <circle cx="360" cy="270" r="5" fill="#ef4444"/>
+                <text x="345" y="274" fill="#f87171" font-family="JetBrains Mono" font-size="11" text-anchor="end">5V Power</text>
+                
+                <circle cx="360" cy="310" r="5" fill="#64748b"/>
+                <text x="345" y="314" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" text-anchor="end">GND</text>
+                
                 <!-- HC-SR04 Module -->
-                <rect x="560" y="70" width="360" height="120" rx="10" fill="#111827" stroke="#10b981" stroke-width="2"/>
-                <circle cx="640" cy="130" r="30" fill="#042f2e" stroke="#10b981" stroke-width="2"/>
-                <circle cx="840" cy="130" r="30" fill="#042f2e" stroke="#10b981" stroke-width="2"/>
-                <text x="740" y="100" fill="#6ee7b7" font-size="12" font-weight="800" text-anchor="middle">HC-SR04+ ULTRASONIC</text>
-                <text x="740" y="175" fill="#9ca3af" font-size="9" text-anchor="middle">VCC &bull; TRIG &bull; ECHO &bull; GND</text>
-
+                <rect x="580" y="70" width="320" height="110" rx="10" fill="#064e3b" stroke="#10b981" stroke-width="2"/>
+                <circle cx="650" cy="120" r="30" fill="#022c22" stroke="#34d399" stroke-width="2.5"/>
+                <circle cx="830" cy="120" r="30" fill="#022c22" stroke="#34d399" stroke-width="2.5"/>
+                <text x="740" y="100" fill="#6ee7b7" font-size="12" font-weight="800" text-anchor="middle">HC-SR04+ ULTRASONIC (CEILING TOP-DOWN)</text>
+                <text x="740" y="145" fill="#a7f3d0" font-size="9" text-anchor="middle">Ceiling to Trapdoor: 40 cm | 1.5L: 5-13cm | Mismo: 18-24cm</text>
+                
+                <!-- HC-SR04 Pins -->
+                <circle cx="580" cy="95" r="5" fill="#ef4444"/>
+                <circle cx="580" cy="115" r="5" fill="#eab308"/>
+                <circle cx="580" cy="135" r="5" fill="#10b981"/>
+                <circle cx="580" cy="155" r="5" fill="#64748b"/>
+                <text x="595" y="99" fill="#fca5a5" font-family="JetBrains Mono" font-size="10">VCC</text>
+                <text x="595" y="119" fill="#fde047" font-family="JetBrains Mono" font-size="10">Trig</text>
+                <text x="595" y="139" fill="#6ee7b7" font-family="JetBrains Mono" font-size="10">Echo</text>
+                <text x="595" y="159" fill="#cbd5e1" font-family="JetBrains Mono" font-size="10">GND</text>
+                
                 <!-- IR Sensor Module -->
-                <rect x="560" y="230" width="360" height="120" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="2"/>
-                <circle cx="620" cy="290" r="14" fill="#1e293b" stroke="#38bdf8"/>
-                <circle cx="660" cy="290" r="14" fill="#38bdf8"/>
-                <text x="760" y="260" fill="#bae6fd" font-size="12" font-weight="800" text-anchor="middle">IR OBSTACLE SENSOR</text>
-                <text x="760" y="290" fill="#94a3b8" font-size="10" text-anchor="middle">Active LOW on insertion</text>
-                <text x="760" y="335" fill="#64748b" font-size="9" text-anchor="middle">VCC &bull; GND &bull; OUT</text>
-
-                <!-- Signal Wires -->
-                <path class="wire" d="M 360 140 L 560 140" stroke="#06b6d4" stroke-width="2.5" fill="none"/>
-                <path class="wire" d="M 360 180 L 560 160" stroke="#10b981" stroke-width="2.5" fill="none"/>
-                <path class="wire" d="M 360 220 L 560 290" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+                <rect x="580" y="230" width="280" height="120" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
+                <text x="720" y="260" fill="#c7d2fe" font-size="13" font-weight="800" text-anchor="middle">IR ENTRY SENSOR (CHUTE WALL)</text>
+                <circle cx="830" cy="290" r="12" fill="#312e81" stroke="#818cf8" stroke-width="2"/>
+                <text x="830" y="294" fill="#e0e7ff" font-size="8" text-anchor="middle">IR LED</text>
+                
+                <!-- IR Pins -->
+                <circle cx="580" cy="265" r="5" fill="#ef4444"/>
+                <circle cx="580" cy="290" r="5" fill="#64748b"/>
+                <circle cx="580" cy="315" r="5" fill="#a855f7"/>
+                <text x="595" y="269" fill="#fca5a5" font-family="JetBrains Mono" font-size="10">VCC</text>
+                <text x="595" y="294" fill="#cbd5e1" font-family="JetBrains Mono" font-size="10">GND</text>
+                <text x="595" y="319" fill="#d8b4fe" font-family="JetBrains Mono" font-size="10">OUT</text>
+                
+                <!-- Connection Wires -->
+                <!-- 5V Wire -->
+                <path class="wire" d="M 360 270 L 460 270 L 460 95 L 580 95" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                <path class="wire" d="M 460 270 L 460 265 L 580 265" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                
+                <!-- GND Wire -->
+                <path class="wire" d="M 360 310 L 480 310 L 480 155 L 580 155" stroke="#64748b" stroke-width="2.5" fill="none"/>
+                <path class="wire" d="M 480 310 L 480 290 L 580 290" stroke="#64748b" stroke-width="2.5" fill="none"/>
+                
+                <!-- Trig Wire D2 -->
+                <path class="wire" d="M 360 140 L 500 140 L 500 115 L 580 115" stroke="#eab308" stroke-width="2.5" fill="none"/>
+                
+                <!-- Echo Wire D3 -->
+                <path class="wire" d="M 360 180 L 520 180 L 520 135 L 580 135" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                
+                <!-- IR OUT Wire D4 -->
+                <path class="wire" d="M 360 220 L 540 220 L 540 315 L 580 315" stroke="#a855f7" stroke-width="2.5" fill="none"/>
             </svg>
         </div>
     </div>
+
+    <!-- 4. Step-by-Step Bench Testing Guide -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#9989;</div>
+            Bench Testing & Calibration Procedure
+        </div>
+        
+        <div class="step-grid">
+            <div class="step-box">
+                <div class="step-num">1</div>
+                <h4>Verify 5V Logic</h4>
+                <p>Ensure the HC-SR04+ and IR sensor are connected to the 5V regulated rail and share a common ground with the Arduino Uno.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">2</div>
+                <h4>Calibrate IR Sensor Sensitivity</h4>
+                <p>Turn the small potentiometer screw on the blue IR obstacle board until the onboard green LED lights up ONLY when an object is placed inside the chute entry.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">3</div>
+                <h4>Upload Sketch</h4>
+                <p>Open <code>03_ultrasonic_ir_dimension_test.ino</code> in Arduino IDE. Select <strong>Tools &rarr; Board &rarr; Arduino Uno</strong>, select your COM port, and click <strong>Upload</strong>.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">4</div>
+                <h4>Open Serial Monitor</h4>
+                <p>Open Serial Monitor and set baud rate to <strong>115200 baud</strong>. Place a 1.5L bottle and then a Mismo bottle in the vertical chamber to watch the live classification stream.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (40 cm Vertical Chamber):</h4>
+            <div class="code-box">
+==========================================================<br>
+ PCBCES Test 03: Vertical Chamber Distance & Height Check <br>
+ Total Height: 40 cm (Ceiling Sensor to Base Trapdoor)     <br>
+ 1.5L / 1.7L: 5 - 13 cm to cap | Mismo: 18 - 24 cm to cap <br>
+==========================================================<br>
+IR Entry: [CLEAR         ] | Ceiling-to-Cap: 40 cm (~Height: 0 cm)  | Classification: Waiting for insertion...<br>
+IR Entry: [BOTTLE PRESENT] | Ceiling-to-Cap: 9 cm  (~Height: 31 cm) | Classification: 1.5L / 1.7L BOTTLE DETECTED (NEAR)<br>
+IR Entry: [BOTTLE PRESENT] | Ceiling-to-Cap: 21 cm (~Height: 19 cm) | Classification: MISMO BOTTLE DETECTED (FAR)<br>
+IR Entry: [CLEAR         ] | Ceiling-to-Cap: 40 cm (~Height: 0 cm)  | Classification: Waiting for insertion...
+            </div>
+        </div>
+    </div>
 </div>
+
+<div id="imageModal" class="modal" onclick="closeModal()">
+    <span class="close-btn">&times;</span>
+    <img id="modalImg" class="modal-content" src="" alt="Fullscreen Visual">
+</div>
+
+<script>
+    function openModal(src) {
+        document.getElementById('modalImg').src = src;
+        document.getElementById('imageModal').classList.add('active');
+    }
+    function closeModal() {
+        document.getElementById('imageModal').classList.remove('active');
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "Escape") closeModal();
+    });
+</script>
+
 </body>
 </html>

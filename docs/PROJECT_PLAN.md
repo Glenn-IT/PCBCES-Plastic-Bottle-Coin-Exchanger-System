@@ -19,7 +19,7 @@ The system logic follows an intuitive sequence:
    - **Metal Detection (LJ12A3-4-Z/BX):** Rejects metallic cans or foreign objects.
    - **Plastic Dielectric Verification (LJC18A3-B-Z/BX):** Confirms bottle material is genuine plastic.
    - **Insertion Detection (IR Obstacle Sensor):** Detects object placed into the inspection cradle.
-   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Distinguishes a tall 1.5L bottle (~30cm) from a short Mismo bottle (~18cm). *(Note: Weight scale feature omitted in favor of high-speed non-contact classification with zero mechanical wear).*
+   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 40 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.7L bottles (5–13 cm to ceiling) from shorter Mismo bottles (18–24 cm to ceiling). *(Note: Weight scale feature omitted in favor of high-speed non-contact classification with zero mechanical wear).*
 4. **Accept / Reject Mechanism (MG996R Servo):**
    - **Valid Bottle:** Servo opens the trapdoor to drop the bottle into the internal bin; count increments (e.g., `1/5`), green light blinks.
    - **Invalid Bottle:** Servo blocks insertion or ejects to return tray; buzzer beeps alert, red light blinks, LCD prompts `"Pls try again"`.

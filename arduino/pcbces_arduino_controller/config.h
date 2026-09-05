@@ -42,13 +42,22 @@
 #define SERVO_ACCEPT_ANGLE      90   // Drop into internal storage bin
 #define SERVO_REJECT_ANGLE      180  // Return chute to user
 
-// Ultrasonic Height / Length Ranges (cm)
-// Measures distance to bottle bottom in horizontal cradle:
-// 1.5L bottle (~30cm length) vs Mismo bottle (~18cm length)
-#define HEIGHT_1_5L_MIN         26
-#define HEIGHT_1_5L_MAX         35
-#define HEIGHT_MISMO_MIN        16
-#define HEIGHT_MISMO_MAX        24
+// Ultrasonic Vertical Distance Thresholds (Ceiling Sensor to Bottle Cap)
+// Total Chamber Height (Bottom Trapdoor to Ceiling HC-SR04): 40 cm
+// Empty Chamber baseline echo: ~38 cm to 42 cm
+// 1.5L / 1.7L Bottle (Height ~30-33 cm): Cap is NEAR sensor -> Distance: 5 cm to 13 cm
+// Mismo Bottle (Height ~18-19 cm): Cap is FAR from sensor -> Distance: 18 cm to 24 cm
+#define CHAMBER_TOTAL_HEIGHT_CM 40   // Total distance from trapdoor base to HC-SR04
+#define DIST_1_5L_MIN           5    // Minimum distance from top sensor to 1.5L cap
+#define DIST_1_5L_MAX           13   // Maximum distance from top sensor to 1.5L cap
+#define DIST_MISMO_MIN          18   // Minimum distance from top sensor to Mismo cap
+#define DIST_MISMO_MAX          24   // Maximum distance from top sensor to Mismo cap
+
+// Backwards-compatible aliases
+#define HEIGHT_1_5L_MIN         DIST_1_5L_MIN
+#define HEIGHT_1_5L_MAX         DIST_1_5L_MAX
+#define HEIGHT_MISMO_MIN        DIST_MISMO_MIN
+#define HEIGHT_MISMO_MAX        DIST_MISMO_MAX
 
 // Admin SMS Recipient (Replace with actual phone number)
 #define ADMIN_PHONE_NUMBER      "+639123456789"
