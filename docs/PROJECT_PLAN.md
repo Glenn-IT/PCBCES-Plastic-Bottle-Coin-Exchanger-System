@@ -10,19 +10,19 @@
 
 The system logic follows an intuitive sequence:
 1. **Standby / Selection (Dedicated 3-Button Control):**
-   - **Button Green:** Direct selection for **1.5L Mode** (5 bottles = ₱3.00).
-   - **Button Blue:** Direct selection for **Mismo Mode** (10 bottles = ₱3.00).
+   - **Button Green:** Direct selection for **1.5L / 1.75L Mode** (5 bottles = ₱20.00).
+   - **Button Blue:** Direct selection for **290 ML Mode** (10 bottles = ₱3.00).
    - **Button Red:** System Restart / Cancel current transaction at any time.
-   - The 16x2 LCD displays: `GRN:1.5L BLU:MIS` / `RED:Cancel/Reset`.
-2. **Deposit Progress Tracking:** The LCD displays live progress (e.g., `1.5L [0/5]` or `Mismo [0/10]`). User can press Red at any point to cancel.
+   - The 16x2 LCD displays: `GRN:1.5L BLU:290` / `RED:Cancel/Reset`.
+2. **Deposit Progress Tracking:** The LCD displays live progress (e.g., `1.5L/1.75L(5pcs)` or `290 ML  (10 pcs)`). User can press Red at any point to cancel.
 3. **Sensor Verification (Non-Contact Classification Architecture):**
    - **Metal Detection (LJ12A3-4-Z/BX):** Rejects metallic cans or foreign objects.
    - **Insertion Detection (IR Obstacle Sensor):** Detects object placed into the inspection cradle.
-   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 43 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.7L bottles (7–15 cm to ceiling) from shorter Mismo bottles (26–27 cm to ceiling). *(Note: LJC18A3 Capacitive Sensor and HX711 Load Cell omitted).*
+   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 43 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.75L bottles (7–15 cm to ceiling) from shorter 290 ML bottles (26–27 cm to ceiling). *(Note: LJC18A3 Capacitive Sensor and HX711 Load Cell omitted).*
 4. **Accept / Reject Mechanism (MG996R Servo):**
    - **Valid Bottle:** Servo opens the trapdoor to 90° to drop the bottle into the internal storage bin; returns to 0° standby; count increments (e.g., `1/5`), green light blinks.
    - **Invalid Bottle:** Servo flap holds at 0° (stays closed); buzzer sounds alert, red light blinks, LCD prompts `"Pls Remove Item"` for customer manual retrieval from entry chute.
-5. **Coin Payout:** Once the target count is satisfied (5 bottles for 1.5L or 10 bottles for Mismo), the system triggers the 12V Coin Hopper to dispense **₱3.00** (three ₱1 coins), emits a completion beep, and resets to Standby.
+5. **Coin Payout:** Once the target count is satisfied (5 bottles for 1.5L/1.75L = ₱20.00 [20 coins] or 10 bottles for 290 ML = ₱3.00 [3 coins]), the system triggers the 12V Coin Hopper to dispense the exact target, emits a completion beep, and resets to Standby.
 6. **Bin Full Monitoring & GSM SMS Alert:**
    - When the internal bin fills up (detected via sensor and/or total bottle count capacity, e.g. 50 bottles), the system locks the chute, displays `"BIN FULL / SYSTEM PAUSED"` on the LCD, and **sends an SMS alert to the admin's phone number**:
      `"ALERT: PCBCES Storage Bin is FULL! Please empty the collection bin to resume operations."`
@@ -51,7 +51,7 @@ The system logic follows an intuitive sequence:
 | **Voltage Divider Resistors (10k, 4.7k, 2k)** | Available | Safely steps down 12V sensor/hopper signals to ~3.8V |
 | **1000µF Capacitor & 1N4007 Diode** | Available | Power rail stabilization (vital for GSM bursts & servo) |
 | **Breadboard & Power Distribution Block** | Available | Common 5V & GND distribution |
-| **Dedicated Buttons (Green, Blue, Red)** | Available | Green (1.5L), Blue (Mismo), Red (Cancel/Reset) |
+| **Dedicated Buttons (Green, Blue, Red)** | Available | Green (1.5L/1.75L), Blue (290 ML), Red (Cancel/Reset) |
 
 ---
 
@@ -75,18 +75,18 @@ Every pin on the Arduino Uno is carefully budgeted:
 |---|---|---|---|
 | **D0 (RX) / D1 (TX)** | Hardware Serial / USB | Serial Comm | Reserved for PC / USB Debugging / XAMPP |
 | **D2 (Trig)** | HC-SR04 Ultrasonic | Digital Out | Bottle height check |
-| **D3 (Echo)** | HC-SR04 Ultrasonic | Digital In | Bottle height echo |
+| **D3 (Echo)** | HC-SR04 Ultrasonic | Digital In | Bottle height echo: 1.5L near (7-15cm), 290 ML far (26-27cm) |
 | **D4** | IR Obstacle Sensor | Digital In | Insertion trigger (detects bottle inserted) |
 | **D5** | Spare / Unassigned GPIO | Unassigned | Reserved for future expansion (LJC18A3 omitted) |
 | **D6** | LJ12A3 Inductive Sensor | Digital In | Via 10k/4.7k voltage divider (12V -> ~3.8V) |
 | **D7** | Coin Hopper Pulse Line | Digital In (INT) | Via 10k/4.7k voltage divider (Counts ₱1 pulses) |
 | **D8** | 5V Relay Module | Digital Out | Turns ON/OFF 12V Hopper motor |
 | **D9 (PWM)** | MG996R Servo Motor | PWM Out | Trapdoor: 0° Standby / Reject, 90° Accept Drop |
-| **D10** | Button Green (1.5L) | Digital In (PULLUP)| Selects 1.5L bottle mode (5 pcs quota) |
+| **D10** | Button Green (1.5L) | Digital In (PULLUP)| Selects 1.5L/1.75L mode (5 pcs quota = ₱20 payout) |
 | **D11** | GSM SIM Module TX -> Arduino RX | SoftwareSerial RX | Receives AT response from SIM module |
 | **D12** | Active Buzzer | Digital Out | High = Beep, Low = Silent |
 | **D13** | Red LED / Bulb | Digital Out | Rejection / Error |
-| **A0** | Button Blue (Mismo) | Digital In (PULLUP)| Selects Mismo bottle mode (10 pcs quota) |
+| **A0** | Button Blue (Mismo / 290 ML) | Digital In (PULLUP)| Selects 290 ML mode (10 pcs quota = ₱3 payout) |
 | **A1** | Button Red (Restart/Cancel) | Digital In (PULLUP)| Cancels active transaction / resets system |
 | **A2** | Green LED / Bulb | Digital Out | Acceptance / Ready |
 | **A3** | Arduino TX -> GSM SIM Module RX | SoftwareSerial TX | Sends AT commands to SIM module |

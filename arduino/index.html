@@ -261,7 +261,7 @@
         <div>
             <div class="hero-title">⚡ Master Reverse Vending Machine Capstone Controller</div>
             <div class="hero-desc">
-                Full finite state machine integrating non-contact vertical bottle classification (43cm vertical chamber: 1.5L vs Mismo ceiling-to-cap distance via HC-SR04), inductive metal rejection (LJ12A3), MG996R trapdoor servo gate, 12V ₱3 coin hopper, dedicated 3-button user interface (Green 1.5L / Blue Mismo / Red Reset), and SIM800L SMS bin-full dispatcher. (Pin D5 reserved as spare GPIO; LJC18A3 capacitive sensor omitted).
+                Full finite state machine integrating non-contact vertical bottle classification (43cm vertical chamber: 1.5L/1.75L vs 290 ML ceiling-to-cap distance via HC-SR04), inductive metal rejection (LJ12A3), MG996R trapdoor servo gate, 12V coin hopper (₱20 / ₱3 payouts), dedicated 3-button user interface (Green 1.5L / Blue 290 ML / Red Reset), and SIM800L SMS bin-full dispatcher. (Pin D5 reserved as spare GPIO; LJC18A3 capacitive sensor omitted).
             </div>
             <div class="hero-badges">
                 <span class="pill" style="border-color: #ef4444; color: #f87171;">🔴 12V 10A Main PSU</span>
@@ -435,7 +435,7 @@
                     <text x="500" y="338" fill="#94a3b8" font-size="10" font-weight="700">ANALOG / DIGITAL PINS</text>
 
                     <circle cx="490" cy="370" r="6" fill="#3b82f6" class="term-dot"/>
-                    <text x="505" y="374" fill="#60a5fa" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A0: BTN BLUE (Mismo)</text>
+                    <text x="505" y="374" fill="#60a5fa" font-size="10" font-family="JetBrains Mono" font-weight="700">A0: BTN BLUE (Mismo / 290 ML)</text>
 
                     <circle cx="490" cy="410" r="6" fill="#ef4444" class="term-dot"/>
                     <text x="505" y="414" fill="#f87171" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A1: BTN RED (Restart)</text>
@@ -587,17 +587,17 @@
 
                     <!-- 3x Dedicated Control Buttons -->
                     <g>
-                        <!-- Button Green: 1.5L -->
+                        <!-- Button Green: 1.5L / 1.75L -->
                         <rect x="930" y="898" width="162" height="60" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
                         <circle cx="955" cy="928" r="10" fill="#10b981"/>
                         <text x="975" y="922" fill="#a7f3d0" font-size="9.5" font-weight="800">BTN GREEN (1.5L)</text>
-                        <text x="975" y="936" fill="#6ee7b7" font-size="8.5">5 pcs = 3.00 PHP</text>
+                        <text x="975" y="936" fill="#6ee7b7" font-size="8.5">5 pcs = 20.00 PHP</text>
                         <text x="975" y="948" fill="#a7f3d0" font-size="8" font-family="JetBrains Mono">Arduino D10</text>
 
-                        <!-- Button Blue: Mismo -->
+                        <!-- Button Blue: 290 ML -->
                         <rect x="1104" y="898" width="162" height="60" rx="6" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1.5"/>
                         <circle cx="1129" cy="928" r="10" fill="#3b82f6"/>
-                        <text x="1149" y="922" fill="#bfdbfe" font-size="9.5" font-weight="800">BTN BLUE (MISMO)</text>
+                        <text x="1149" y="922" fill="#bfdbfe" font-size="9" font-weight="800">BTN BLUE (MISMO)</text>
                         <text x="1149" y="936" fill="#93c5fd" font-size="8.5">10 pcs = 3.00 PHP</text>
                         <text x="1149" y="948" fill="#bfdbfe" font-size="8" font-family="JetBrains Mono">Arduino A0</text>
 
@@ -732,7 +732,7 @@
                     <td><strong>HC-SR04 Ultrasonic</strong></td>
                     <td>Digital Input</td>
                     <td>5V Logic</td>
-                    <td>Reads echo from bottle cap: 1.5L near (7-15cm), Mismo far (20-27cm)</td>
+                    <td>Reads echo from bottle cap: 1.5L/1.75L near (7-15cm), 290 ML far (26-27cm)</td>
                     <td><a href="03_ultrasonic_ir_dimension_test/wiring_guide.html" style="color: var(--accent-cyan); font-weight: 700; text-decoration: none;">Test 03 Guide &rarr;</a></td>
                 </tr>
                 <tr>
@@ -788,7 +788,7 @@
                     <td><strong>Button Green (1.5L Mode)</strong></td>
                     <td>Digital Input (PULLUP)</td>
                     <td>5V Logic (Active LOW to GND)</td>
-                    <td>Dedicated button selecting 1.5L bottle deposit mode (Quota: 5 pcs = ₱3)</td>
+                    <td>Dedicated button selecting 1.5L / 1.75L bottle deposit mode (Quota: 5 pcs = ₱20)</td>
                     <td><a href="01_lcd_button_menu_test/wiring_guide.html" style="color: var(--accent-green); font-weight: 700; text-decoration: none;">Test 01 Guide &rarr;</a></td>
                 </tr>
                 <tr>
@@ -820,7 +820,7 @@
                     <td><strong>Button Blue (Mismo Mode)</strong></td>
                     <td>Digital Input (PULLUP)</td>
                     <td>5V Logic (Active LOW to GND)</td>
-                    <td>Dedicated button selecting Mismo bottle deposit mode (Quota: 10 pcs = ₱3)</td>
+                    <td>Dedicated button selecting 290 ML bottle deposit mode (Quota: 10 pcs = ₱3)</td>
                     <td><a href="01_lcd_button_menu_test/wiring_guide.html" style="color: var(--accent-green); font-weight: 700; text-decoration: none;">Test 01 Guide &rarr;</a></td>
                 </tr>
                 <tr>
@@ -875,7 +875,7 @@
             <div>
                 <span class="card-tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">TEST 01</span>
                 <h3>16x2 I2C LCD & 3-Button Interface</h3>
-                <p>Verifies 16x2 I2C LCD display and 3 dedicated control buttons: Green (1.5L Mode on D10), Blue (Mismo Mode on A0), and Red (Cancel/Reset on A1) with active buzzer audio prompts.</p>
+                <p>Verifies 16x2 I2C LCD display and 3 dedicated control buttons: Green (1.5L/1.75L Mode on D10: ₱20), Blue (290 ML Mode on A0: ₱3), and Red (Cancel/Reset on A1) with active buzzer audio prompts.</p>
             </div>
             <a href="01_lcd_button_menu_test/wiring_guide.html" class="btn btn-green">View Test 01 Guide &rarr;</a>
         </div>
@@ -895,7 +895,7 @@
             <div>
                 <span class="card-tag" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">TEST 03</span>
                 <h3>Ultrasonic HC-SR04 & IR Entry</h3>
-                <p>Measures top-down distance to bottle cap in 43cm vertical chamber using D2/D3 ultrasonic pulses to differentiate 1.5L/1.7L (7-15cm near) from Mismo (26-27cm far), paired with D4 IR entry beam detection.</p>
+                <p>Measures top-down distance to bottle cap in 43cm vertical chamber using D2/D3 ultrasonic pulses to differentiate 1.5L/1.75L (7-15cm near) from 290 ML (26-27cm far), paired with D4 IR entry beam detection.</p>
             </div>
             <a href="03_ultrasonic_ir_dimension_test/wiring_guide.html" class="btn btn-cyan">View Test 03 Guide &rarr;</a>
         </div>
@@ -925,7 +925,7 @@
             <div>
                 <span class="card-tag" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">TEST 06</span>
                 <h3>12V Coin Hopper & 5V Relay</h3>
-                <p>5V relay motor switching on pin D8 paired with D7 optical falling pulse interrupt for dispensing accurate ₱3.00 (3 x ₱1 coins) rewards upon reaching bottle quota.</p>
+                <p>5V relay motor switching on pin D8 paired with D7 optical falling pulse interrupt for dispensing accurate coin rewards (₱20 for 1.5L/1.75L, ₱3 for 290 ML) upon reaching bottle quota.</p>
             </div>
             <a href="06_coin_hopper_relay_test/wiring_guide.html" class="btn btn-purple">View Test 06 Guide &rarr;</a>
         </div>

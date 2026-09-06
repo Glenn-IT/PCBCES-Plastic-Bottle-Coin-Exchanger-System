@@ -186,6 +186,46 @@
             </svg>
         </div>
     </div>
+
+    <!-- Payout Targets & Procedure Card -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">🪙</div>
+            Coin Payout Standards & Testing Guide
+        </div>
+        <table style="margin-bottom: 1.25rem;">
+            <thead>
+                <tr>
+                    <th>Deposit Mode</th>
+                    <th>Session Quota</th>
+                    <th>Payout Reward</th>
+                    <th>Hopper Coin Pulse Target</th>
+                    <th>Serial Test Key</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1.5L / 1.75L Bottle Mode</strong></td>
+                    <td>5 bottles</td>
+                    <td><strong style="color: #34d399;">₱20.00</strong> (₱4.00/pc)</td>
+                    <td><span class="pin-tag tag-uno">20 Coins</span></td>
+                    <td>Send <code>2</code></td>
+                </tr>
+                <tr>
+                    <td><strong>290 ML Bottle Mode</strong></td>
+                    <td>10 bottles</td>
+                    <td><strong style="color: #60a5fa;">₱3.00</strong> (₱0.30/pc)</td>
+                    <td><span class="pin-tag tag-uno">3 Coins</span></td>
+                    <td>Send <code>1</code> or <code>d</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <ul>
+            <li><strong>D8 Relay Driver:</strong> Active LOW switches 12V DC power to the hopper motor.</li>
+            <li><strong>D7 Optical Pulse Interrupt:</strong> Falling-edge interrupt scaled via 10kΩ/4.7kΩ (or 5kΩ) voltage divider (~3.84V–4.00V). 1 pulse = 1 coin dispensed.</li>
+            <li><strong>Testing:</strong> Open Serial Monitor at <code>115200 baud</code>. Send <code>1</code> to dispense 3 coins, or <code>2</code> to dispense 20 coins.</li>
+        </ul>
+    </div>
 </div>
 </body>
 </html>

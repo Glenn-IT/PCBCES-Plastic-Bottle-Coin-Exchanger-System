@@ -6,8 +6,8 @@
  * Vertical Measurement Logic:
  * - Total Chamber Height (Ceiling HC-SR04 to Trapdoor Base): 43 cm
  * - Empty Chamber: ~41 cm - 45 cm
- * - 1.5L / 1.7L Bottle (~30-33 cm height): Cap is NEAR sensor -> 7 cm to 15 cm
- * - Mismo Bottle (~16-17 cm height): Cap is FAR from sensor -> 26 cm to 27 cm
+ * - 1.5L / 1.75L Bottle (~30-33 cm height): Cap is NEAR sensor -> 7 cm to 15 cm
+ * - 290 ML Bottle (~16-17 cm height): Cap is FAR from sensor -> 26 cm to 27 cm
  * 
  * Pin Connections:
  * - HC-SR04 Trig -> D2
@@ -16,7 +16,7 @@
  * - VCC -> 5V Rail
  * - GND -> Common GND Rail
  * 
- * Last Updated: 2026-09-06 15:34:00 (+08:00)
+ * Last Updated: 2026-09-06 18:35:00 (+08:00)
  */
 
 const int TRIG_PIN = 2;
@@ -24,10 +24,14 @@ const int ECHO_PIN = 3;
 const int IR_PIN = 4;
 
 const int CHAMBER_HEIGHT_CM = 43; // Physical distance from ceiling HC-SR04 to floor trapdoor
-const int DIST_1_5L_MIN = 7;      // 1.5L cap is ~7-15 cm from ceiling (~28-36 cm tall bottle)
+const int DIST_1_5L_MIN = 7;      // 1.5L/1.75L cap is ~7-15 cm from ceiling (~28-36 cm tall bottle)
 const int DIST_1_5L_MAX = 15;
-const int DIST_MISMO_MIN = 26;    // Mismo cap is ~26-27 cm from ceiling (~16-17 cm tall bottle)
-const int DIST_MISMO_MAX = 27;
+const int DIST_290ML_MIN = 26;    // 290 ML cap is ~26-27 cm from ceiling (~16-17 cm tall bottle)
+const int DIST_290ML_MAX = 27;
+
+// Backward-compatibility aliases
+const int DIST_MISMO_MIN = DIST_290ML_MIN;
+const int DIST_MISMO_MAX = DIST_290ML_MAX;
 
 // Single ping with bounded timeout (~102 cm max) to prevent stray echo listening
 long singlePingCm() {
@@ -78,7 +82,7 @@ void setup() {
   Serial.println(F("=========================================================="));
   Serial.println(F(" PCBCES Test 03: Vertical Chamber Distance & Height Check "));
   Serial.println(F(" Total Height: 43 cm (Ceiling Sensor to Base Trapdoor)     "));
-  Serial.println(F(" 1.5L / 1.7L: 7 - 15 cm to cap | Mismo: 26 - 27 cm to cap "));
+  Serial.println(F(" 1.5L/1.75L: 7-15 cm to cap | 290 ML: 26-27 cm to cap     "));
   Serial.println(F("=========================================================="));
 }
 
@@ -97,9 +101,9 @@ void loop() {
 
   if (bottleAtEntry) {
     if (distToCap >= DIST_1_5L_MIN && distToCap <= DIST_1_5L_MAX) {
-      Serial.println(F("1.5L / 1.7L BOTTLE DETECTED (NEAR)"));
-    } else if (distToCap >= DIST_MISMO_MIN && distToCap <= DIST_MISMO_MAX) {
-      Serial.println(F("MISMO BOTTLE DETECTED (FAR)"));
+      Serial.println(F("1.5L / 1.75L BOTTLE DETECTED (NEAR)"));
+    } else if (distToCap >= DIST_290ML_MIN && distToCap <= DIST_290ML_MAX) {
+      Serial.println(F("290 ML BOTTLE DETECTED (FAR)"));
     } else if (distToCap >= (CHAMBER_HEIGHT_CM - 3)) {
       Serial.println(F("EMPTY / OBSTACLE AT BEAM BUT NO BOTTLE"));
     } else {

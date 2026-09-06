@@ -46,14 +46,14 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | | GND | Common GND | |
 | | SDA | Arduino **A4** | Hardware I2C SDA |
 | | SCL | Arduino **A5** | Hardware I2C SCL |
-| **Button Blue (Mismo)** | Leg 1 | Arduino **A0** | Selects Mismo mode (10 pcs quota, `INPUT_PULLUP`) |
+| **Button Blue (Mismo / 290 ML)** | Leg 1 | Arduino **A0** | Selects 290 ML mode (10 pcs quota = ₱3.00, `INPUT_PULLUP`) |
 | | Leg 2 | Common GND | |
 | **Button Red (Reset/Cancel)** | Leg 1 | Arduino **A1** | Cancels transaction / resets system (`INPUT_PULLUP`) |
 | | Leg 2 | Common GND | |
 | **HC-SR04 Ultrasonic** | VCC | 5V Bus | |
 | | GND | Common GND | |
 | | Trig | Arduino **D2** | Trigger pulse (Ceiling sensor down into 43cm chamber) |
-| | Echo | Arduino **D3** | Echo from bottle cap: 1.5L near (7-15cm), Mismo far (20-27cm) |
+| | Echo | Arduino **D3** | Echo from bottle cap: 1.5L/1.75L near (7-15cm), 290 ML far (26-27cm) |
 | **IR Obstacle Sensor** | VCC | 5V Bus | |
 | | GND | Common GND | |
 | | OUT | Arduino **D4** | Active LOW when bottle blocks beam |
@@ -70,7 +70,7 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | **MG996R Servo** | Red (+V) | 5V Bus (with 1000µF capacitor across + & -) | High torque servo |
 | | Brown (GND) | Common GND | |
 | | Orange (Signal)| Arduino **D9 (PWM)** | Controls trapdoor gate (0° Standby / Reject, 90° Accept Drop) |
-| **Button Green (1.5L)** | Leg 1 | Arduino **D10** | Selects 1.5L mode (5 pcs quota, `INPUT_PULLUP`) |
+| **Button Green (1.5L)** | Leg 1 | Arduino **D10** | Selects 1.5L / 1.75L mode (5 pcs quota = ₱20.00, `INPUT_PULLUP`) |
 | | Leg 2 | Common GND | |
 | **GSM SIM Module** | VCC | 4.3V Rail (via 1N4007 from 5V + 1000µF cap) | Needs 3.7V - 4.4V with 2A burst |
 | | GND | Common GND | |

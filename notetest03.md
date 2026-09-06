@@ -72,16 +72,16 @@ $$\text{Distance to Cap} = H_{\text{chamber}} - \text{Bottle Height}$$
 
 ---
 
-### Phase 3: Calibrate Mismo (250–350 mL) Bottle Mode
+### Phase 3: Calibrate 290 ML / Mismo (250–350 mL) Bottle Mode
 
-1. Place an actual **Mismo bottle** (e.g., Coca-Cola 290 mL Mismo, Sprite Mismo, or C2 355 mL) upright on the trapdoor flap.
+1. Place an actual **290 ML bottle** (e.g., Coca-Cola 290 ML Mismo, Sprite Mismo, or C2 355 mL) upright on the trapdoor flap.
 2. Read the `Chamber Distance` on the Serial Monitor.
-3. Test with **2 to 3 common Mismo/mini bottles** (they vary between 16 cm and 20 cm tall).
+3. Test with **2 to 3 common 290 ML / mini bottles** (they vary between 16 cm and 20 cm tall).
 4. Record the observed distance to cap:
    * Example: Observed readings between `24 cm` and `26 cm`.
 5. Add a **safety tolerance margin**:
-   * `DIST_MISMO_MIN = Observed_Min - 1` (e.g., 24 - 1 = 23 cm or 24 cm)
-   * `DIST_MISMO_MAX = Observed_Max + 1` (e.g., 26 + 1 = 27 cm)
+   * `DIST_290ML_MIN = Observed_Min - 1` (e.g., 24 - 1 = 23 cm or 24 cm; alias: `DIST_MISMO_MIN`)
+   * `DIST_290ML_MAX = Observed_Max + 1` (e.g., 26 + 1 = 27 cm; alias: `DIST_MISMO_MAX`)
 
 ---
 
@@ -142,6 +142,6 @@ php scripts/verify_hardware_sync.php
 |---|---|---|---|
 | **Chamber Baseline** | `43 cm` | `40 cm to 55 cm` | Empty chamber reading on Serial Monitor |
 | **1.5L Distance Range** | `7 cm to 15 cm` | Baseline - (30 to 33 cm) | Cap distance with 1.5L bottle inside |
-| **Mismo Distance Range** | `26 cm to 27 cm` | Baseline - (16 to 17 cm) | Cap distance with Mismo bottle inside |
+| **290 ML / Mismo Distance Range** | `26 cm to 27 cm` | Baseline - (16 to 17 cm) | Cap distance with 290 ML bottle inside |
 | **IR Sensor Position** | Lower right wall | Flush on lower chute entry | Flush with inner wall, no protrusion |
 | **Trapdoor Base** | Cardboard flap | Acrylic/sheet metal on MG996R | Must rest 100% horizontal in Standby (0°) |

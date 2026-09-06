@@ -19,8 +19,8 @@
    - When routing button wires from the front door panel to the Arduino Uno, twist each signal wire with a GND wire (twisted pair).
    - If wire runs exceed 50 cm, electrical noise from the hopper motor or relay can cause ghost presses. The master firmware already includes a **50 ms debounce delay**, but keeping wires shielded or twisted is critical.
 3. **Physical Button Layout Standard:**
-   - **GREEN (D10):** 1.5L Bottle Mode (5 pcs = ₱3.00)
-   - **BLUE (A0):** Mismo Bottle Mode (10 pcs = ₱3.00)
+   - **GREEN (D10):** 1.5L / 1.75L Bottle Mode (5 pcs = ₱20.00)
+   - **BLUE (A0):** 290 ML Bottle Mode (10 pcs = ₱3.00)
    - **RED (A1):** Cancel Transaction / System Reset
 
 ---
@@ -116,5 +116,5 @@
 | **Chamber Height** | Run `03_ultrasonic_ir_dimension_test.ino` | Stable baseline reading with 0 cm height |
 | **Inductive Metal** | Test aluminum can and plastic bottle at sensor face | Cans trigger D6 LOW; plastic ignored |
 | **Servo Angles** | Test flap positions at 0° (Standby/Reject) and 90° (Accept) | Smooth travel, no motor humming at 0° rest |
-| **Hopper Payout** | Run `06_coin_hopper_relay_test.ino` | Dispenses exactly 3 coins (₱3.00) and halts |
+| **Hopper Payout** | Run `06_coin_hopper_relay_test.ino` | Dispenses exactly 3 coins (₱3.00) or 20 coins (₱20.00) and halts |
 | **GSM Signal** | Run `07_sim800l_gsm_sms_test.ino` | Returns `+CSQ: > 14` and sends test SMS |

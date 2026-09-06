@@ -3,12 +3,12 @@
 
 // =============================================================================
 // PCBCES PIN CONFIGURATION MATRIX (Arduino Uno ATmega328P)
-// Last Updated: 2026-09-06 18:15:00 (+08:00)
+// Last Updated: 2026-09-06 18:35:00 (+08:00)
 // =============================================================================
 
 // Dedicated 3-Button User Interface Pins (INPUT_PULLUP to GND)
-#define PIN_BTN_GREEN       10   // Button Green: Select 1.5L Bottle Mode (5 pcs = 3 PHP)
-#define PIN_BTN_BLUE        A0   // Button Blue:  Select Mismo Bottle Mode (10 pcs = 3 PHP)
+#define PIN_BTN_GREEN       10   // Button Green: Select 1.5L / 1.75L Bottle Mode (5 pcs = 20 PHP)
+#define PIN_BTN_BLUE        A0   // Button Blue:  Select 290 ML Bottle Mode (10 pcs = 3 PHP)
 #define PIN_BTN_RED         A1   // Button Red:   System Restart / Cancel Transaction
 
 // Analog & I2C Pins
@@ -33,9 +33,11 @@
 // =============================================================================
 // THRESHOLDS & SPECIFICATIONS
 // =============================================================================
-#define BOTTLE_1_5L_QUOTA       5    // 5 bottles = 3.00 PHP
-#define BOTTLE_MISMO_QUOTA      10   // 10 bottles = 3.00 PHP
-#define COINS_PAYOUT_TARGET     3    // 3 x 1.00 Peso coins = 3.00 PHP
+#define BOTTLE_1_5L_QUOTA       5    // 5 bottles = 20.00 PHP (4.00 PHP per bottle)
+#define BOTTLE_290ML_QUOTA      10   // 10 bottles = 3.00 PHP (290 ML Mode)
+#define COINS_PAYOUT_1_5L       20   // 20 x 1.00 Peso coins = 20.00 PHP
+#define COINS_PAYOUT_290ML      3    // 3 x 1.00 Peso coins = 3.00 PHP
+#define COINS_PAYOUT_TARGET     COINS_PAYOUT_290ML // Backward-compatible default (3 PHP)
 #define MAX_BIN_CAPACITY        30   // Trigger Bin-Full SMS when 30 bottles deposited
 
 // Servo Angles
@@ -46,19 +48,24 @@
 // Ultrasonic Vertical Distance Thresholds (Ceiling Sensor to Bottle Cap)
 // Total Chamber Height (Bottom Trapdoor to Ceiling HC-SR04): Calibrated to 43 cm
 // Empty Chamber baseline echo: ~41 cm to 45 cm
-// 1.5L / 1.7L Bottle (Height ~30-33 cm): Cap is NEAR sensor -> Distance: 7 cm to 15 cm
-// Mismo Bottle (Height ~16-17 cm): Cap is FAR from sensor -> Distance: 26 cm to 27 cm
+// 1.5L / 1.75L Bottle (Height ~30-33 cm): Cap is NEAR sensor -> Distance: 7 cm to 15 cm
+// 290 ML Bottle (Height ~16-17 cm): Cap is FAR from sensor -> Distance: 26 cm to 27 cm
 #define CHAMBER_TOTAL_HEIGHT_CM 43   // Calibrated physical distance from trapdoor base to HC-SR04
-#define DIST_1_5L_MIN           7    // Minimum distance from top sensor to 1.5L cap (~36 cm max bottle height)
-#define DIST_1_5L_MAX           15   // Maximum distance from top sensor to 1.5L cap (~28 cm min bottle height)
-#define DIST_MISMO_MIN          26   // Minimum distance from top sensor to Mismo cap (~17 cm max bottle height)
-#define DIST_MISMO_MAX          27   // Maximum distance from top sensor to Mismo cap (~16 cm min bottle height)
+#define DIST_1_5L_MIN           7    // Minimum distance from top sensor to 1.5L/1.75L cap (~36 cm max bottle height)
+#define DIST_1_5L_MAX           15   // Maximum distance from top sensor to 1.5L/1.75L cap (~28 cm min bottle height)
+#define DIST_290ML_MIN          26   // Minimum distance from top sensor to 290 ML cap (~17 cm max bottle height)
+#define DIST_290ML_MAX          27   // Maximum distance from top sensor to 290 ML cap (~16 cm min bottle height)
 
 // Backwards-compatible aliases
+#define BOTTLE_MISMO_QUOTA      BOTTLE_290ML_QUOTA
+#define DIST_MISMO_MIN          DIST_290ML_MIN
+#define DIST_MISMO_MAX          DIST_290ML_MAX
 #define HEIGHT_1_5L_MIN         DIST_1_5L_MIN
 #define HEIGHT_1_5L_MAX         DIST_1_5L_MAX
 #define HEIGHT_MISMO_MIN        DIST_MISMO_MIN
 #define HEIGHT_MISMO_MAX        DIST_MISMO_MAX
+#define HEIGHT_290ML_MIN        DIST_290ML_MIN
+#define HEIGHT_290ML_MAX        DIST_290ML_MAX
 
 // Admin SMS Recipient (Replace with actual phone number)
 #define ADMIN_PHONE_NUMBER      "+639123456789"

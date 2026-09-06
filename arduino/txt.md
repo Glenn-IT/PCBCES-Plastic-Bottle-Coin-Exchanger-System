@@ -1,8 +1,18 @@
-C:\xampp\htdocs\PCBCES-Plastic-Bottle-Coin-Exchanger-System\arduino\Proposal01.png
+# PCBCES Bottle Mode & Pricing Specifications (Updated & Confirmed)
 
+## 1. 1.5L / 1.75L Bottle Mode
+- **Mode Button:** Green Button (Arduino Pin D10)
+- **Bottle Classification:** 1.5 Liter / 1.75 Liter PET Bottles (Height: ~30–33 cm; Distance to Cap: 7–15 cm)
+- **Session Quota:** Exactly 5 bottles per session (LCD displays `0/5` up to `5/5`)
+- **Reward Rate:** ₱4.00 per bottle
+- **Total Payout:** 5 bottles × ₱4.00 = **₱20.00 (20 x ₱1 coins)** dispensed via 12V Coin Hopper
 
-Check that image as reference
+## 2. 290 ML Bottle Mode (Formerly "Mismo")
+- **Mode Button:** Blue Button (Arduino Pin A0)
+- **Naming Standard:** Renamed strictly from "Mismo" to **"290 ML"**
+- **Bottle Classification:** 290 ML PET Bottles (Height: ~16–17 cm; Distance to Cap: 26–27 cm)
+- **Session Quota:** Exactly 10 bottles per session (LCD displays `0/10` up to `10/10`)
+- **Total Payout:** 10 bottles = **₱3.00 (3 x ₱1 coins)** dispensed via 12V Coin Hopper
 
-Let the HC-SR04 look for the distance of the bottle Vertically
-
-Like if the object of course the bottle cap object is far form the sensor thats an Mismo so check the exact heifht of mismo bottles and if its near the sensor thats an 1.5 of course check the heifght also of the 1.5 ok
+## 3. Control & Safety
+- **Red Button (Arduino Pin A1):** Transaction Cancel / System Reset at any time (clears count, returns to standby menu)

@@ -1,21 +1,21 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
- * Last Updated: 2026-09-06 18:15:00 (+08:00)
+ * Last Updated: 2026-09-06 18:35:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
  * - 16x2 I2C LCD (PCF8574)
  * - 3 Dedicated Control Buttons (INPUT_PULLUP):
- *     * Button Green (Pin 10): 1.5L Bottle Mode (5 pcs = 3 PHP)
- *     * Button Blue  (Pin A0): Mismo Bottle Mode (10 pcs = 3 PHP)
+ *     * Button Green (Pin 10): 1.5L / 1.75L Bottle Mode (5 pcs = 20 PHP)
+ *     * Button Blue  (Pin A0): 290 ML Bottle Mode (10 pcs = 3 PHP)
  *     * Button Red   (Pin A1): System Restart / Cancel Transaction
  * - Active 5V Buzzer & Green/Red Status LEDs
  * - HC-SR04+ Ultrasonic (Bottle Length / Size Discrimination)
  * - IR Obstacle Avoidance (Bottle Insertion Beam Trigger)
  * - LJ12A3 Inductive Sensor (Metallic Object Rejection)
  * - MG996R Metal Gear Servo (Accept/Reject Trapdoor Flap)
- * - 12V Coin Hopper & 5V Relay (3.00 PHP Payout)
+ * - 12V Coin Hopper & 5V Relay (20.00 PHP or 3.00 PHP Payout)
  * - SIM800L GSM Module (Storage Bin Full SMS Telemetry)
  * - Pin D5: Spare / Unassigned GPIO (LJC18A3 Capacitive Sensor omitted)
  */
@@ -43,11 +43,13 @@ enum MachineState {
 };
 
 MachineState currentState = STATE_STANDBY_MENU;
-enum BottleType { TYPE_1_5L, TYPE_MISMO };
+enum BottleType { TYPE_1_5L, TYPE_290ML };
+const BottleType TYPE_MISMO = TYPE_290ML; // Backward compatibility alias
 BottleType selectedType = TYPE_1_5L;
 
 int currentDepositCount = 0;
 int requiredQuota = BOTTLE_1_5L_QUOTA;
+int requiredCoinsPayout = COINS_PAYOUT_1_5L;
 int totalBinBottles = 0;
 volatile int coinsDispensed = 0;
 
@@ -144,7 +146,7 @@ void sendBinFullSMS() {
 void showMenuLCD() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("GRN:1.5L BLU:MIS");
+  lcd.print("GRN:1.5L BLU:290");
   lcd.setCursor(0, 1);
   lcd.print("RED:Cancel/Reset");
 }
@@ -153,9 +155,9 @@ void showProgressLCD() {
   lcd.clear();
   lcd.setCursor(0, 0);
   if (selectedType == TYPE_1_5L) {
-    lcd.print("1.5L PET (5 pcs)");
+    lcd.print("1.5L/1.75L(5pcs)");
   } else {
-    lcd.print("Mismo PET (10pcs)");
+    lcd.print("290 ML  (10 pcs)");
   }
   lcd.setCursor(0, 1);
   lcd.print("Count: ");
@@ -245,21 +247,22 @@ void loop() {
       digitalWrite(PIN_LED_GREEN, HIGH);
       digitalWrite(PIN_LED_RED, LOW);
 
-      // 1. GREEN BUTTON -> Select 1.5L Mode
+      // 1. GREEN BUTTON -> Select 1.5L / 1.75L Mode (5 pcs = 20 PHP)
       if (digitalRead(PIN_BTN_GREEN) == LOW) {
         delay(50);
         if (digitalRead(PIN_BTN_GREEN) == LOW) {
           selectedType = TYPE_1_5L;
           requiredQuota = BOTTLE_1_5L_QUOTA;
+          requiredCoinsPayout = COINS_PAYOUT_1_5L;
           currentDepositCount = 0;
           soundBeep(100);
-          Serial.println(F("[MENU] GREEN pressed: 1.5L Mode Selected (5 pcs)"));
+          Serial.println(F("[MENU] GREEN pressed: 1.5L / 1.75L Mode Selected (5 pcs = 20 PHP)"));
           
           lcd.clear();
           lcd.setCursor(0, 0);
-          lcd.print("MODE: 1.5L PET  ");
+          lcd.print("MODE: 1.5L/1.75L");
           lcd.setCursor(0, 1);
-          lcd.print("Target: 5 Pcs   ");
+          lcd.print("Target: 5 (20P) ");
           delay(1000);
           
           currentState = STATE_WAIT_INSERTION;
@@ -269,21 +272,22 @@ void loop() {
         }
       }
 
-      // 2. BLUE BUTTON -> Select Mismo Mode
+      // 2. BLUE BUTTON -> Select 290 ML Mode (10 pcs = 3 PHP)
       if (digitalRead(PIN_BTN_BLUE) == LOW) {
         delay(50);
         if (digitalRead(PIN_BTN_BLUE) == LOW) {
-          selectedType = TYPE_MISMO;
-          requiredQuota = BOTTLE_MISMO_QUOTA;
+          selectedType = TYPE_290ML;
+          requiredQuota = BOTTLE_290ML_QUOTA;
+          requiredCoinsPayout = COINS_PAYOUT_290ML;
           currentDepositCount = 0;
           soundBeep(100);
-          Serial.println(F("[MENU] BLUE pressed: Mismo Mode Selected (10 pcs)"));
+          Serial.println(F("[MENU] BLUE pressed: 290 ML Mode Selected (10 pcs = 3 PHP)"));
           
           lcd.clear();
           lcd.setCursor(0, 0);
-          lcd.print("MODE: MISMO PET ");
+          lcd.print("MODE: 290 ML PET");
           lcd.setCursor(0, 1);
-          lcd.print("Target: 10 Pcs  ");
+          lcd.print("Target: 10 (3P) ");
           delay(1000);
           
           currentState = STATE_WAIT_INSERTION;
@@ -351,13 +355,13 @@ void loop() {
       bool validDimensions = false;
       if (selectedType == TYPE_1_5L && distToCap >= DIST_1_5L_MIN && distToCap <= DIST_1_5L_MAX) {
         validDimensions = true;
-      } else if (selectedType == TYPE_MISMO && distToCap >= DIST_MISMO_MIN && distToCap <= DIST_MISMO_MAX) {
+      } else if (selectedType == TYPE_290ML && distToCap >= DIST_290ML_MIN && distToCap <= DIST_290ML_MAX) {
         validDimensions = true;
       }
 
       if (!validDimensions) {
         Serial.print(F("[VALIDATION] REJECT: Bottle dimensions mismatch for "));
-        Serial.println((selectedType == TYPE_1_5L) ? F("1.5L Mode") : F("Mismo Mode"));
+        Serial.println((selectedType == TYPE_1_5L) ? F("1.5L / 1.75L Mode") : F("290 ML Mode"));
         currentState = STATE_REJECT_EJECT;
         break;
       }
@@ -428,20 +432,26 @@ void loop() {
     }
 
     case STATE_PAYOUT_COINS: {
-      Serial.println(F("[PAYOUT] Quota reached! Dispensing 3.00 PHP..."));
+      Serial.print(F("[PAYOUT] Quota reached! Dispensing "));
+      Serial.print(requiredCoinsPayout);
+      Serial.println(F(".00 PHP..."));
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("QUOTA REACHED!  ");
       lcd.setCursor(0, 1);
-      lcd.print("Dispensing 3 PHP");
+      if (requiredCoinsPayout >= 10) {
+        lcd.print("Dispensing 20PHP");
+      } else {
+        lcd.print("Dispensing 3 PHP");
+      }
 
       coinsDispensed = 0;
       digitalWrite(PIN_RELAY_HOPPER, LOW); // Start 12V Hopper Motor
 
       unsigned long payoutStart = millis();
-      while (coinsDispensed < COINS_PAYOUT_TARGET) {
-        // Safety timeout of 10 seconds
-        if (millis() - payoutStart > 10000) {
+      unsigned long payoutTimeout = (unsigned long)requiredCoinsPayout * 2500UL + 6000UL;
+      while (coinsDispensed < requiredCoinsPayout) {
+        if (millis() - payoutStart > payoutTimeout) {
           Serial.println(F("[PAYOUT ERROR] Hopper timeout (Low coins?)"));
           break;
         }

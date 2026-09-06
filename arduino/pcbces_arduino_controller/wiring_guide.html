@@ -233,7 +233,7 @@
     <header>
         <span class="badge">Capstone Hardware Engineering Reference</span>
         <h1>PCBCES Full System Hardware Wiring & Schematic Hub</h1>
-        <p class="subtitle">Plastic Bottle Coin Exchanger System with 12V High-Torque Hopper, Multi-Sensor Bottle Classifier, Dedicated 3-Button User Interface (Green 1.5L / Blue Mismo / Red Reset), and SIM800L GSM Bin-Full SMS Dispatcher.</p>
+        <p class="subtitle">Plastic Bottle Coin Exchanger System with 12V High-Torque Hopper (₱20 / ₱3 Payout), Multi-Sensor Bottle Classifier (1.5L/1.75L vs 290 ML), Dedicated 3-Button User Interface (Green 1.5L / Blue 290 ML / Red Reset), and SIM800L GSM Bin-Full SMS Dispatcher.</p>
     </header>
 
     <!-- Hero Status Banner -->
@@ -413,7 +413,7 @@
                     <text x="500" y="338" fill="#94a3b8" font-size="10" font-weight="700">ANALOG / DIGITAL PINS</text>
 
                     <circle cx="490" cy="370" r="6" fill="#3b82f6" class="term-dot"/>
-                    <text x="505" y="374" fill="#60a5fa" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A0: BTN BLUE (Mismo)</text>
+                    <text x="505" y="374" fill="#60a5fa" font-size="10" font-family="JetBrains Mono" font-weight="700">A0: BTN BLUE (Mismo / 290 ML)</text>
 
                     <circle cx="490" cy="410" r="6" fill="#ef4444" class="term-dot"/>
                     <text x="505" y="414" fill="#f87171" font-size="10.5" font-family="JetBrains Mono" font-weight="700">A1: BTN RED (Restart)</text>
@@ -564,14 +564,14 @@
 
                     <!-- 3x Dedicated Control Buttons -->
                     <g>
-                        <!-- Button Green: 1.5L -->
+                        <!-- Button Green: 1.5L / 1.75L -->
                         <rect x="930" y="898" width="162" height="60" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
                         <circle cx="955" cy="928" r="10" fill="#10b981"/>
                         <text x="975" y="922" fill="#a7f3d0" font-size="9.5" font-weight="800">BTN GREEN (1.5L)</text>
-                        <text x="975" y="936" fill="#6ee7b7" font-size="8.5">5 pcs = 3.00 PHP</text>
+                        <text x="975" y="936" fill="#6ee7b7" font-size="8.5">5 pcs = 20.00 PHP</text>
                         <text x="975" y="948" fill="#a7f3d0" font-size="8" font-family="JetBrains Mono">Arduino D10</text>
 
-                        <!-- Button Blue: Mismo -->
+                        <!-- Button Blue: 290 ML -->
                         <rect x="1104" y="898" width="162" height="60" rx="6" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1.5"/>
                         <circle cx="1129" cy="928" r="10" fill="#3b82f6"/>
                         <text x="1149" y="922" fill="#bfdbfe" font-size="9.5" font-weight="800">BTN BLUE (MISMO)</text>
@@ -701,7 +701,7 @@
                         <td><span class="pin-tag tag-uno">D3</span></td>
                         <td>HC-SR04 Ultrasonic</td>
                         <td>Digital Input (5V)</td>
-                        <td>Echo duration to bottle cap: 1.5L near (7-15cm), Mismo far (20-27cm)</td>
+                        <td>Echo duration to bottle cap: 1.5L/1.75L near (7-15cm), 290 ML far (26-27cm)</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D4</span></td>
@@ -743,7 +743,7 @@
                         <td><span class="pin-tag tag-uno">D10</span></td>
                         <td>Button Green (1.5L)</td>
                         <td>Digital In (PULLUP)</td>
-                        <td>Direct selection for 1.5L Mode (5 pcs quota)</td>
+                        <td>Direct selection for 1.5L / 1.75L Mode (5 pcs quota = ₱20.00)</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D11</span></td>
@@ -765,9 +765,9 @@
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">A0</span></td>
-                        <td>Button Blue (Mismo)</td>
+                        <td>Button Blue (Mismo / 290 ML)</td>
                         <td>Digital In (PULLUP)</td>
-                        <td>Direct selection for Mismo Mode (10 pcs quota)</td>
+                        <td>Direct selection for 290 ML Mode (10 pcs quota = ₱3.00)</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">A1</span></td>
