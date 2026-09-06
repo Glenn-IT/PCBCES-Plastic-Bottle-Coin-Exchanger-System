@@ -996,16 +996,17 @@
                 </div>
             </div>
             <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
-                The 12V inductive proximity switch (LJ12A3) and the 12V Coin Hopper optical pulse wire produce 12V output signals. To protect the Arduino ATmega328P pins (maximum 5.5V), two identical <strong>10kΩ / 4.7kΩ voltage divider pairs</strong> scale the voltage down to a safe ~3.83V logic level.
+                The 12V inductive proximity switch (LJ12A3) and the 12V Coin Hopper optical pulse wire produce 12V output signals. To protect the Arduino ATmega328P pins (maximum 5.5V), two identical <strong>10kΩ / 4.7kΩ or 5kΩ voltage divider pairs</strong> scale the voltage down to a safe ~3.8V to 4.0V logic level.
             </p>
             <div class="ascii-box">
-Sensor Signal Wire (12V High) ───[ 10kΩ Resistor ]───┬───> Arduino Digital Pin (~3.83V Safe)
+Sensor Signal Wire (12V High) ───[ 10kΩ Resistor ]───┬───> Arduino Digital Pin (~3.8V - 4.0V Safe)
                                                      │
-                                              [ 4.7kΩ Resistor ]
+                                           [ 4.7kΩ or 5kΩ Resistor ]
                                                      │
                                            Common Star GND (0V)
 
-Formula: V_out = 12V × (4.7kΩ / (10kΩ + 4.7kΩ)) = 12V × 0.3197 = 3.836V DC
+With 5kΩ:   V_out = 12V × (5kΩ / (10kΩ + 5kΩ))     = 12V × (1/3)  = 4.00V DC (Safe 5V Logic)
+With 4.7kΩ: V_out = 12V × (4.7kΩ / (10kΩ + 4.7kΩ)) = 12V × 0.3197 = 3.84V DC (Safe 5V Logic)
             </div>
         </div>
     </div>

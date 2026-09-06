@@ -235,15 +235,22 @@
         </div>
 
         <div class="formula-card">
-            <h4 style="color: #fff; margin-bottom: 0.5rem;">Why You MUST Use a 10k&Omega; / 4.7k&Omega; Voltage Divider:</h4>
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Why You MUST Use a Voltage Divider (10k&Omega; + 4.7k&Omega; or 5k&Omega;):</h4>
             <p style="color: var(--text-secondary); font-size: 0.95rem;">
-                The LJ12A3 sensor operates on <strong>12V DC</strong>. When no metal is present, its internal open-collector pullup outputs <strong>12V</strong>. An Arduino Uno digital pin (ATmega328P) has an absolute maximum rating of <strong>5.5V</strong>. Feeding 12V directly into Arduino Pin D6 will <strong>instantly destroy the Arduino microcontroller</strong>!
+                The LJ12A3 sensor operates on <strong>12V DC</strong>. When no metal is present, its internal pullup outputs <strong>12V</strong>. An Arduino Uno digital pin (ATmega328P) has an absolute maximum rating of <strong>5.5V</strong>. Feeding 12V directly into Arduino Pin D6 will <strong>instantly destroy the Arduino microcontroller</strong>!
             </p>
-            <div class="formula-math">
-                V_out = V_in &times; [ R2 / (R1 + R2) ] = 12V &times; [ 4.7k / (10k + 4.7k) ] = 12V &times; 0.3197 = 3.84V DC
+            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 0.75rem 0;">
+                <div class="formula-math" style="margin: 0;">
+                    <strong style="color: #fbbf24;">With 5k&Omega; (2:1 Ratio):</strong><br>
+                    V_out = 12V &times; [ 5k / (10k + 5k) ] = 12V &times; (1/3) = <strong>4.00V DC</strong>
+                </div>
+                <div class="formula-math" style="margin: 0;">
+                    <strong style="color: #a7f3d0;">With 4.7k&Omega; (Standard):</strong><br>
+                    V_out = 12V &times; [ 4.7k / (10k + 4.7k) ] = 12V &times; 0.3197 = <strong>3.84V DC</strong>
+                </div>
             </div>
             <p style="color: var(--text-secondary); font-size: 0.92rem;">
-                <strong>3.84V</strong> is well above the minimum Arduino logic HIGH threshold (3.0V), and completely safe below the 5.0V maximum rating!
+                Both <strong>4.00V</strong> (with 5k&Omega;) and <strong>3.84V</strong> (with 4.7k&Omega;) are well above the Arduino logic HIGH threshold (3.0V) and 100% safe below the 5.5V maximum limit!
             </p>
         </div>
     </div>
@@ -300,11 +307,11 @@
                 
                 <!-- Center Tap Node -->
                 <circle cx="580" cy="280" r="7" fill="#06b6d4" stroke="#22d3ee" stroke-width="2"/>
-                <text x="580" y="302" fill="#67e8f9" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle">Safe Tap (~3.84V)</text>
+                <text x="580" y="302" fill="#67e8f9" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle">Safe Tap (~3.8V - 4.0V)</text>
 
-                <!-- 4.7k Resistor -->
+                <!-- 4.7k or 5k Resistor -->
                 <rect x="510" y="325" width="140" height="35" rx="5" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
-                <text x="580" y="347" fill="#a7f3d0" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="middle">R2: 4.7k&Omega; Resistor</text>
+                <text x="580" y="347" fill="#a7f3d0" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle">R2: 4.7k&Omega; or 5k&Omega;</text>
 
                 <!-- Arduino Uno Box -->
                 <rect x="770" y="60" width="260" height="400" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
@@ -402,12 +409,12 @@
                     <td><strong>Resistor Divider Node</strong></td>
                     <td><span class="pin-tag tag-sig">Cyan Jumper</span></td>
                     <td><span class="pin-tag tag-uno">Arduino Uno Pin D6</span></td>
-                    <td>~3.84V / 0V</td>
+                    <td>~3.8V &ndash; 4.0V / 0V</td>
                     <td>Safe scaled logic input (Active LOW = Metal detected)</td>
                 </tr>
                 <tr>
                     <td><strong>Divider Lower Leg</strong></td>
-                    <td><span class="pin-tag tag-bb">4.7k&Omega; Resistor</span></td>
+                    <td><span class="pin-tag tag-bb">4.7k&Omega; or 5k&Omega; Resistor</span></td>
                     <td><span class="pin-tag tag-gnd">Common Star GND</span></td>
                     <td>0V Ground</td>
                     <td>Pulls voltage divider node down to ground</td>
@@ -462,7 +469,7 @@
                     <td>Air (> 4mm)</td>
                     <td><span class="pin-tag tag-gnd">OFF</span></td>
                     <td>~12.0V</td>
-                    <td><strong>~3.84V</strong></td>
+                    <td><strong>~3.8V &ndash; 4.0V</strong></td>
                     <td><span class="pin-tag tag-uno">HIGH (1)</span></td>
                     <td><strong style="color: #34d399;">READY / ACCEPT</strong></td>
                 </tr>
@@ -471,7 +478,7 @@
                     <td>Non-metallic</td>
                     <td><span class="pin-tag tag-gnd">OFF</span></td>
                     <td>~12.0V</td>
-                    <td><strong>~3.84V</strong></td>
+                    <td><strong>~3.8V &ndash; 4.0V</strong></td>
                     <td><span class="pin-tag tag-uno">HIGH (1)</span></td>
                     <td><strong style="color: #34d399;">READY (Green LED ON)</strong></td>
                 </tr>
@@ -516,7 +523,7 @@
             <div class="step-box">
                 <div class="step-num">1</div>
                 <h4>Multimeter Safety Pre-Check</h4>
-                <p>Before plugging the divider output into Arduino Pin D6, turn on the 12V PSU and measure between the center tap and GND using a Digital Multimeter. <strong>Confirm it reads between 3.7V and 3.9V DC.</strong> If it reads 12V, check your 4.7k ground connection immediately!</p>
+                <p>Before plugging the divider output into Arduino Pin D6, turn on the 12V PSU and measure between the center tap and GND using a Digital Multimeter. <strong>Confirm it reads between 3.7V and 4.1V DC (~3.84V with 4.7k&Omega;, or 4.00V with 5k&Omega;).</strong> If it reads 12V, check your ground connection immediately!</p>
             </div>
 
             <div class="step-box">

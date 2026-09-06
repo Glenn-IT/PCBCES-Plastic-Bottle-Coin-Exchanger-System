@@ -3,7 +3,7 @@
 
 // =============================================================================
 // PCBCES PIN CONFIGURATION MATRIX (Arduino Uno ATmega328P)
-// Last Updated: 2026-09-06 15:34:00 (+08:00)
+// Last Updated: 2026-09-06 16:46:00 (+08:00)
 // =============================================================================
 
 // Dedicated 3-Button User Interface Pins (INPUT_PULLUP to GND)
@@ -22,8 +22,8 @@
 #define PIN_ULTRASONIC_ECHO  3   // HC-SR04 Echo Return Pulse
 #define PIN_IR_ENTRY         4   // IR Obstacle Avoidance Sensor (Active LOW entry trigger)
 #define PIN_SPARE_D5         5   // Spare / Unassigned GPIO (LJC18A3 Capacitive Sensor omitted)
-#define PIN_IND_METAL        6   // LJ12A3 Inductive Metal Sensor (Metal rejection via 10k/4.7k divider)
-#define PIN_COIN_PULSE       7   // 12V Coin Hopper Counter (via 10k/4.7k divider)
+#define PIN_IND_METAL        6   // LJ12A3 Inductive Metal Sensor (Metal rejection via 10k/4.7k or 5k divider)
+#define PIN_COIN_PULSE       7   // 12V Coin Hopper Counter (via 10k/4.7k or 5k divider)
 #define PIN_RELAY_HOPPER     8   // 5V Relay Module (Controls 12V Hopper Motor)
 #define PIN_SERVO_TRAPDOOR   9   // MG996R PWM Trapdoor Flap
 #define PIN_GSM_RX          11   // SoftwareSerial RX (From GSM SIM800L TX)

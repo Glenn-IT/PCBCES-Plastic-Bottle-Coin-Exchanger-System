@@ -29,7 +29,7 @@
 
 ### Hardware Components:
 * 12V LJ12A3-4-Z/BX NPN NO Proximity Sensor
-* 10kΩ / 4.7kΩ Resistor Voltage Divider (Scales 12V output to ~3.8V into Pin D6)
+* 10kΩ / 4.7kΩ or 5kΩ Resistor Voltage Divider (Scales 12V output to safe ~3.8V – 4.0V into Pin D6)
 
 ### Real Chassis Installation & Calibration:
 1. **Critical Mounting Distance (2–3 mm Air Gap):**
@@ -40,7 +40,7 @@
    - Mount the sensor through an **acrylic plate, 3D-printed plastic collar, or wood insert** with at least **15 mm clearance** from surrounding metal framing.
 3. **Voltage Divider Verification:**
    - Before connecting the black signal wire to Arduino Pin D6, measure with a multimeter at the divider junction:
-     * Sensor un-triggered: **~3.8V DC** (safe logic HIGH).
+     * Sensor un-triggered: **~3.8V – 4.0V DC** (safe logic HIGH: ~3.84V with 4.7kΩ, or 4.00V with 5kΩ).
      * Sensor triggered: **~0.0V DC** (logic LOW).
 
 ---
@@ -69,12 +69,12 @@
 ### Hardware Components:
 * 12V DC Coin Hopper (Dispenses ₱1.00 coins)
 * 5V Single-Channel Relay Module (Pin D8, active LOW)
-* 10kΩ / 4.7kΩ Voltage Divider (Pin D7 interrupt)
+* 10kΩ / 4.7kΩ or 5kΩ Voltage Divider (Pin D7 interrupt)
 
 ### Real Chassis Installation & Calibration:
 1. **Pulse Line Interfacing (Pin D7):**
    - The optical count switch inside the hopper pulls the signal line LOW when a coin passes through the exit eye.
-   - Verify the 10k/4.7k voltage divider scales the pulse to **~3.8V DC** into Pin D7.
+   - Verify the 10k/(4.7k or 5k) voltage divider scales the pulse to **~3.8V – 4.0V DC** into Pin D7.
    - Software interrupt debounce is calibrated to **60 ms** to eliminate contact bounce.
 2. **Hopper Dispense Ramp Angle:**
    - Mount the hopper securely with at least a **30°–45° gravity ramp** leading to the exterior coin return cup.
