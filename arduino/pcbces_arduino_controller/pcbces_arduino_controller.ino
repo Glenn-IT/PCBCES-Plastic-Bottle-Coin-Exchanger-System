@@ -1,7 +1,7 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
- * Last Updated: 2026-09-06 20:05:00 (+08:00)
+ * Last Updated: 2026-09-06 21:16:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
@@ -436,18 +436,20 @@ void loop() {
       }
 
       coinsDispensed = 0;
-      digitalWrite(PIN_RELAY_HOPPER, LOW); // Start 12V Hopper Motor
+      digitalWrite(PIN_RELAY_HOPPER, LOW); // Start Hopper Motor (220V AC / 12V DC)
+      delay(50); // Settle electrical inrush transient
 
       unsigned long payoutStart = millis();
       unsigned long payoutTimeout = (unsigned long)requiredCoinsPayout * 2500UL + 6000UL;
-      unsigned long lastEdgeTime = 0;
+      unsigned long lastEdgeTime = millis();
       int lastEdgeState = digitalRead(PIN_COIN_PULSE);
 
       while (coinsDispensed < requiredCoinsPayout) {
         int curState = digitalRead(PIN_COIN_PULSE);
         if (curState != lastEdgeState) {
           unsigned long now = millis();
-          if (curState == LOW && (now - lastEdgeTime > 40)) {
+          // Mask noise within first 150ms of payout and require 35ms pulse separation
+          if (curState == LOW && (now - payoutStart > 100) && (now - lastEdgeTime > 35)) {
             coinsDispensed++;
             lastEdgeTime = now;
           }

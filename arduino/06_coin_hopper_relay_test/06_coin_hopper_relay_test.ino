@@ -1,7 +1,7 @@
 /*
  * PCBCES - Test 06: Coin Hopper & 5V Relay Payout Test
  * Hardware: Arduino Uno, 5V Relay Module, 220V/12V Coin Hopper, YT LP-08 A01 Sensor Board
- * Last Updated: 2026-09-06 20:15:00 (+08:00)
+ * Last Updated: 2026-09-06 21:16:00 (+08:00)
  * 
  * Clean Edge-Detection Polling (No PCINT / No Serial Ghost Triggering)
  * 
@@ -20,13 +20,12 @@ bool isDispensing = false;
 
 int lastPinState = -1;
 unsigned long lastPulseTime = 0;
+unsigned long payoutStartTime = 0;
 
 void startPayout(int target) {
   currentTargetCoins = target;
   coinsDispensed = 0;
-  isDispensing = true;
-  lastPinState = digitalRead(COIN_PULSE_PIN);
-
+  
   Serial.println();
   Serial.print(F(">>> STARTING PAYOUT: Target = "));
   Serial.print(target);
@@ -37,6 +36,13 @@ void startPayout(int target) {
 
   // Turn Relay ON (Active LOW)
   digitalWrite(RELAY_PIN, LOW);
+  payoutStartTime = millis();
+  isDispensing = true;
+
+  // Let electrical turn-on noise settle, then latch baseline pin state
+  delay(50);
+  lastPinState = digitalRead(COIN_PULSE_PIN);
+  lastPulseTime = millis();
 }
 
 void stopPayout() {
@@ -83,8 +89,11 @@ void loop() {
   if (lastPinState == HIGH && currentPinState == LOW) {
     unsigned long now = millis();
 
-    // 60ms debounce: ensures 1 coin = exactly 1 pulse
-    if (now - lastPulseTime > 60) {
+    // 35ms debounce: prevents optical ring bounce while ensuring fast coins are not skipped
+    // Also ignore any pulse within the first 150ms of motor turn-on (relay inrush noise)
+    bool startupNoise = isDispensing && (now - payoutStartTime < 150);
+
+    if (!startupNoise && (now - lastPulseTime > 35)) {
       coinsDispensed++;
       lastPulseTime = now;
 
