@@ -8,7 +8,6 @@
 You have two main power rails + dedicated supply for the GSM module:
 1. **12V DC Rail (High Current)**: Supplied by S-120-12 (120W 12V 10A PSU).
    - Powers the **Coin Hopper Motor** (switched via Relay).
-   - Powers the **LJC18A3** capacitive proximity sensor.
    - Powers the **LJ12A3** inductive proximity sensor.
    - Powers the **LM2596 Buck Converter** input.
 2. **5V DC Rail (Regulated)**: Supplied by **LM2596 Buck Converter** output (tuned with a multimeter to **5.0V**).
@@ -27,7 +26,7 @@ You have two main power rails + dedicated supply for the GSM module:
 
 ### 2. Voltage Divider Wiring (12V Sensors to 5V Arduino)
 
-The `LJ12A3`, `LJC18A3`, and the Coin Hopper pulse line output 12V logic. Use your **10kΩ** and **4.7kΩ** resistors to step the voltage down safely:
+The `LJ12A3` and the Coin Hopper pulse line output 12V logic. Use two pairs of **10kΩ** and **4.7kΩ** resistors to step the voltage down safely:
 
 ```text
 Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Arduino Digital Pin (~3.8V safe)
@@ -58,9 +57,7 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | **IR Obstacle Sensor** | VCC | 5V Bus | |
 | | GND | Common GND | |
 | | OUT | Arduino **D4** | Active LOW when bottle blocks beam |
-| **LJC18A3 Capacitive** | Brown (+V) | 12V Rail | |
-| | Blue (GND) | Common GND | |
-| | Black (Signal) | Voltage Divider (10k/4.7k) -> Arduino **D5** | Non-metal/plastic presence |
+| **Spare Pin D5** | NC | Arduino **D5** | Reserved for future expansion (LJC18A3 omitted) |
 | **LJ12A3 Inductive** | Brown (+V) | 12V Rail | |
 | | Blue (GND) | Common GND | |
 | | Black (Signal) | Voltage Divider (10k/4.7k) -> Arduino **D6** | Metal rejection trigger |

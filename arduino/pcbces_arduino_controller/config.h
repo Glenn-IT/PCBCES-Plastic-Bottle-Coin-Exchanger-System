@@ -20,7 +20,7 @@
 #define PIN_ULTRASONIC_TRIG  2   // HC-SR04 Trigger Pulse (Measures bottle length)
 #define PIN_ULTRASONIC_ECHO  3   // HC-SR04 Echo Return Pulse
 #define PIN_IR_ENTRY         4   // IR Obstacle Avoidance Sensor (Active LOW entry trigger)
-#define PIN_CAP_PLASTIC      5   // LJC18A3 Capacitive Sensor (Dielectric plastic verify via 10k/4.7k divider)
+#define PIN_SPARE_D5         5   // Spare / Unassigned GPIO (LJC18A3 Capacitive Sensor omitted)
 #define PIN_IND_METAL        6   // LJ12A3 Inductive Metal Sensor (Metal rejection via 10k/4.7k divider)
 #define PIN_COIN_PULSE       7   // 12V Coin Hopper Counter (via 10k/4.7k divider)
 #define PIN_RELAY_HOPPER     8   // 5V Relay Module (Controls 12V Hopper Motor)

@@ -17,9 +17,8 @@ The system logic follows an intuitive sequence:
 2. **Deposit Progress Tracking:** The LCD displays live progress (e.g., `1.5L [0/5]` or `Mismo [0/10]`). User can press Red at any point to cancel.
 3. **Sensor Verification (Non-Contact Classification Architecture):**
    - **Metal Detection (LJ12A3-4-Z/BX):** Rejects metallic cans or foreign objects.
-   - **Plastic Dielectric Verification (LJC18A3-B-Z/BX):** Confirms bottle material is genuine plastic.
    - **Insertion Detection (IR Obstacle Sensor):** Detects object placed into the inspection cradle.
-   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 40 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.7L bottles (5–13 cm to ceiling) from shorter Mismo bottles (18–24 cm to ceiling). *(Note: Weight scale feature omitted in favor of high-speed non-contact classification with zero mechanical wear).*
+   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 40 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.7L bottles (5–13 cm to ceiling) from shorter Mismo bottles (18–24 cm to ceiling). *(Note: LJC18A3 Capacitive Sensor and HX711 Load Cell omitted).*
 4. **Accept / Reject Mechanism (MG996R Servo):**
    - **Valid Bottle:** Servo opens the trapdoor to drop the bottle into the internal bin; count increments (e.g., `1/5`), green light blinks.
    - **Invalid Bottle:** Servo blocks insertion or ejects to return tray; buzzer beeps alert, red light blinks, LCD prompts `"Pls try again"`.
@@ -39,7 +38,7 @@ The system logic follows an intuitive sequence:
 | **GSM SIM Module (e.g. SIM800L / SIM900A)** | **Newly Added** | Sends SMS alerts when bin is full to admin's phone |
 | **12V Coin Hopper** | Available | Dispenses ₱1 coins (switched by 5V Relay) |
 | **5V Relay Module** | Available | Switches 12V power to the Coin Hopper |
-| **LJC18A3-B-Z/BX Capacitive Sensor** | Available | 12V powered, detects plastic presence |
+| **LJC18A3-B-Z/BX Capacitive Sensor** | **Omitted** | Omitted to prevent sensor drift & simplify wiring; D5 is spare |
 | **LJ12A3-4-Z/BX Inductive Sensor** | Available | 12V powered, detects & rejects metal |
 | **IR Obstacle Avoidance Sensor** | Available | Bottle chute entry trigger or bin level check |
 | **HX711 Load Cell + 1kg Bar** | **Omitted / Retired** | Omitted in favor of high-reliability non-contact classification |
@@ -78,7 +77,7 @@ Every pin on the Arduino Uno is carefully budgeted:
 | **D2 (Trig)** | HC-SR04 Ultrasonic | Digital Out | Bottle height check |
 | **D3 (Echo)** | HC-SR04 Ultrasonic | Digital In | Bottle height echo |
 | **D4** | IR Obstacle Sensor | Digital In | Insertion trigger (detects bottle inserted) |
-| **D5** | LJC18A3 Capacitive Sensor | Digital In | Via 10k/4.7k voltage divider (12V -> ~3.8V) |
+| **D5** | Spare / Unassigned GPIO | Unassigned | Reserved for future expansion (LJC18A3 omitted) |
 | **D6** | LJ12A3 Inductive Sensor | Digital In | Via 10k/4.7k voltage divider (12V -> ~3.8V) |
 | **D7** | Coin Hopper Pulse Line | Digital In (INT) | Via 10k/4.7k voltage divider (Counts ₱1 pulses) |
 | **D8** | 5V Relay Module | Digital Out | Turns ON/OFF 12V Hopper motor |

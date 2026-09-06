@@ -443,8 +443,8 @@
                     <circle cx="830" cy="305" r="6" fill="#06b6d4" class="term-dot"/>
                     <text x="815" y="309" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D4: IR Bottle Entry</text>
 
-                    <circle cx="830" cy="345" r="6" fill="#06b6d4" class="term-dot"/>
-                    <text x="815" y="349" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D5: LJC18A3 (Capacitive)</text>
+                    <circle cx="830" cy="345" r="6" fill="#64748b" class="term-dot"/>
+                    <text x="815" y="349" fill="#94a3b8" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D5: SPARE (NC / Unassigned)</text>
 
                     <circle cx="830" cy="385" r="6" fill="#06b6d4" class="term-dot"/>
                     <text x="815" y="389" fill="#67e8f9" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D6: LJ12A3 (Inductive)</text>
@@ -516,10 +516,10 @@
                     <circle cx="930" cy="385" r="6" fill="#06b6d4" class="term-dot"/>
                     <text x="945" y="389" fill="#cbd5e1" font-size="9.5" font-family="JetBrains Mono">OUT (D4) Active LOW</text>
 
-                    <!-- LJC18A3 Capacitive Sensor -->
-                    <rect x="1190" y="345" width="250" height="60" rx="6" fill="#312e81" stroke="#818cf8"/>
-                    <text x="1315" y="365" fill="#c7d2fe" font-size="11" font-weight="700" text-anchor="middle">LJC18A3 CAPACITIVE (PLASTIC)</text>
-                    <text x="1315" y="382" fill="#9ca3af" font-size="9" text-anchor="middle">12V Power &rarr; 10k/4.7k Divider &rarr; D5</text>
+                    <!-- LJC18A3 Capacitive Sensor (Omitted) -->
+                    <rect x="1190" y="345" width="250" height="60" rx="6" fill="#1e293b" stroke="#475569" stroke-dasharray="4"/>
+                    <text x="1315" y="370" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle">LJC18A3 OMITTED</text>
+                    <text x="1315" y="388" fill="#64748b" font-size="9" text-anchor="middle">Capacitive sensor removed &bull; Pin D5 Spare</text>
 
                     <!-- LJ12A3 Inductive Metal Sensor -->
                     <rect x="930" y="420" width="510" height="60" rx="6" fill="#450a0a" stroke="#f87171"/>
@@ -646,9 +646,9 @@
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D5</span></td>
-                        <td>LJC18A3 Capacitive Sensor</td>
-                        <td>Digital In via 10k/4.7k</td>
-                        <td>Confirms non-metal / dielectric plastic presence</td>
+                        <td>Spare / Unassigned GPIO</td>
+                        <td>Unassigned / NC</td>
+                        <td>Reserved for future expansion (LJC18A3 Capacitive Sensor omitted)</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D6</span></td>
@@ -773,7 +773,7 @@
                 </li>
                 <li class="step-item">
                     <h4>Step 3: Wire Resistor Dividers for 12V Signals</h4>
-                    <p>Build three identical 10kΩ/4.7kΩ voltage divider pairs on the breadboard for LJC18A3, LJ12A3, and the Coin Hopper pulse wire.</p>
+                    <p>Build two identical 10kΩ/4.7kΩ voltage divider pairs on the breadboard for the LJ12A3 Inductive metal sensor and the Coin Hopper pulse wire. (LJC18A3 is omitted; Pin D5 is spare).</p>
                 </li>
                 <li class="step-item">
                     <h4>Step 4: Connect I2C LCD & Calibrate Contrast</h4>

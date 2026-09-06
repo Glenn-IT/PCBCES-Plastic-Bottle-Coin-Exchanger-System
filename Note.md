@@ -1,8 +1,8 @@
 Coin Hopper for Coin Changer / Bill changer / Coin counting machine
-LJC18A3-B-Z/BX NPN.Proximity Switch
+[REMOVED/OMITTED] LJC18A3-B-Z/BX NPN Proximity Switch (Capacitive sensor omitted to eliminate drift & simplify wiring; Pin D5 is Spare GPIO)
 LJ12A34Z/BX Inductive Proximity Sensor Probe Cable NPN 3-Wire Metal Induction Photoelectric Switch Sensor LJ12A3-4-Z/BX
 IR Infrared Obstacle Avoidance Sensor Module Smart Electronics New for Arduino Diy Smart Car Robot Reflective Photoelectric 3pin
-[REMOVED/OMITTED] Load Cell Amplifier HX711 & Straight Bar Load Cell Weight Sensor 1kg (Replaced with non-contact Ultrasonic & Dielectric Proximity sensing for high durability and zero mechanical wear)
+[REMOVED/OMITTED] Load Cell Amplifier HX711 & Straight Bar Load Cell Weight Sensor 1kg (Replaced with non-contact Ultrasonic & Inductive Proximity sensing for high durability and zero mechanical wear)
 Dedicated 3-Button Control Interface (Green: 1.5L on D10, Blue: Mismo on A0, Red: Cancel/Restart on A1)
 Digital Robot Servo Motor (180 Rotation) – MG996R MG996 360°
 DIYMORE 2315 active mechanical buzzer 6V 85dB mini electronic alarm buzzer
@@ -23,4 +23,4 @@ The user selects via 3 dedicated buttons:
 - Button Green (D10): Selects 1.5L bottle mode (LCD: 0/5 1.5L Bottle)
 - Button Blue (A0): Selects Mismo bottle mode (LCD: 0/10 Mismo Bottle)
 - Button Red (A1): System restart / cancel transaction at any time, resetting count and returning to start.
-When a bottle is inserted, sensors verify plastic material, non-metal, and correct dimensions. If valid, the servo trapdoor opens 90 degrees to drop the bottle into the bin. If invalid, the buzzer alerts, red LED blinks, and LCD prompts 'Pls try again'. Once the target count is satisfied, the 12V hopper dispenses 3 pesos coins.
+When a bottle is inserted, sensors verify non-metal and correct dimensions. If valid, the servo trapdoor opens 90 degrees to drop the bottle into the bin. If invalid, the buzzer alerts, red LED blinks, and LCD prompts 'Pls try again'. Once the target count is satisfied, the 12V hopper dispenses 3 pesos coins.

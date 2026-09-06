@@ -12,11 +12,11 @@
  * - Active 5V Buzzer & Green/Red Status LEDs
  * - HC-SR04+ Ultrasonic (Bottle Length / Size Discrimination)
  * - IR Obstacle Avoidance (Bottle Insertion Beam Trigger)
- * - LJC18A3 Capacitive Sensor (Dielectric Plastic Material Verification)
  * - LJ12A3 Inductive Sensor (Metallic Object Rejection)
  * - MG996R Metal Gear Servo (Accept/Reject Trapdoor Flap)
  * - 12V Coin Hopper & 5V Relay (3.00 PHP Payout)
  * - SIM800L GSM Module (Storage Bin Full SMS Telemetry)
+ * - Pin D5: Spare / Unassigned GPIO (LJC18A3 Capacitive Sensor omitted)
  */
 
 #include <Wire.h>
@@ -179,7 +179,6 @@ void setup() {
 
   // Sensors & Actuators
   pinMode(PIN_IR_ENTRY, INPUT);
-  pinMode(PIN_CAP_PLASTIC, INPUT);
   pinMode(PIN_IND_METAL, INPUT);
   pinMode(PIN_COIN_PULSE, INPUT_PULLUP);
   pinMode(PIN_ULTRASONIC_TRIG, OUTPUT);
@@ -319,16 +318,8 @@ void loop() {
         break;
       }
 
-      // 2. Plastic Dielectric Check (LJC18A3 Capacitive Sensor)
-      // Active LOW when plastic dielectric material is present
-      bool isPlastic = (digitalRead(PIN_CAP_PLASTIC) == LOW);
-      if (!isPlastic) {
-        Serial.println(F("[VALIDATION] REJECT: Plastic material not confirmed!"));
-        currentState = STATE_REJECT_EJECT;
-        break;
-      }
-
-      // 3. Dimensional Vertical Distance Check (HC-SR04 Ultrasonic at Ceiling)
+      // 2. Dimensional Vertical Distance Check (HC-SR04 Ultrasonic at Ceiling)
+      // Measures distance from ceiling down to the bottle cap to verify correct size
       long distToCap = readChamberDistance();
       long computedBottleHeight = (CHAMBER_TOTAL_HEIGHT_CM > distToCap) ? (CHAMBER_TOTAL_HEIGHT_CM - distToCap) : 0;
       Serial.print(F("[VALIDATION] Top-to-Cap Distance: "));

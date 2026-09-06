@@ -7,7 +7,7 @@
 
 | Rail / Source | Regulated Voltage | Peak Current Capacity | Connected Modules | Protection Hardware |
 |---|---|---|---|---|
-| **S-120-12 PSU** | **12.00V DC** | **10.0 Amps** | 12V Coin Hopper Motor, LJC18A3 Capacitive, LJ12A3 Inductive, Buck IN | 1N4007 Diode across relay/hopper |
+| **S-120-12 PSU** | **12.00V DC** | **10.0 Amps** | 12V Coin Hopper Motor, LJ12A3 Inductive, Buck IN | 1N4007 Diode across relay/hopper |
 | **LM2596 Buck** | **5.00V DC** | **3.0 Amps** | Arduino Uno 5V, MG996R Servo, I2C LCD, HC-SR04, IR, Buzzer | 1000µF 16V Decoupling Capacitor |
 | **Diode Drop Rail** | **4.30V DC** | **2.0A Burst** | SIM800L GSM Module (VCC & GND) | 1N4007 + 1000µF Low-ESR Capacitor |
 | **Star Ground Rail**| **0.00V (GND)** | N/A | PSU (V-), Buck (OUT-), Arduino (GND), All Sensor Grounds | Single-point common star topology |
@@ -22,7 +22,7 @@
 | **D2** | Digital Output | HC-SR04 Trigger | 5V Logic | 10µs ultrasonic pulse down into 40cm chamber | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
 | **D3** | Digital Input | HC-SR04 Echo | 5V Logic | Top-down echo to bottle cap: 1.5L near (5-13cm), Mismo far (18-24cm) | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
 | **D4** | Digital Input | IR Obstacle Avoidance | 5V Logic | Active LOW bottle insertion beam detector | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
-| **D5** | Digital Input | LJC18A3 Capacitive | Scaled to ~3.8V | Confirms non-metallic dielectric PET plastic | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |
+| **D5** | Unassigned / Spare | Spare GPIO | 5V TTL | Reserved for future expansion (LJC18A3 Capacitive omitted) | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |
 | **D6** | Digital Input | LJ12A3 Inductive Metal | Scaled to ~3.8V | Detects metallic objects / instant reject | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |
 | **D7** | Digital Input (INT) | Coin Hopper Pulse Line | Scaled to ~3.8V | Optical falling pulse interrupt (1 pulse = ₱1) | [Test 06 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/06_coin_hopper_relay_test/wiring_guide.html) |
 | **D8** | Digital Output | 5V Relay Module | 5V Logic | Switches 12V power to Coin Hopper motor | [Test 06 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/06_coin_hopper_relay_test/wiring_guide.html) |
@@ -61,7 +61,7 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
    - `Blue Button (A0)`: Instantly starts **Mismo Mode** (10 bottles = ₱3.00 payout).
    - `Red Button (A1)`: Aborts active transaction, resets count to 0, returns trapdoor to standby, and displays reset confirmation.
 2. **Archived Load Cell Feature (Test 02)**:
-   - The HX711 1kg load cell was archived in favor of ultrasonic non-contact length profiling and capacitive dielectric sensing to prevent mechanical wear and calibration drift.
+   - The HX711 1kg load cell was archived in favor of ultrasonic non-contact length profiling and inductive metal rejection to prevent mechanical wear and calibration drift. (LJC18A3 capacitive sensor omitted; D5 spare).
    - Pins `A0` and `A1` were permanently reallocated to the **Blue** and **Red** control buttons in the production machine.
 3. **Master Interactive Controller**:
    - Interactive full schematic, wiring step-by-step checklist, and state machine firmware are available at [`arduino/pcbces_arduino_controller/wiring_guide.html`](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/pcbces_arduino_controller/wiring_guide.html).
