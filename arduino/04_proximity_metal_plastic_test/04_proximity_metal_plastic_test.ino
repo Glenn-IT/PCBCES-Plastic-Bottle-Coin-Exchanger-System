@@ -13,6 +13,8 @@
  * - Red LED -> D13
  * - Green LED -> A2
  * - (Pin D5: Spare / Unassigned)
+ * 
+ * Last Updated: 2026-09-06 14:30:41 (+08:00)
  */
 
 const int IND_METAL_PIN   = 6; // LJ12A3 via 10k/4.7k voltage divider

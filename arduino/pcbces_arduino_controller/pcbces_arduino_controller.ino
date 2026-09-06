@@ -1,6 +1,7 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
+ * Last Updated: 2026-09-06 14:48:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
@@ -83,24 +84,43 @@ void soundSuccess() {
 }
 
 // Ultrasonic reading (Vertical Top-Down: Ceiling Sensor to Bottle Cap)
+// 5-sample median filter with 30ms acoustic decay to eliminate internal chamber echo ringing
+long singlePingChamber() {
+  digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
+  delayMicroseconds(4);
+  digitalWrite(PIN_ULTRASONIC_TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
+
+  // 6000us timeout = ~102 cm max range (prevents listening to stray wall reflections)
+  long duration = pulseIn(PIN_ULTRASONIC_ECHO, HIGH, 6000);
+  if (duration <= 0) return CHAMBER_TOTAL_HEIGHT_CM;
+  long cm = duration * 0.034 / 2;
+  if (cm < 2 || cm > 60) return CHAMBER_TOTAL_HEIGHT_CM;
+  return cm;
+}
+
 long readChamberDistance() {
-  // Take 3 quick pulses and sort/average to eliminate acoustic flutter
-  long readings[3];
-  for (int i = 0; i < 3; i++) {
-    digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
-    delayMicroseconds(2);
-    digitalWrite(PIN_ULTRASONIC_TRIG, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
-    long duration = pulseIn(PIN_ULTRASONIC_ECHO, HIGH, 30000);
-    readings[i] = (duration == 0) ? 999 : (duration * 0.034 / 2);
-    delay(10);
+  const int NUM_SAMPLES = 5;
+  long samples[NUM_SAMPLES];
+
+  for (int i = 0; i < NUM_SAMPLES; i++) {
+    samples[i] = singlePingChamber();
+    delay(30); // 30ms inter-ping acoustic dissipation delay
   }
-  // Simple median of 3
-  long a = readings[0], b = readings[1], c = readings[2];
-  if ((a >= b && a <= c) || (a <= b && a >= c)) return a;
-  if ((b >= a && b <= c) || (b <= a && b >= c)) return b;
-  return c;
+
+  // Insertion sort to extract true median
+  for (int i = 1; i < NUM_SAMPLES; i++) {
+    long key = samples[i];
+    int j = i - 1;
+    while (j >= 0 && samples[j] > key) {
+      samples[j + 1] = samples[j];
+      j--;
+    }
+    samples[j + 1] = key;
+  }
+
+  return samples[NUM_SAMPLES / 2];
 }
 
 // GSM SMS Alert

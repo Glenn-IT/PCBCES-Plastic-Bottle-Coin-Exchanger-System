@@ -17,6 +17,8 @@
  * 
  * Purpose:
  * - Historical reference for bench scale calibration testing
+ * 
+ * Last Updated: 2026-09-06 14:30:41 (+08:00)
  */
 
 #include "HX711.h"

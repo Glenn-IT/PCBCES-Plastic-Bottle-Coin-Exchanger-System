@@ -15,6 +15,8 @@
  * - Press Green: Starts 1.5L deposit mode (Quota: 5 pcs)
  * - Press Blue:  Starts Mismo deposit mode (Quota: 10 pcs)
  * - Press Red:   At ANY time, cancels current transaction, resets count, returns to start
+ * 
+ * Last Updated: 2026-09-06 14:30:41 (+08:00)
  */
 
 #include <Wire.h>

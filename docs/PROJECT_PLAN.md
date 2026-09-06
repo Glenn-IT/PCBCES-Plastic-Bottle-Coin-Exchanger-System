@@ -18,7 +18,7 @@ The system logic follows an intuitive sequence:
 3. **Sensor Verification (Non-Contact Classification Architecture):**
    - **Metal Detection (LJ12A3-4-Z/BX):** Rejects metallic cans or foreign objects.
    - **Insertion Detection (IR Obstacle Sensor):** Detects object placed into the inspection cradle.
-   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 40 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.7L bottles (5–13 cm to ceiling) from shorter Mismo bottles (18–24 cm to ceiling). *(Note: LJC18A3 Capacitive Sensor and HX711 Load Cell omitted).*
+   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 43 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.7L bottles (7–15 cm to ceiling) from shorter Mismo bottles (20–27 cm to ceiling). *(Note: LJC18A3 Capacitive Sensor and HX711 Load Cell omitted).*
 4. **Accept / Reject Mechanism (MG996R Servo):**
    - **Valid Bottle:** Servo opens the trapdoor to drop the bottle into the internal bin; count increments (e.g., `1/5`), green light blinks.
    - **Invalid Bottle:** Servo blocks insertion or ejects to return tray; buzzer beeps alert, red light blinks, LCD prompts `"Pls try again"`.

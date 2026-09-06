@@ -1,6 +1,7 @@
 /*
  * PCBCES - Test 06: 12V Coin Hopper & 5V Relay Payout Test
  * Hardware: Arduino Uno, 5V Relay Module, 12V Coin Hopper, 10k/4.7k Voltage Divider
+ * Last Updated: 2026-09-06 14:30:41 (+08:00)
  * 
  * Pin Connections:
  * - 5V Relay IN -> D8 (Active LOW or HIGH depending on relay board)

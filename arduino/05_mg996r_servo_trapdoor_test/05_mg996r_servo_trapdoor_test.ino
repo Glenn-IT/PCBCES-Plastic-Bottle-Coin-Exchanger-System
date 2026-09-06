@@ -14,6 +14,8 @@
  * Send '0' -> Standby / Trapdoor Closed (0 degrees)
  * Send '1' -> Accept / Drop into Bin    (90 degrees)
  * Send '2' -> Reject / Return to User   (180 degrees)
+ * 
+ * Last Updated: 2026-09-06 14:30:41 (+08:00)
  */
 
 #include <Servo.h>

@@ -230,7 +230,7 @@
         </div>
 
         <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1rem;">
-            This bench setup validates your <strong>Vertical Drop Chamber (40 cm height from bottom trapdoor to ceiling sensor)</strong>. The <strong>HC-SR04 ultrasonic transceiver</strong> is mounted at the top ceiling looking down at the bottle cap. A tall <strong>1.5L / 1.7L bottle</strong> (~30–33 cm) leaves a short distance of <strong>5 cm to 13 cm</strong> to the ceiling. A shorter <strong>Mismo bottle</strong> (~18–19 cm) sits lower down, measuring <strong>18 cm to 24 cm</strong> to the ceiling. The <strong>IR obstacle sensor</strong> is mounted on the entry wall to immediately wake up scanning when a bottle is inserted.
+            This bench setup validates your <strong>Vertical Drop Chamber (43 cm physical height from bottom trapdoor to ceiling sensor)</strong>. The <strong>HC-SR04 ultrasonic transceiver</strong> is mounted at the top ceiling looking down at the bottle cap. A tall <strong>1.5L / 1.7L bottle</strong> (~30–33 cm) leaves a short distance of <strong>7 cm to 15 cm</strong> to the ceiling. A shorter <strong>Mismo bottle</strong> (~18–21 cm) sits lower down, measuring <strong>20 cm to 27 cm</strong> to the ceiling. The <strong>IR obstacle sensor</strong> is mounted on the entry wall to immediately wake up scanning when a bottle is inserted.
         </p>
     </div>
 
@@ -339,7 +339,7 @@
                 <circle cx="650" cy="120" r="30" fill="#022c22" stroke="#34d399" stroke-width="2.5"/>
                 <circle cx="830" cy="120" r="30" fill="#022c22" stroke="#34d399" stroke-width="2.5"/>
                 <text x="740" y="100" fill="#6ee7b7" font-size="12" font-weight="800" text-anchor="middle">HC-SR04+ ULTRASONIC (CEILING TOP-DOWN)</text>
-                <text x="740" y="145" fill="#a7f3d0" font-size="9" text-anchor="middle">Ceiling to Trapdoor: 40 cm | 1.5L: 5-13cm | Mismo: 18-24cm</text>
+                <text x="740" y="145" fill="#a7f3d0" font-size="9" text-anchor="middle">Ceiling to Trapdoor: 43 cm | 1.5L: 7-15cm | Mismo: 20-27cm</text>
                 
                 <!-- HC-SR04 Pins -->
                 <circle cx="580" cy="95" r="5" fill="#ef4444"/>
@@ -402,8 +402,8 @@
 
             <div class="step-box">
                 <div class="step-num">2</div>
-                <h4>Calibrate IR Sensor Sensitivity</h4>
-                <p>Turn the small potentiometer screw on the blue IR obstacle board until the onboard green LED lights up ONLY when an object is placed inside the chute entry.</p>
+                <h4>Flush Mount & Calibrate IR Sensor</h4>
+                <p>Mount the IR sensor body outside the chamber with lens flush to the wall (do NOT let the sensor head protrude into the 15&deg;&ndash;30&deg; ultrasonic cone). Calibrate the potentiometer screw so the onboard LED lights ONLY when an object is in the entry chute.</p>
             </div>
 
             <div class="step-box">
@@ -420,17 +420,17 @@
         </div>
 
         <div style="margin-top: 1.5rem;">
-            <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (40 cm Vertical Chamber):</h4>
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (43 cm Vertical Chamber):</h4>
             <div class="code-box">
 ==========================================================<br>
  PCBCES Test 03: Vertical Chamber Distance & Height Check <br>
- Total Height: 40 cm (Ceiling Sensor to Base Trapdoor)     <br>
- 1.5L / 1.7L: 5 - 13 cm to cap | Mismo: 18 - 24 cm to cap <br>
+ Total Height: 43 cm (Ceiling Sensor to Base Trapdoor)     <br>
+ 1.5L / 1.7L: 7 - 15 cm to cap | Mismo: 20 - 27 cm to cap <br>
 ==========================================================<br>
-IR Entry: [CLEAR         ] | Ceiling-to-Cap: 40 cm (~Height: 0 cm)  | Classification: Waiting for insertion...<br>
-IR Entry: [BOTTLE PRESENT] | Ceiling-to-Cap: 9 cm  (~Height: 31 cm) | Classification: 1.5L / 1.7L BOTTLE DETECTED (NEAR)<br>
-IR Entry: [BOTTLE PRESENT] | Ceiling-to-Cap: 21 cm (~Height: 19 cm) | Classification: MISMO BOTTLE DETECTED (FAR)<br>
-IR Entry: [CLEAR         ] | Ceiling-to-Cap: 40 cm (~Height: 0 cm)  | Classification: Waiting for insertion...
+IR Entry: [CLEAR         ] | Chamber Distance: 43 cm (~Height: 0 cm)  | Classification: Waiting for insertion...<br>
+IR Entry: [BOTTLE PRESENT] | Chamber Distance: 11 cm (~Height: 32 cm) | Classification: 1.5L / 1.7L BOTTLE DETECTED (NEAR)<br>
+IR Entry: [BOTTLE PRESENT] | Chamber Distance: 23 cm (~Height: 20 cm) | Classification: MISMO BOTTLE DETECTED (FAR)<br>
+IR Entry: [CLEAR         ] | Chamber Distance: 43 cm (~Height: 0 cm)  | Classification: Waiting for insertion...
             </div>
         </div>
     </div>
