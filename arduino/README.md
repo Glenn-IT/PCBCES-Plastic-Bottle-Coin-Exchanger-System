@@ -8,7 +8,7 @@ This directory contains standalone, isolated bench-testing suites and the master
 - `02_load_cell_hx711_test/`: [ARCHIVED / OMITTED] Former HX711 weight test (retired in active build; Pins A0/A1 reallocated to Blue and Red buttons).
 - `03_ultrasonic_ir_dimension_test/`: HC-SR04 ultrasonic vertical top-down profiler (43cm chamber ceiling-to-cap distance) and IR bottle entry detector.
 - `04_proximity_metal_plastic_test/`: 12V LJ12A3 inductive metal rejection via 10k/4.7k resistor divider. (LJC18A3 capacitive sensor omitted; Pin D5 is Spare GPIO).
-- `05_mg996r_servo_trapdoor_test/`: MG996R metal gear sorting servo mechanism (0° Standby, 90° Accept, 180° Reject).
+- `05_mg996r_servo_trapdoor_test/`: MG996R metal gear sorting servo mechanism (0° Standby / Reject, 90° Accept Drop).
 - `06_coin_hopper_relay_test/`: 12V Coin hopper motor, 5V relay switch, and D7 pulse interrupt payout test.
 - `07_sim800l_gsm_sms_test/`: SIM800L GSM SMS bin-full dispatcher test with dedicated 4.3V buffer power rail.
 - `pcbces_arduino_controller/`: Master full reverse vending machine capstone production firmware and master schematic guide.

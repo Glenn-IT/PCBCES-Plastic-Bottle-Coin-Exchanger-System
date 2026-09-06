@@ -213,7 +213,7 @@
             <div class="spec-box" style="border-left: 4px solid #f59e0b;">
                 <div class="spec-label">Orange / White Wire</div>
                 <div class="spec-val" style="color: #fbbf24;">PWM Signal (D9)</div>
-                <div class="spec-sub">5V PWM timing pulse from Arduino Uno Pin D9 controlling angles 0° to 180°.</div>
+                <div class="spec-sub">5V PWM timing pulse from Arduino Uno Pin D9 controlling angles: 0° Standby / Reject Hold, 90° Accept Drop.</div>
             </div>
 
             <div class="spec-box" style="border-left: 4px solid #ef4444;">
@@ -302,7 +302,7 @@
                 <circle cx="875" cy="225" r="45" fill="#312e81" stroke="#ec4899" stroke-width="2"/>
                 <rect x="865" y="170" width="20" height="110" rx="5" fill="#f472b6"/>
                 <circle cx="875" cy="225" r="8" fill="#ffffff"/>
-                <text x="875" y="295" fill="#f472b6" font-family="JetBrains Mono" font-size="11" font-weight="800" text-anchor="middle">0&deg; &bull; 90&deg; &bull; 180&deg;</text>
+                <text x="875" y="295" fill="#f472b6" font-family="JetBrains Mono" font-size="10" font-weight="800" text-anchor="middle">0&deg; Standby/Reject &bull; 90&deg; Accept Drop</text>
 
                 <!-- Servo Terminals -->
                 <circle cx="730" cy="340" r="6" fill="#f59e0b"/>
@@ -359,7 +359,7 @@
                     <td><span class="pin-tag" style="background:#78350f; color:#fef3c7;">Orange / White</span></td>
                     <td><span class="pin-tag tag-pwm">Arduino Uno Pin D9</span></td>
                     <td>5V PWM Logic</td>
-                    <td>Angle position timing command (0° Standby, 90° Accept, 180° Reject)</td>
+                    <td>Angle position timing command (0° Standby / Reject Hold, 90° Accept Drop)</td>
                 </tr>
                 <tr>
                     <td><strong>Servo Motor Power (+)</strong></td>
@@ -429,14 +429,14 @@
                     <td><strong>Accept / Drop</strong></td>
                     <td><span class="pin-tag tag-bb">90&deg;</span></td>
                     <td><strong>Swings Downward Open</strong></td>
-                    <td>Drops valid plastic bottle into internal storage bin under gravity</td>
+                    <td>Drops valid plastic bottle into internal storage bin under gravity, then returns to 0° Standby</td>
                     <td><strong style="color: #34d399;">STATE_ACCEPT_DROP</strong></td>
                 </tr>
                 <tr>
-                    <td><strong>Reject / Return</strong></td>
-                    <td><span class="pin-tag tag-pwr">180&deg;</span></td>
-                    <td><strong>Tilts Forward / Eject</strong></td>
-                    <td>Diverts metallic cans, unaligned bottles, or trash out to return tray</td>
+                    <td><strong>Reject / Hold</strong></td>
+                    <td><span class="pin-tag tag-pwr">0&deg;</span></td>
+                    <td><strong>Stays at 0&deg; (Closed Flap)</strong></td>
+                    <td>Keeps invalid item (metal can, wrong size) on cradle for customer manual retrieval from entry chute</td>
                     <td><strong style="color: #fb7185;">STATE_REJECT_EJECT</strong></td>
                 </tr>
             </tbody>
@@ -480,7 +480,7 @@
             <div class="step-box">
                 <div class="step-num">4</div>
                 <h4>Interactive Serial Testing</h4>
-                <p>Open Serial Monitor at <strong>115200 baud</strong>. Type <code>1</code> to test 90° Accept Drop, <code>2</code> to test 180° Reject, <code>0</code> to return to Standby, or <code>a</code> to run the automated cycle!</p>
+                <p>Open Serial Monitor at <strong>115200 baud</strong>. Type <code>0</code> to hold Standby/Reject (0°), <code>1</code> to trigger Accept Drop (90° then returns to 0°), or <code>a</code> to run the automated cycle!</p>
             </div>
         </div>
 
@@ -491,16 +491,14 @@
  PCBCES Test 05: MG996R Sorting Servo Mechanism <br>
 ================================================<br>
 Send via Serial Monitor:<br>
- '0' -&gt; Close / Standby (0 deg)<br>
- '1' -&gt; Accept / Drop (90 deg)<br>
- '2' -&gt; Reject / Eject (180 deg)<br>
- 'a' -&gt; Auto-cycle test (Close -&gt; Accept -&gt; Close -&gt; Reject -&gt; Close)<br>
-Moving to: ACCEPT / DROP TO BIN (90 deg)<br>
-Moving to: STANDBY (0 deg)<br>
-Starting Auto-Cycle Test...<br>
-1. Accept Sequence (Valid bottle)<br>
-2. Reject Sequence (Invalid bottle)<br>
-Auto-cycle test complete. Ready for next command.
+ '0' -&gt; Standby / Reject Hold (0 deg - Flap Closed)<br>
+ '1' -&gt; Accept Drop (90 deg -&gt; returns to 0 deg)<br>
+ 'a' -&gt; Auto-cycle test (Standby 0° -&gt; Reject 0° -&gt; Accept 90° -&gt; 0°)<br>
+Command '1': ACCEPT SEQUENCE TRIGGERED<br>
+ -&gt; Opening trapdoor to 90 deg (dropping bottle into bin)...<br>
+ -&gt; Returning trapdoor to 0 deg (Standby closed position)...<br>
+ -&gt; Flap locked at 0 deg. Ready for next bottle.<br>
+Command '0': STANDBY / REJECT HOLD (0 deg - Flap Closed)
             </div>
         </div>
     </div>

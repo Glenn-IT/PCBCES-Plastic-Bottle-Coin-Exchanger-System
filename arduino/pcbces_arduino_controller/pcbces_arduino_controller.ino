@@ -1,7 +1,7 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
- * Last Updated: 2026-09-06 16:46:00 (+08:00)
+ * Last Updated: 2026-09-06 18:15:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
@@ -400,17 +400,27 @@ void loop() {
     }
 
     case STATE_REJECT_EJECT: {
-      Serial.println(F("[TRAPDOOR] Rejection sequence triggered (Hatch remains closed)."));
+      Serial.println(F("[TRAPDOOR] Rejection triggered: Flap holds at 0 deg (Item remains on cradle for manual removal)."));
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("BOTTLE REJECTED!");
       lcd.setCursor(0, 1);
-      lcd.print("Pls Try Again   ");
+      lcd.print("Pls Remove Item ");
       soundError();
 
-      // Flap remains at 0 to prevent drop into bin
+      // Flap remains firmly at 0 deg (Closed cradle position)
       trapdoor.write(SERVO_STANDBY_ANGLE);
-      delay(2000);
+
+      // Flash Red LED and wait until user removes the rejected item from cradle
+      unsigned long rejectStart = millis();
+      while (digitalRead(PIN_IR_ENTRY) == LOW && (millis() - rejectStart < 6000)) {
+        digitalWrite(PIN_LED_RED, HIGH);
+        delay(200);
+        digitalWrite(PIN_LED_RED, LOW);
+        delay(200);
+      }
+      digitalWrite(PIN_LED_RED, LOW);
+      delay(500);
 
       showProgressLCD();
       currentState = STATE_WAIT_INSERTION;

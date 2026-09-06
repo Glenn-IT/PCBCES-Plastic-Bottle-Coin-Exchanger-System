@@ -48,14 +48,14 @@
 ## 3. Test 05: MG996R Metal Gear Trapdoor Servo
 
 ### Hardware Components:
-* TowerPro MG996R High-Torque Metal Gear Servo (180° rotation)
+* TowerPro MG996R High-Torque Metal Gear Servo (0° Standby/Reject, 90° Accept)
 * 5V Regulated Power Rail (minimum 2.5A peak current capacity)
 
 ### Real Chassis Installation & Calibration:
 1. **Horn Alignment & Angle Calibration:**
-   - **0° (Standby Position):** Trapdoor flap must be **100% horizontal**, perfectly supporting the inserted bottle and providing a flat bounce surface for the top HC-SR04 sensor.
-   - **90° (Accept Position):** Flap swings down/open completely to let the bottle drop into the internal collection bin under gravity.
-   - **180° (Reject Position):** Flap tilts forward to divert rejected items (cans, wrong size bottles) out through the front return chute.
+   - **0° (Standby & Reject Position):** Trapdoor flap must be **100% horizontal**, perfectly supporting the inserted bottle on the cradle. If the bottle is rejected (metal detected, size mismatch), the flap **holds firmly at 0° (stays closed)** so the customer can manually retrieve the item from the entry chute while the buzzer sounds and Red LED blinks.
+   - **90° (Accept Position):** Flap swings down/open completely to let the verified plastic bottle drop into the internal collection bin under gravity, then immediately returns to 0° Standby.
+   - **Note on 180°:** The previous 180° forward tilt is retired in favor of front-chute manual retrieval at 0° closed flap.
 2. **Mechanical Stopper & Strain Relief:**
    - Install a small mechanical bumper or ledge under the flap at 0° so that heavy 1.5L bottles filled with liquid rest on the frame, **NOT solely on the servo gear teeth**.
 3. **Power Rail Decoupling:**
@@ -115,6 +115,6 @@
 | **Grounding** | Check continuity between all GND pins | $< 0.2\,\Omega$ resistance across all grounds |
 | **Chamber Height** | Run `03_ultrasonic_ir_dimension_test.ino` | Stable baseline reading with 0 cm height |
 | **Inductive Metal** | Test aluminum can and plastic bottle at sensor face | Cans trigger D6 LOW; plastic ignored |
-| **Servo Angles** | Test flap positions at 0°, 90°, and 180° | Smooth travel, no motor humming at 0° rest |
+| **Servo Angles** | Test flap positions at 0° (Standby/Reject) and 90° (Accept) | Smooth travel, no motor humming at 0° rest |
 | **Hopper Payout** | Run `06_coin_hopper_relay_test.ino` | Dispenses exactly 3 coins (₱3.00) and halts |
 | **GSM Signal** | Run `07_sim800l_gsm_sms_test.ino` | Returns `+CSQ: > 14` and sends test SMS |

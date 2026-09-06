@@ -20,8 +20,8 @@ The system logic follows an intuitive sequence:
    - **Insertion Detection (IR Obstacle Sensor):** Detects object placed into the inspection cradle.
    - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 43 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.7L bottles (7–15 cm to ceiling) from shorter Mismo bottles (26–27 cm to ceiling). *(Note: LJC18A3 Capacitive Sensor and HX711 Load Cell omitted).*
 4. **Accept / Reject Mechanism (MG996R Servo):**
-   - **Valid Bottle:** Servo opens the trapdoor to drop the bottle into the internal bin; count increments (e.g., `1/5`), green light blinks.
-   - **Invalid Bottle:** Servo blocks insertion or ejects to return tray; buzzer beeps alert, red light blinks, LCD prompts `"Pls try again"`.
+   - **Valid Bottle:** Servo opens the trapdoor to 90° to drop the bottle into the internal storage bin; returns to 0° standby; count increments (e.g., `1/5`), green light blinks.
+   - **Invalid Bottle:** Servo flap holds at 0° (stays closed); buzzer sounds alert, red light blinks, LCD prompts `"Pls Remove Item"` for customer manual retrieval from entry chute.
 5. **Coin Payout:** Once the target count is satisfied (5 bottles for 1.5L or 10 bottles for Mismo), the system triggers the 12V Coin Hopper to dispense **₱3.00** (three ₱1 coins), emits a completion beep, and resets to Standby.
 6. **Bin Full Monitoring & GSM SMS Alert:**
    - When the internal bin fills up (detected via sensor and/or total bottle count capacity, e.g. 50 bottles), the system locks the chute, displays `"BIN FULL / SYSTEM PAUSED"` on the LCD, and **sends an SMS alert to the admin's phone number**:
@@ -81,7 +81,7 @@ Every pin on the Arduino Uno is carefully budgeted:
 | **D6** | LJ12A3 Inductive Sensor | Digital In | Via 10k/4.7k voltage divider (12V -> ~3.8V) |
 | **D7** | Coin Hopper Pulse Line | Digital In (INT) | Via 10k/4.7k voltage divider (Counts ₱1 pulses) |
 | **D8** | 5V Relay Module | Digital Out | Turns ON/OFF 12V Hopper motor |
-| **D9 (PWM)** | MG996R Servo Motor | PWM Out | Trapdoor accept/reject |
+| **D9 (PWM)** | MG996R Servo Motor | PWM Out | Trapdoor: 0° Standby / Reject, 90° Accept Drop |
 | **D10** | Button Green (1.5L) | Digital In (PULLUP)| Selects 1.5L bottle mode (5 pcs quota) |
 | **D11** | GSM SIM Module TX -> Arduino RX | SoftwareSerial RX | Receives AT response from SIM module |
 | **D12** | Active Buzzer | Digital Out | High = Beep, Low = Silent |

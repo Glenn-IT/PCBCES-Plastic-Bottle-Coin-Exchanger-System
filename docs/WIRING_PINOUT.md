@@ -69,7 +69,7 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | | IN | Arduino **D8** | Relay trigger |
 | **MG996R Servo** | Red (+V) | 5V Bus (with 1000µF capacitor across + & -) | High torque servo |
 | | Brown (GND) | Common GND | |
-| | Orange (Signal)| Arduino **D9 (PWM)** | Controls trapdoor gate |
+| | Orange (Signal)| Arduino **D9 (PWM)** | Controls trapdoor gate (0° Standby / Reject, 90° Accept Drop) |
 | **Button Green (1.5L)** | Leg 1 | Arduino **D10** | Selects 1.5L mode (5 pcs quota, `INPUT_PULLUP`) |
 | | Leg 2 | Common GND | |
 | **GSM SIM Module** | VCC | 4.3V Rail (via 1N4007 from 5V + 1000µF cap) | Needs 3.7V - 4.4V with 2A burst |

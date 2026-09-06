@@ -10,12 +10,16 @@
  * Safety:
  * - 1000uF (16V to 50V rated) electrolytic capacitor connected across Servo +5V and GND to absorb 2.5A current spikes.
  * 
- * Interactive Console:
- * Send '0' -> Standby / Trapdoor Closed (0 degrees)
- * Send '1' -> Accept / Drop into Bin    (90 degrees)
- * Send '2' -> Reject / Return to User   (180 degrees)
+ * Sorting Motion Standard:
+ * - 0°  -> Standby / Scanning / Rejection Hold (Flap closed: supports bottle; invalid items stay on cradle for manual removal)
+ * - 90° -> Accept Drop (Flap swings down to drop valid bottle into lower storage bin, then returns to 0°)
  * 
- * Last Updated: 2026-09-06 17:50:00 (+08:00)
+ * Interactive Console:
+ * Send '0' -> Standby / Rejection Hold (0 degrees)
+ * Send '1' -> Accept Sequence (90 degrees drop -> returns to 0 degrees standby)
+ * Send 'a' -> Auto-cycle test (0° Standby -> 0° Reject Hold -> 90° Accept Drop -> 0° Standby)
+ * 
+ * Last Updated: 2026-09-06 18:15:00 (+08:00)
  */
 
 #include <Servo.h>
@@ -27,17 +31,16 @@ void setup() {
   Serial.begin(115200);
   trapdoorServo.attach(SERVO_PIN);
   
-  // Start at Standby closed position
+  // Start at Standby closed position (0 degrees)
   trapdoorServo.write(0);
 
   Serial.println(F("================================================"));
   Serial.println(F(" PCBCES Test 05: MG996R Sorting Servo Mechanism "));
   Serial.println(F("================================================"));
   Serial.println(F("Send via Serial Monitor:"));
-  Serial.println(F(" '0' -> Close / Standby (0 deg)"));
-  Serial.println(F(" '1' -> Accept / Drop (90 deg)"));
-  Serial.println(F(" '2' -> Reject / Eject (180 deg)"));
-  Serial.println(F(" 'a' -> Auto-cycle test (Close -> Accept -> Close -> Reject -> Close)"));
+  Serial.println(F(" '0' -> Standby / Reject Hold (0 deg - Flap Closed)"));
+  Serial.println(F(" '1' -> Accept Drop (90 deg -> returns to 0 deg)"));
+  Serial.println(F(" 'a' -> Auto-cycle test (Standby 0° -> Reject 0° -> Accept 90° -> 0°)"));
 }
 
 void loop() {
@@ -45,30 +48,43 @@ void loop() {
     char cmd = Serial.read();
 
     if (cmd == '0') {
-      Serial.println(F("Moving to: STANDBY (0 deg)"));
+      Serial.println(F("Command '0': STANDBY / REJECT HOLD (0 deg - Flap Closed)"));
       trapdoorServo.write(0);
     } else if (cmd == '1') {
-      Serial.println(F("Moving to: ACCEPT / DROP TO BIN (90 deg)"));
+      Serial.println(F("Command '1': ACCEPT SEQUENCE TRIGGERED"));
+      Serial.println(F(" -> Opening trapdoor to 90 deg (dropping bottle into bin)..."));
       trapdoorServo.write(90);
+      delay(1500); // Hold open for bottle to fall into internal storage bin
+      Serial.println(F(" -> Returning trapdoor to 0 deg (Standby closed position)..."));
+      trapdoorServo.write(0);
+      Serial.println(F(" -> Flap locked at 0 deg. Ready for next bottle."));
     } else if (cmd == '2') {
-      Serial.println(F("Moving to: REJECT / RETURN (180 deg)"));
-      trapdoorServo.write(180);
+      Serial.println(F("[NOTICE] 180 deg tilt is RETIRED. Rejection holds at 0 deg (closed cradle) for manual user retrieval."));
+      trapdoorServo.write(0);
     } else if (cmd == 'a' || cmd == 'A') {
+      Serial.println(F("------------------------------------------------"));
       Serial.println(F("Starting Auto-Cycle Test..."));
       
-      Serial.println(F("1. Accept Sequence (Valid bottle)"));
-      trapdoorServo.write(90);
-      delay(1500); // Hold open for bottle to fall
-      trapdoorServo.write(0); // Close
+      Serial.println(F("Step 1: Standby / Scanning State (0 deg)"));
+      trapdoorServo.write(0);
       delay(1000);
 
-      Serial.println(F("2. Reject Sequence (Invalid bottle)"));
-      trapdoorServo.write(180);
-      delay(1500); // Return
-      trapdoorServo.write(0); // Return to close
+      Serial.println(F("Step 2: Rejection Simulation (Invalid Item Detected)"));
+      Serial.println(F(" -> Flap STAYS at 0 deg (Item remains on cradle for manual removal)"));
+      trapdoorServo.write(0);
+      delay(2000);
+
+      Serial.println(F("Step 3: Acceptance Simulation (Valid Plastic Bottle)"));
+      Serial.println(F(" -> Flap rotates to 90 deg (Drop into bin)..."));
+      trapdoorServo.write(90);
+      delay(1500);
+
+      Serial.println(F("Step 4: Returning Flap to 0 deg Standby..."));
+      trapdoorServo.write(0);
       delay(1000);
       
       Serial.println(F("Auto-cycle test complete. Ready for next command."));
+      Serial.println(F("------------------------------------------------"));
     }
   }
 }

@@ -3,7 +3,7 @@
 
 // =============================================================================
 // PCBCES PIN CONFIGURATION MATRIX (Arduino Uno ATmega328P)
-// Last Updated: 2026-09-06 16:46:00 (+08:00)
+// Last Updated: 2026-09-06 18:15:00 (+08:00)
 // =============================================================================
 
 // Dedicated 3-Button User Interface Pins (INPUT_PULLUP to GND)
@@ -39,9 +39,9 @@
 #define MAX_BIN_CAPACITY        30   // Trigger Bin-Full SMS when 30 bottles deposited
 
 // Servo Angles
-#define SERVO_STANDBY_ANGLE     0    // Flap Closed
+#define SERVO_STANDBY_ANGLE     0    // Flap Closed (Horizontal Cradle Rest & Scanning)
 #define SERVO_ACCEPT_ANGLE      90   // Drop into internal storage bin
-#define SERVO_REJECT_ANGLE      180  // Return chute to user
+#define SERVO_REJECT_ANGLE      0    // Flap Stays Closed at 0° (Item remains on cradle for manual removal)
 
 // Ultrasonic Vertical Distance Thresholds (Ceiling Sensor to Bottle Cap)
 // Total Chamber Height (Bottom Trapdoor to Ceiling HC-SR04): Calibrated to 43 cm
