@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --bg-card-hover: #334155;
-            --border-color: #334155;
+            --bg-dark: #090d16;
+            --bg-card: #111827;
+            --bg-surface: #162032;
+            --border-color: #27354f;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --accent-cyan: #06b6d4;
@@ -19,8 +19,10 @@
             --accent-amber: #f59e0b;
             --accent-rose: #f43f5e;
             --accent-purple: #8b5cf6;
-            --accent-yellow: #eab308;
+            --accent-pink: #ec4899;
             --active-accent: #ec4899;
+            --radius-lg: 16px;
+            --radius-md: 10px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -28,7 +30,7 @@
             background-color: var(--bg-dark);
             color: var(--text-primary);
             line-height: 1.6;
-            padding: 2rem 1rem;
+            padding: 2.5rem 1rem 5rem;
         }
         .container { max-width: 1280px; margin: 0 auto; }
         header {
@@ -39,19 +41,19 @@
         }
         .badge {
             display: inline-block;
-            padding: 0.35rem 1rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 9999px;
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.82rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background: rgba(16, 185, 129, 0.15);
+            letter-spacing: 0.08em;
+            background: rgba(236, 72, 153, 0.15);
             color: var(--active-accent);
-            border: 1px solid var(--active-accent);
+            border: 1px solid rgba(236, 72, 153, 0.4);
             margin-bottom: 0.75rem;
         }
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 800;
             letter-spacing: -0.025em;
             margin-bottom: 0.5rem;
@@ -60,33 +62,50 @@
             -webkit-text-fill-color: transparent;
         }
         p.subtitle { color: var(--text-secondary); font-size: 1.05rem; }
+        
         .nav-bar {
-            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem;
+            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2.5rem;
         }
         .nav-link {
             font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); background: var(--bg-card);
-            padding: 0.5rem 0.9rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid var(--border-color);
+            padding: 0.55rem 1rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid var(--border-color);
             transition: all 0.2s ease;
         }
         .nav-link:hover, .nav-link.active {
             color: #ffffff; background: var(--active-accent); border-color: var(--active-accent);
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.35);
         }
-        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        
         .card {
             background-color: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 1rem; padding: 1.75rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-lg); padding: 2rem; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
             margin-bottom: 2rem;
         }
         .card-title {
-            font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; display: flex;
-            align-items: center; gap: 0.75rem; color: var(--text-primary);
+            font-size: 1.3rem; font-weight: 800; margin-bottom: 1.5rem; display: flex;
+            align-items: center; gap: 0.85rem; color: var(--text-primary);
         }
         .card-title .icon {
-            width: 32px; height: 32px; border-radius: 0.5rem; background: rgba(59, 130, 246, 0.2);
-            color: var(--active-accent); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+            width: 36px; height: 36px; border-radius: var(--radius-md); background: rgba(236, 72, 153, 0.2);
+            color: var(--active-accent); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
+
+        /* Specs Grid */
+        .specs-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;
+        }
+        .spec-box {
+            background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md);
+            padding: 1.25rem; transition: transform 0.2s ease;
+        }
+        .spec-box:hover { transform: translateY(-2px); border-color: rgba(236, 72, 153, 0.5); }
+        .spec-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); font-weight: 700; margin-bottom: 0.35rem; }
+        .spec-val { font-size: 1.15rem; font-weight: 800; color: #fff; }
+        .spec-sub { font-size: 0.85rem; color: #94a3b8; margin-top: 0.35rem; }
+
+        /* SVG Schematic */
         .svg-container {
-            width: 100%; overflow-x: auto; background: #090d16; border-radius: 0.75rem;
+            width: 100%; overflow-x: auto; background: #090d16; border-radius: var(--radius-md);
             padding: 1.5rem 1rem; border: 1px solid #1e293b;
         }
         svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
@@ -94,15 +113,17 @@
             stroke-dasharray: 8; animation: dash 30s linear infinite;
             transition: stroke-width 0.2s ease, stroke 0.2s ease; cursor: pointer;
         }
-        .wire:hover { stroke-width: 4.5px !important; filter: drop-shadow(0 0 6px currentColor); }
+        .wire:hover { stroke-width: 4.5px !important; filter: drop-shadow(0 0 8px currentColor); }
         @keyframes dash { to { stroke-dashoffset: -1000; } }
+
+        /* Tables */
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; }
         th {
-            background-color: #0f172a; color: var(--text-secondary); font-weight: 600;
+            background-color: #0c1220; color: var(--text-secondary); font-weight: 600;
             padding: 0.85rem 1rem; border-bottom: 2px solid var(--border-color);
             text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
         }
-        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+        td { padding: 0.95rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
         tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
         .pin-tag {
             font-family: 'JetBrains Mono', monospace; padding: 0.2rem 0.5rem; border-radius: 0.35rem;
@@ -111,88 +132,379 @@
         .tag-uno { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .tag-bb { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
         .tag-pwr { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
-        .tag-gsm { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
-        .note-box {
+        .tag-sig { background: rgba(6, 182, 212, 0.2); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.4); }
+        .tag-gnd { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.4); }
+        .tag-pwm { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+
+        /* Step Grid */
+        .step-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem; margin-top: 1rem;
+        }
+        .step-box {
+            background-color: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 1.5rem; position: relative;
+        }
+        .step-num {
+            position: absolute; top: 1rem; right: 1rem; font-size: 1.8rem; font-weight: 800;
+            color: rgba(236, 72, 153, 0.25); font-family: 'JetBrains Mono', monospace;
+        }
+        .step-box h4 { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+        .step-box p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* Callout Cards */
+        .info-card {
+            background: linear-gradient(135deg, #18182b 0%, #111827 100%);
+            border: 1px solid #374151; border-radius: var(--radius-md); padding: 1.5rem; margin-top: 1.5rem;
+        }
+        .alert-box {
             background: rgba(244, 63, 94, 0.1); border-left: 4px solid var(--accent-rose);
             padding: 1.25rem; border-radius: 0 0.5rem 0.5rem 0; margin-top: 1.5rem;
         }
-        .note-box h4 {
-            color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.5rem;
-            display: flex; align-items: center; gap: 0.5rem;
+        .alert-box h4 { color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+        .alert-box p, .alert-box li { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+        .alert-box ul { padding-left: 1.25rem; margin-top: 0.4rem; }
+
+        .success-box {
+            background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--accent-green);
+            padding: 1.25rem; border-radius: 0 0.5rem 0.5rem 0; margin-top: 1.5rem;
         }
-        .note-box p, .note-box li { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.4rem; }
-        .note-box ul { padding-left: 1.25rem; }
+        .success-box h4 { color: var(--accent-green); font-size: 1rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+        .success-box p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+
         .code-box {
             font-family: 'JetBrains Mono', monospace; background: #090d16;
-            border: 1px solid #1e293b; padding: 1rem; border-radius: 0.5rem;
-            font-size: 0.85rem; color: #38bdf8; overflow-x: auto; margin-top: 1rem;
+            border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.5rem;
+            font-size: 0.85rem; color: #38bdf8; overflow-x: auto; margin-top: 1rem; line-height: 1.6;
         }
     </style>
 </head>
 <body>
-<div class="container">    <header>
-        <span class="badge">Component Test 05</span>
-        <h1>MG996R Metal Gear Sorting Servo Mechanism</h1>
-        <p class="subtitle">Hardware: MG996R High-Torque Servo &bull; D9 (PWM) &bull; LM2596 5V Rail &bull; 1000µF Decoupling Capacitor</p>
-    </header><div class="nav-bar"><a href="../index.html" class="nav-link">🏠 Master Hub</a><a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & Button</a><a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (HX711)</a><a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a><a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a><a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link active">Test 05: Servo Trapdoor</a><a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a><a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a><a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a></div>    <div class="card">
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <span class="badge">Isolated Bench Test 05</span>
+        <h1>MG996R Metal Gear Sorting Trapdoor Mechanism</h1>
+        <p class="subtitle">Hardware: MG996R High-Torque Servo &bull; D9 (PWM) &bull; LM2596 5V Rail &bull; 1000µF 16V–50V Decoupling Buffer</p>
+    </header>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <a href="../index.html" class="nav-link">🏠 Master Hub</a>
+        <a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & 3-Button</a>
+        <a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (Archived)</a>
+        <a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a>
+        <a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal Sensor</a>
+        <a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link active">Test 05: Servo Trapdoor</a>
+        <a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a>
+        <a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a>
+        <a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a>
+    </div>
+
+    <!-- 1. Hardware & Capacitor Specifications Card -->
+    <div class="card">
         <div class="card-title">
-            <div class="icon">⚙️</div>
-            Interactive Wiring Schematic (MG996R Servo & Decoupling Buffer)
+            <div class="icon">&#128269;</div>
+            MG996R Servo Specifications & 1000µF 50V Capacitor Compatibility
         </div>
+
+        <div class="specs-grid">
+            <div class="spec-box" style="border-left: 4px solid #f59e0b;">
+                <div class="spec-label">Orange / White Wire</div>
+                <div class="spec-val" style="color: #fbbf24;">PWM Signal (D9)</div>
+                <div class="spec-sub">5V PWM timing pulse from Arduino Uno Pin D9 controlling angles 0° to 180°.</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #ef4444;">
+                <div class="spec-label">Red Wire (+)</div>
+                <div class="spec-val" style="color: #f87171;">+5.0V Buck Rail</div>
+                <div class="spec-sub">Powers motor & gear train. Connects to LM2596 5.0V rail (NEVER Arduino 5V pin!).</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #64748b;">
+                <div class="spec-label">Brown / Black Wire (-)</div>
+                <div class="spec-val" style="color: #cbd5e1;">Common Star GND</div>
+                <div class="spec-sub">Ground return line. Must share common ground with Arduino Uno GND.</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #ec4899;">
+                <div class="spec-label">Peak Inrush Current</div>
+                <div class="spec-val" style="color: #f472b6;">1.5A &ndash; 2.5A Peak</div>
+                <div class="spec-sub">Metal gears moving under bottle load draw sudden current spikes when starting.</div>
+            </div>
+        </div>
+
+        <!-- 1000uF 50V Capacitor Answer Box -->
+        <div class="success-box">
+            <h4>&#9989; Can I use my 1000µF 50V Electrolytic Capacitor? YES, 100% PERFECT!</h4>
+            <p>
+                A <strong>1000µF 50V</strong> capacitor is <strong>completely compatible and safe</strong> for your 5V servo power rail. Here is why:
+            </p>
+            <ul style="padding-left: 1.25rem; margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.92rem;">
+                <li><strong>1000µF Capacitance:</strong> This is the exact reservoir size needed to store charge and instantly feed the servo's 2.5A startup spikes, completely eliminating voltage dips (brownouts) that would cause the Arduino Uno to reboot.</li>
+                <li><strong>50V Voltage Rating:</strong> The 50V printed on the capacitor is its <em>maximum breakdown limit</em>. When used on a <strong>5.0V</strong> rail, it operates with a <strong>10x safety headroom</strong>. It will run cool, experience zero electrical stress, and last virtually forever! (Any rating &ge; 10V, 16V, 25V, 35V, or 50V works identically).</li>
+                <li><strong>POLARITY CHECK:</strong> Ensure the <strong>negative leg (shorter leg with white stripe and minus &minus; signs)</strong> connects to <strong>GND</strong>, and the <strong>positive leg (longer leg)</strong> connects to <strong>+5V</strong>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 2. Interactive SVG Wiring Schematic -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#9889;</div>
+            Interactive Wiring Schematic (MG996R, 1000µF Buffer, & Arduino Uno)
+        </div>
+
         <div class="svg-container">
-            <svg viewBox="0 0 1000 420" width="1000" height="420" xmlns="http://www.w3.org/2000/svg">
-                <rect width="1000" height="420" fill="#090d16" rx="8"/>
-                
+            <svg viewBox="0 0 1060 520" width="1060" height="520" xmlns="http://www.w3.org/2000/svg">
+                <!-- Background -->
+                <rect width="1060" height="520" fill="#090d16" rx="10"/>
+
+                <!-- LM2596 5.0V Buck Rail -->
+                <rect x="40" y="40" width="16" height="440" rx="4" fill="#7c2d12" stroke="#f97316" stroke-width="1.5"/>
+                <text x="48" y="260" fill="#fdba74" font-family="JetBrains Mono" font-size="11" font-weight="800" text-anchor="middle" transform="rotate(-90 48 260)">+5.0V LM2596 BUCK POWER RAIL</text>
+
+                <!-- Common Star GND Rail -->
+                <rect x="75" y="40" width="16" height="440" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+                <text x="83" y="260" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="800" text-anchor="middle" transform="rotate(-90 83 260)">COMMON STAR GROUND RAIL</text>
+
                 <!-- Arduino Uno Box -->
-                <rect x="60" y="60" width="300" height="300" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
-                <text x="210" y="100" fill="#60a5fa" font-size="16" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
+                <rect x="140" y="70" width="280" height="380" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
+                <text x="280" y="110" fill="#60a5fa" font-size="16" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
                 
-                <circle cx="360" cy="180" r="6" fill="#ec4899"/>
-                <text x="345" y="184" fill="#f472b6" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">D9 (PWM Signal)</text>
+                <!-- Pin D9 (PWM) -->
+                <circle cx="420" cy="190" r="7" fill="#ec4899"/>
+                <text x="405" y="195" fill="#f472b6" font-family="JetBrains Mono" font-size="12" font-weight="800" text-anchor="end">D9 (PWM Signal Out)</text>
 
-                <circle cx="360" cy="280" r="6" fill="#64748b"/>
-                <text x="345" y="284" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">GND (Common)</text>
+                <!-- Arduino GND -->
+                <circle cx="420" cy="360" r="7" fill="#64748b"/>
+                <text x="405" y="365" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">GND (Common)</text>
 
-                <!-- LM2596 5V Power Rail -->
-                <rect x="440" y="60" width="16" height="300" rx="4" fill="#7c2d12" stroke="#f97316"/>
-                <text x="448" y="210" fill="#fdba74" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" transform="rotate(-90 448 210)">5.0V BUCK POWER RAIL</text>
+                <!-- 1000uF 50V Buffer Capacitor Block -->
+                <rect x="490" y="160" width="160" height="200" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="2"/>
+                <text x="570" y="190" fill="#38bdf8" font-size="12" font-weight="800" text-anchor="middle">1000µF 50V CAPACITOR</text>
+                <text x="570" y="208" fill="#94a3b8" font-size="9.5" text-anchor="middle">Inrush Buffer Decoupling</text>
 
-                <!-- Star GND Rail -->
-                <rect x="480" y="60" width="16" height="300" rx="4" fill="#1e293b" stroke="#64748b"/>
-                <text x="488" y="210" fill="#cbd5e1" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" transform="rotate(-90 488 210)">COMMON STAR GND RAIL</text>
+                <!-- Capacitor Body Graphic -->
+                <rect x="540" y="225" width="60" height="90" rx="8" fill="#0369a1" stroke="#38bdf8" stroke-width="1.5"/>
+                <line x1="585" y1="225" x2="585" y2="315" stroke="#ffffff" stroke-width="6"/>
+                <text x="585" y="275" fill="#0369a1" font-family="JetBrains Mono" font-size="14" font-weight="900" text-anchor="middle">&minus;</text>
+                <text x="550" y="245" fill="#ffffff" font-size="8" font-weight="800">+</text>
+                <text x="570" y="335" fill="#bae6fd" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle">1000µF 50V</text>
 
-                <!-- 1000uF Capacitor -->
-                <rect x="530" y="230" width="80" height="90" rx="8" fill="#111827" stroke="#38bdf8" stroke-width="2"/>
-                <circle cx="570" cy="265" r="16" fill="#0284c7"/>
-                <text x="570" y="300" fill="#bae6fd" font-size="9" font-weight="700" text-anchor="middle">1000µF CAP</text>
+                <!-- MG996R Servo Body -->
+                <rect x="730" y="90" width="290" height="340" rx="14" fill="#1e1b4b" stroke="#ec4899" stroke-width="2.5"/>
+                <text x="875" y="125" fill="#fbcfe8" font-size="15" font-weight="800" text-anchor="middle">MG996R METAL GEAR SERVO</text>
+                <text x="875" y="145" fill="#9ca3af" font-size="10.5" text-anchor="middle">High-Torque Sorting Trapdoor Flap</text>
 
-                <!-- MG996R Servo Box -->
-                <rect x="680" y="90" width="260" height="240" rx="12" fill="#1e1b4b" stroke="#ec4899" stroke-width="2.5"/>
-                <circle cx="810" cy="180" r="45" fill="#312e81" stroke="#ec4899" stroke-width="2"/>
-                <rect x="800" y="145" width="20" height="70" rx="4" fill="#f472b6"/>
-                <text x="810" y="260" fill="#fbcfe8" font-size="13" font-weight="800" text-anchor="middle">MG996R SERVO MOTOR</text>
-                <text x="810" y="280" fill="#9ca3af" font-size="10" text-anchor="middle">High-Torque Metal Gear</text>
+                <!-- Servo Rotating Horn Graphic -->
+                <circle cx="875" cy="225" r="45" fill="#312e81" stroke="#ec4899" stroke-width="2"/>
+                <rect x="865" y="170" width="20" height="110" rx="5" fill="#f472b6"/>
+                <circle cx="875" cy="225" r="8" fill="#ffffff"/>
+                <text x="875" y="295" fill="#f472b6" font-family="JetBrains Mono" font-size="11" font-weight="800" text-anchor="middle">0&deg; &bull; 90&deg; &bull; 180&deg;</text>
 
-                <!-- Signal Wire -->
-                <path class="wire" d="M 360 180 L 420 180 L 420 130 L 680 130" stroke="#ec4899" stroke-width="2.5" fill="none"/>
+                <!-- Servo Terminals -->
+                <circle cx="730" cy="340" r="6" fill="#f59e0b"/>
+                <text x="745" y="344" fill="#fbbf24" font-family="JetBrains Mono" font-size="10" font-weight="700">Orange: Signal (D9)</text>
+
+                <circle cx="730" cy="375" r="6" fill="#ef4444"/>
+                <text x="745" y="379" fill="#f87171" font-family="JetBrains Mono" font-size="10" font-weight="700">Red: Power (+5.0V)</text>
+
+                <circle cx="730" cy="410" r="6" fill="#64748b"/>
+                <text x="745" y="414" fill="#cbd5e1" font-family="JetBrains Mono" font-size="10" font-weight="700">Brown: Ground (GND)</text>
+
+                <!-- WIRING PATHS -->
+                <!-- PWM Signal: Arduino D9 to Servo Orange Wire -->
+                <path class="wire" d="M 427 190 L 700 190 L 700 340 L 730 340" stroke="#f59e0b" stroke-width="3" fill="none"/>
+
+                <!-- 5V Rail to Capacitor Positive (+) -->
+                <path class="wire" d="M 56 240 L 545 240" stroke="#f97316" stroke-width="3" fill="none"/>
+                
+                <!-- 5V Rail to Servo Red Wire (+) -->
+                <path class="wire" d="M 56 375 L 730 375" stroke="#ef4444" stroke-width="3" fill="none"/>
+
+                <!-- Star GND to Capacitor Negative (-) -->
+                <path class="wire" d="M 91 290 L 595 290" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+
+                <!-- Star GND to Servo Brown Wire (-) -->
+                <path class="wire" d="M 91 410 L 730 410" stroke="#64748b" stroke-width="2.5" fill="none"/>
+
+                <!-- Arduino GND to Star GND -->
+                <path class="wire" d="M 420 360 L 450 360 L 450 450 L 91 450" stroke="#64748b" stroke-width="2.5" fill="none"/>
             </svg>
         </div>
     </div>
 
+    <!-- 3. Complete Pin-by-Pin Connection Matrix -->
     <div class="card">
         <div class="card-title">
-            <div class="icon">⚠️</div>
-            Critical Servo Power Guidelines
+            <div class="icon">&#128203;</div>
+            Complete Hardware Interconnection Matrix
         </div>
-        <div class="note-box">
-            <h4>Brownout Warning: Never power MG996R from the Arduino 5V Pin!</h4>
-            <p>The MG996R is an industrial-grade metal gear servo that draws up to <strong>1.5A to 2.5A peak stall current</strong> when opening or closing. The onboard Arduino 5V regulator can only output ~400mA. Attempting to power this servo from the Arduino pin will cause the board to reboot spontaneously!</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Hardware & Lead</th>
+                    <th>Wire Color</th>
+                    <th>Connected Destination</th>
+                    <th>Voltage Domain</th>
+                    <th>Electrical Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Servo PWM Signal</strong></td>
+                    <td><span class="pin-tag" style="background:#78350f; color:#fef3c7;">Orange / White</span></td>
+                    <td><span class="pin-tag tag-pwm">Arduino Uno Pin D9</span></td>
+                    <td>5V PWM Logic</td>
+                    <td>Angle position timing command (0° Standby, 90° Accept, 180° Reject)</td>
+                </tr>
+                <tr>
+                    <td><strong>Servo Motor Power (+)</strong></td>
+                    <td><span class="pin-tag tag-pwr">Red Wire</span></td>
+                    <td><span class="pin-tag tag-pwr">LM2596 5.0V Buck Rail</span></td>
+                    <td>5.0V DC (1.5A–2.5A)</td>
+                    <td>Dedicated regulated power for high-torque servo motor and gearbox</td>
+                </tr>
+                <tr>
+                    <td><strong>Servo Motor Ground (-)</strong></td>
+                    <td><span class="pin-tag tag-gnd">Brown / Black</span></td>
+                    <td><span class="pin-tag tag-gnd">Common Star GND</span></td>
+                    <td>0V Ground</td>
+                    <td>Power and signal ground return path</td>
+                </tr>
+                <tr>
+                    <td><strong>1000µF Capacitor (+)</strong></td>
+                    <td><span class="pin-tag tag-pwr">Longer Leg</span></td>
+                    <td><span class="pin-tag tag-pwr">LM2596 5.0V Buck Rail</span></td>
+                    <td>5.0V DC (50V max)</td>
+                    <td>Energy buffer: Supplies rapid current bursts during servo motor acceleration</td>
+                </tr>
+                <tr>
+                    <td><strong>1000µF Capacitor (-)</strong></td>
+                    <td><span class="pin-tag tag-gnd">Shorter Leg (Stripe)</span></td>
+                    <td><span class="pin-tag tag-gnd">Common Star GND</span></td>
+                    <td>0V Ground</td>
+                    <td>Capacitor ground connection (Observe polarity!)</td>
+                </tr>
+                <tr>
+                    <td><strong>Arduino Uno Ground</strong></td>
+                    <td><span class="pin-tag tag-gnd">Black Wire</span></td>
+                    <td><span class="pin-tag tag-gnd">Common Star GND</span></td>
+                    <td>0V Ground</td>
+                    <td>Ensures common ground reference between Arduino PWM and 5V power rail</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 4. Trapdoor Sorting Angles Table -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#9878;</div>
+            Trapdoor Sorting Positions & Angular Motion Standard
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Position Command</th>
+                    <th>Servo Angle</th>
+                    <th>Mechanical Flap State</th>
+                    <th>Action on Inserted Item</th>
+                    <th>System State Context</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Standby / Closed</strong></td>
+                    <td><span class="pin-tag tag-pwm">0&deg;</span></td>
+                    <td><strong>100% Horizontal Flat</strong></td>
+                    <td>Supports inserted bottle on cradle under sensor inspection</td>
+                    <td><strong style="color: #60a5fa;">STATE_STANDBY / WAITING</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Accept / Drop</strong></td>
+                    <td><span class="pin-tag tag-bb">90&deg;</span></td>
+                    <td><strong>Swings Downward Open</strong></td>
+                    <td>Drops valid plastic bottle into internal storage bin under gravity</td>
+                    <td><strong style="color: #34d399;">STATE_ACCEPT_DROP</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Reject / Return</strong></td>
+                    <td><span class="pin-tag tag-pwr">180&deg;</span></td>
+                    <td><strong>Tilts Forward / Eject</strong></td>
+                    <td>Diverts metallic cans, unaligned bottles, or trash out to return tray</td>
+                    <td><strong style="color: #fb7185;">STATE_REJECT_EJECT</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="alert-box">
+            <h4>&#9888; CRITICAL CHASSIS MECHANICAL WARNING:</h4>
             <ul>
-                <li>Always connect the Servo Red (+V) wire to the <strong>LM2596 5.0V output rail</strong>.</li>
-                <li>Connect the <strong>1000µF 16V capacitor</strong> in parallel directly across the 5V and GND bus where the servo is plugged in.</li>
+                <li><strong>Provide a mechanical resting ledge under the flap at 0°!</strong> A full 1.5L bottle filled with liquid weighs ~1.5 kg. Never allow that entire weight to hang solely on the servo internal plastic/metal spline. A small physical shelf or stop beneath the flap will absorb the impact force and protect your servo gears forever.</li>
+                <li><strong>Never power the servo from Arduino 5V pin!</strong> The onboard Arduino 5V regulator can only provide ~400mA, but the MG996R pulls up to 2.5A during sudden moves. Powering it from the Arduino will instantly brown out and reboot the microcontroller.</li>
             </ul>
         </div>
     </div>
+
+    <!-- 5. Step-by-Step Bench Testing Procedure -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#9989;</div>
+            Step-by-Step Bench Testing Procedure
+        </div>
+
+        <div class="step-grid">
+            <div class="step-box">
+                <div class="step-num">1</div>
+                <h4>Calibrate 5.0V Buck Rail</h4>
+                <p>Turn on the 12V PSU. Using your Digital Multimeter, measure the output of your LM2596 buck converter. Turn the gold trimmer screw until the output reads <strong>exactly 5.00V &plusmn; 0.1V</strong>.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">2</div>
+                <h4>Install 1000µF 50V Capacitor</h4>
+                <p>Insert the 1000µF 50V capacitor directly across the breadboard 5V and GND power rails right next to the servo connection. <strong>Verify the white stripe side with minus &minus; signs is plugged into GND!</strong></p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">3</div>
+                <h4>Upload Sketch & Align Horn</h4>
+                <p>Upload <code>05_mg996r_servo_trapdoor_test.ino</code> to Arduino Uno. When it powers up, the servo writes <code>0°</code>. Press the servo horn onto the spline so the flap is <strong>100% horizontal flat</strong>, then tighten the center retaining screw.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">4</div>
+                <h4>Interactive Serial Testing</h4>
+                <p>Open Serial Monitor at <strong>115200 baud</strong>. Type <code>1</code> to test 90° Accept Drop, <code>2</code> to test 180° Reject, <code>0</code> to return to Standby, or <code>a</code> to run the automated cycle!</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (115200 baud):</h4>
+            <div class="code-box">
+================================================<br>
+ PCBCES Test 05: MG996R Sorting Servo Mechanism <br>
+================================================<br>
+Send via Serial Monitor:<br>
+ '0' -&gt; Close / Standby (0 deg)<br>
+ '1' -&gt; Accept / Drop (90 deg)<br>
+ '2' -&gt; Reject / Eject (180 deg)<br>
+ 'a' -&gt; Auto-cycle test (Close -&gt; Accept -&gt; Close -&gt; Reject -&gt; Close)<br>
+Moving to: ACCEPT / DROP TO BIN (90 deg)<br>
+Moving to: STANDBY (0 deg)<br>
+Starting Auto-Cycle Test...<br>
+1. Accept Sequence (Valid bottle)<br>
+2. Reject Sequence (Invalid bottle)<br>
+Auto-cycle test complete. Ready for next command.
+            </div>
+        </div>
+    </div>
 </div>
+
 </body>
 </html>

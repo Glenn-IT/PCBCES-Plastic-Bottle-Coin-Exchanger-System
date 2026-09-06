@@ -8,14 +8,14 @@
  * - Servo Ground (Brown/Black)  -> Common GND Rail
  * 
  * Safety:
- * - 1000uF 16V capacitor connected across Servo + and - to prevent brownouts.
+ * - 1000uF (16V to 50V rated) electrolytic capacitor connected across Servo +5V and GND to absorb 2.5A current spikes.
  * 
  * Interactive Console:
  * Send '0' -> Standby / Trapdoor Closed (0 degrees)
  * Send '1' -> Accept / Drop into Bin    (90 degrees)
  * Send '2' -> Reject / Return to User   (180 degrees)
  * 
- * Last Updated: 2026-09-06 14:30:41 (+08:00)
+ * Last Updated: 2026-09-06 17:50:00 (+08:00)
  */
 
 #include <Servo.h>
