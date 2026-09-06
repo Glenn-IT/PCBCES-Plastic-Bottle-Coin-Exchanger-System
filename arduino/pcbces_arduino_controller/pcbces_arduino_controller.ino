@@ -1,7 +1,7 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
- * Last Updated: 2026-09-06 18:35:00 (+08:00)
+ * Last Updated: 2026-09-06 20:05:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
@@ -15,7 +15,7 @@
  * - IR Obstacle Avoidance (Bottle Insertion Beam Trigger)
  * - LJ12A3 Inductive Sensor (Metallic Object Rejection)
  * - MG996R Metal Gear Servo (Accept/Reject Trapdoor Flap)
- * - 12V Coin Hopper & 5V Relay (20.00 PHP or 3.00 PHP Payout)
+ * - 220V/12V Coin Hopper & 5V Relay (20.00 PHP or 3.00 PHP Payout)
  * - SIM800L GSM Module (Storage Bin Full SMS Telemetry)
  * - Pin D5: Spare / Unassigned GPIO (LJC18A3 Capacitive Sensor omitted)
  */
@@ -53,13 +53,16 @@ int requiredCoinsPayout = COINS_PAYOUT_1_5L;
 int totalBinBottles = 0;
 volatile int coinsDispensed = 0;
 
-// Coin Pulse Counter ISR
-void onCoinPulse() {
+// Coin Pulse Counter ISR (Pin Change Interrupt for Pin 7 / PCINT23 on Port D)
+ISR(PCINT2_vect) {
   static unsigned long lastPulse = 0;
-  unsigned long now = millis();
-  if (now - lastPulse > 60) {
-    coinsDispensed++;
-    lastPulse = now;
+  uint8_t pinVal = (PIND & (1 << PIND7)) ? HIGH : LOW;
+  if (pinVal == LOW) { // Falling edge
+    unsigned long now = millis();
+    if (now - lastPulse > 40) {
+      coinsDispensed++;
+      lastPulse = now;
+    }
   }
 }
 
@@ -217,8 +220,9 @@ void setup() {
   digitalWrite(PIN_LED_RED, LOW);
   digitalWrite(PIN_LED_GREEN, LOW);
 
-  // Attach Interrupt for Coin Hopper
-  attachInterrupt(digitalPinToInterrupt(PIN_COIN_PULSE), onCoinPulse, FALLING);
+  // Configure Pin Change Interrupt for Coin Hopper (Pin 7 / PCINT23 on Port D)
+  PCICR |= (1 << PCIE2);
+  PCMSK2 |= (1 << PCINT23);
 
   // Servo Setup
   trapdoor.attach(PIN_SERVO_TRAPDOOR);
@@ -450,12 +454,25 @@ void loop() {
 
       unsigned long payoutStart = millis();
       unsigned long payoutTimeout = (unsigned long)requiredCoinsPayout * 2500UL + 6000UL;
+      unsigned long lastEdgeTime = 0;
+      int lastEdgeState = digitalRead(PIN_COIN_PULSE);
+
       while (coinsDispensed < requiredCoinsPayout) {
+        int curState = digitalRead(PIN_COIN_PULSE);
+        if (curState != lastEdgeState) {
+          unsigned long now = millis();
+          if (curState == LOW && (now - lastEdgeTime > 40)) {
+            coinsDispensed++;
+            lastEdgeTime = now;
+          }
+          lastEdgeState = curState;
+        }
+
         if (millis() - payoutStart > payoutTimeout) {
           Serial.println(F("[PAYOUT ERROR] Hopper timeout (Low coins?)"));
           break;
         }
-        delay(20);
+        delay(2);
       }
 
       digitalWrite(PIN_RELAY_HOPPER, HIGH); // Stop Hopper Motor
