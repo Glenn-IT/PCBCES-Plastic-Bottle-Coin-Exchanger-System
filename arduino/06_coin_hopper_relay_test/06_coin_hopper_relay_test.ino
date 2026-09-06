@@ -79,18 +79,16 @@ void loop() {
   // Read Pin 7 state
   int currentPinState = digitalRead(COIN_PULSE_PIN);
 
-  // Detect state change
-  if (currentPinState != lastPinState) {
+  // Detect FALLING edge only (HIGH -> LOW as coin enters & breaks the IR beam)
+  if (lastPinState == HIGH && currentPinState == LOW) {
     unsigned long now = millis();
 
-    // 50ms optical debounce to filter switch bounce / optical chatter
-    if (now - lastPulseTime > 50) {
+    // 60ms debounce: ensures 1 coin = exactly 1 pulse
+    if (now - lastPulseTime > 60) {
       coinsDispensed++;
       lastPulseTime = now;
 
-      Serial.print(F("--> [COIN DETECTED!] Transition to: "));
-      Serial.print(currentPinState == HIGH ? F("HIGH") : F("LOW"));
-      Serial.print(F(" | Count = "));
+      Serial.print(F("--> [COIN DETECTED!] Count = "));
       Serial.print(coinsDispensed);
 
       if (isDispensing) {
@@ -104,8 +102,8 @@ void loop() {
         Serial.println(F(" (Manual drop test)"));
       }
     }
-    lastPinState = currentPinState;
   }
+  lastPinState = currentPinState;
 
   // Handle Serial Commands
   if (Serial.available()) {
