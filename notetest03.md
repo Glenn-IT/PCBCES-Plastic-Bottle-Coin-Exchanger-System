@@ -142,6 +142,6 @@ php scripts/verify_hardware_sync.php
 |---|---|---|---|
 | **Chamber Baseline** | `43 cm` | `40 cm to 55 cm` | Empty chamber reading on Serial Monitor |
 | **1.5L Distance Range** | `7 cm to 15 cm` | Baseline - (30 to 33 cm) | Cap distance with 1.5L bottle inside |
-| **Mismo Distance Range** | `24 cm to 27 cm` | Baseline - (16 to 19 cm) | Cap distance with Mismo bottle inside |
+| **Mismo Distance Range** | `26 cm to 27 cm` | Baseline - (16 to 17 cm) | Cap distance with Mismo bottle inside |
 | **IR Sensor Position** | Lower right wall | Flush on lower chute entry | Flush with inner wall, no protrusion |
 | **Trapdoor Base** | Cardboard flap | Acrylic/sheet metal on MG996R | Must rest 100% horizontal in Standby (0°) |
