@@ -53,18 +53,8 @@ int requiredCoinsPayout = COINS_PAYOUT_1_5L;
 int totalBinBottles = 0;
 volatile int coinsDispensed = 0;
 
-// Coin Pulse Counter ISR (Pin Change Interrupt for Pin 7 / PCINT23 on Port D)
-ISR(PCINT2_vect) {
-  static unsigned long lastPulse = 0;
-  uint8_t pinVal = (PIND & (1 << PIND7)) ? HIGH : LOW;
-  if (pinVal == LOW) { // Falling edge
-    unsigned long now = millis();
-    if (now - lastPulse > 40) {
-      coinsDispensed++;
-      lastPulse = now;
-    }
-  }
-}
+// Coin Pulse state tracking
+int lastCoinPinState = HIGH;
 
 // Sound Helpers
 void soundBeep(int ms = 80) {
@@ -219,10 +209,6 @@ void setup() {
   digitalWrite(PIN_BUZZER, LOW);
   digitalWrite(PIN_LED_RED, LOW);
   digitalWrite(PIN_LED_GREEN, LOW);
-
-  // Configure Pin Change Interrupt for Coin Hopper (Pin 7 / PCINT23 on Port D)
-  PCICR |= (1 << PCIE2);
-  PCMSK2 |= (1 << PCINT23);
 
   // Servo Setup
   trapdoor.attach(PIN_SERVO_TRAPDOOR);
