@@ -2,19 +2,28 @@
  * PCBCES - Test 04: 12V LJ12A3 Inductive Metal Proximity Sensor Test
  * (Note: LJC18A3 Capacitive Sensor on D5 removed/omitted; Pin D5 is now Spare GPIO)
  * 
- * Hardware: 
- * - LJ12A3-4-Z/BX Inductive Proximity Sensor (Metal detection)
- * - 10k & 4.7k Resistor Divider (Drops 12V sensor signal to safe ~3.8V logic)
- * - Red LED -> D13 (Metal alert / instant reject)
- * - Green LED -> A2 (Clear / ready indicator)
+ * Sensor Specification: LJ12A3-4-Z/BX (NPN Normally Open, 4mm Sensing Distance)
+ * Wire Connections:
+ * - BN (Brown): +12V DC Power Rail (Positive)
+ * - BU (Blue):  Common Star GND (Negative / 5-36VDC Ground)
+ * - BK (Black): NO Signal Output -> 10k/4.7k Resistor Divider -> Arduino Pin D6
  * 
- * Pin Connections:
- * - LJ12A3 (Metal) -> 10k/4.7k Resistor Divider -> Arduino D6
- * - Red LED -> D13
- * - Green LED -> A2
- * - (Pin D5: Spare / Unassigned)
+ * Voltage Divider Circuit:
+ * - LJ12A3 Black Wire -> 10k Ohm Resistor -> Node (Arduino Pin D6)
+ * - Node (Arduino Pin D6) -> 4.7k Ohm Resistor -> Common Star GND
+ * - Output Voltage: 12V * (4.7k / 14.7k) = ~3.84V (Safe for 5V TTL Arduino Uno)
  * 
- * Last Updated: 2026-09-06 14:30:41 (+08:00)
+ * Logic Operation:
+ * - No Metal:    Sensor output is pulled to 12V -> Scaled to ~3.84V -> D6 reads HIGH (Ready)
+ * - Metal Found: NPN switch pulls to GND -> Scaled to ~0.0V -> D6 reads LOW (Reject)
+ * - Rear Red LED on sensor illuminates when metal is within ~2-4mm.
+ * 
+ * Indicators:
+ * - Red LED   -> D13 (Metal alert / instant reject)
+ * - Green LED -> A2  (Clear / ready indicator)
+ * - Pin D5    -> Spare / Unassigned GPIO
+ * 
+ * Last Updated: 2026-09-06 16:06:00 (+08:00)
  */
 
 const int IND_METAL_PIN   = 6; // LJ12A3 via 10k/4.7k voltage divider
@@ -30,28 +39,34 @@ void setup() {
   digitalWrite(RED_LED_PIN, LOW);
   digitalWrite(GREEN_LED_PIN, LOW);
 
-  Serial.println(F("=================================================="));
-  Serial.println(F(" PCBCES Test 04: 12V LJ12A3 Metal Sensor Test     "));
-  Serial.println(F(" (LJC18A3 Capacitive Sensor Omitted - D5 Spare)  "));
-  Serial.println(F("=================================================="));
+  Serial.println(F("=========================================================="));
+  Serial.println(F(" PCBCES Test 04: 12V LJ12A3 Inductive Metal Sensor Test    "));
+  Serial.println(F(" Wiring: BN->+12V | BU->GND | BK->10k/4.7k Divider->D6    "));
+  Serial.println(F(" Logic: HIGH (~3.8V) = Clear | LOW (~0.0V) = Metal Detected"));
+  Serial.println(F(" (LJC18A3 Capacitive Sensor Omitted - Pin D5 is Spare)    "));
+  Serial.println(F("=========================================================="));
 }
 
 void loop() {
-  // LJ12A3 NPN NO sensor pulls LOW when metal is detected
-  bool metalDetected = (digitalRead(IND_METAL_PIN) == LOW);
+  // LJ12A3 NPN NO sensor pulls to GND (LOW) when metal is within sensing field
+  int rawState = digitalRead(IND_METAL_PIN);
+  bool metalDetected = (rawState == LOW);
 
-  Serial.print(F("Inductive [Metal on D6]: "));
+  Serial.print(F("Pin D6: ["));
+  Serial.print(rawState == HIGH ? F("HIGH (~3.8V)") : F("LOW  (~0.0V)"));
+  Serial.print(F("] | Inductive Status: "));
+
   if (metalDetected) {
-    // Immediate Reject
+    // Metal Detected -> Trigger Red LED & Alert
     digitalWrite(RED_LED_PIN, HIGH);
     digitalWrite(GREEN_LED_PIN, LOW);
-    Serial.println(F("TRIGGERED (METAL DETECTED!) --> [REJECT]"));
+    Serial.println(F("[REJECT] --> METALLIC OBJECT DETECTED!"));
   } else {
-    // Clear / Non-metal
+    // Non-Metal / Plastic Bottle -> Green LED Ready
     digitalWrite(RED_LED_PIN, LOW);
     digitalWrite(GREEN_LED_PIN, HIGH);
-    Serial.println(F("CLEAR (NON-METAL)           --> [READY]"));
+    Serial.println(F("[READY ] --> Clear / Non-Metal (Plastic Bottle)"));
   }
 
-  delay(350);
+  delay(300);
 }

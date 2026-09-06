@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test 04: 12V Proximity Metal & Plastic Classifier — PCBCES</title>
+    <title>Test 04: 12V LJ12A3 Inductive Metal Proximity Classifier — PCBCES</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --bg-card-hover: #334155;
-            --border-color: #334155;
+            --bg-dark: #090d16;
+            --bg-card: #111827;
+            --bg-surface: #162032;
+            --border-color: #27354f;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --accent-cyan: #06b6d4;
@@ -21,6 +21,8 @@
             --accent-purple: #8b5cf6;
             --accent-yellow: #eab308;
             --active-accent: #f43f5e;
+            --radius-lg: 16px;
+            --radius-md: 10px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -28,7 +30,7 @@
             background-color: var(--bg-dark);
             color: var(--text-primary);
             line-height: 1.6;
-            padding: 2rem 1rem;
+            padding: 2.5rem 1rem 5rem;
         }
         .container { max-width: 1280px; margin: 0 auto; }
         header {
@@ -39,19 +41,19 @@
         }
         .badge {
             display: inline-block;
-            padding: 0.35rem 1rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 9999px;
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.82rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background: rgba(16, 185, 129, 0.15);
+            letter-spacing: 0.08em;
+            background: rgba(244, 63, 94, 0.15);
             color: var(--active-accent);
-            border: 1px solid var(--active-accent);
+            border: 1px solid rgba(244, 63, 94, 0.4);
             margin-bottom: 0.75rem;
         }
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 800;
             letter-spacing: -0.025em;
             margin-bottom: 0.5rem;
@@ -60,33 +62,50 @@
             -webkit-text-fill-color: transparent;
         }
         p.subtitle { color: var(--text-secondary); font-size: 1.05rem; }
+        
         .nav-bar {
-            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem;
+            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2.5rem;
         }
         .nav-link {
             font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); background: var(--bg-card);
-            padding: 0.5rem 0.9rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid var(--border-color);
+            padding: 0.55rem 1rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid var(--border-color);
             transition: all 0.2s ease;
         }
         .nav-link:hover, .nav-link.active {
             color: #ffffff; background: var(--active-accent); border-color: var(--active-accent);
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.35);
         }
-        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        
         .card {
             background-color: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 1rem; padding: 1.75rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-lg); padding: 2rem; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
             margin-bottom: 2rem;
         }
         .card-title {
-            font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; display: flex;
-            align-items: center; gap: 0.75rem; color: var(--text-primary);
+            font-size: 1.3rem; font-weight: 800; margin-bottom: 1.5rem; display: flex;
+            align-items: center; gap: 0.85rem; color: var(--text-primary);
         }
         .card-title .icon {
-            width: 32px; height: 32px; border-radius: 0.5rem; background: rgba(59, 130, 246, 0.2);
-            color: var(--active-accent); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+            width: 36px; height: 36px; border-radius: var(--radius-md); background: rgba(244, 63, 94, 0.2);
+            color: var(--active-accent); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
+
+        /* Sensor Specs Grid */
+        .specs-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;
+        }
+        .spec-box {
+            background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md);
+            padding: 1.25rem; transition: transform 0.2s ease;
+        }
+        .spec-box:hover { transform: translateY(-2px); border-color: rgba(244, 63, 94, 0.5); }
+        .spec-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); font-weight: 700; margin-bottom: 0.35rem; }
+        .spec-val { font-size: 1.15rem; font-weight: 800; color: #fff; }
+        .spec-sub { font-size: 0.85rem; color: #94a3b8; margin-top: 0.35rem; }
+
+        /* SVG Schematic */
         .svg-container {
-            width: 100%; overflow-x: auto; background: #090d16; border-radius: 0.75rem;
+            width: 100%; overflow-x: auto; background: #090d16; border-radius: var(--radius-md);
             padding: 1.5rem 1rem; border: 1px solid #1e293b;
         }
         svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
@@ -94,15 +113,17 @@
             stroke-dasharray: 8; animation: dash 30s linear infinite;
             transition: stroke-width 0.2s ease, stroke 0.2s ease; cursor: pointer;
         }
-        .wire:hover { stroke-width: 4.5px !important; filter: drop-shadow(0 0 6px currentColor); }
+        .wire:hover { stroke-width: 4.5px !important; filter: drop-shadow(0 0 8px currentColor); }
         @keyframes dash { to { stroke-dashoffset: -1000; } }
+
+        /* Tables */
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; }
         th {
-            background-color: #0f172a; color: var(--text-secondary); font-weight: 600;
+            background-color: #0c1220; color: var(--text-secondary); font-weight: 600;
             padding: 0.85rem 1rem; border-bottom: 2px solid var(--border-color);
             text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
         }
-        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+        td { padding: 0.95rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
         tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
         .pin-tag {
             font-family: 'JetBrains Mono', monospace; padding: 0.2rem 0.5rem; border-radius: 0.35rem;
@@ -111,78 +132,430 @@
         .tag-uno { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .tag-bb { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
         .tag-pwr { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
-        .tag-gsm { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
-        .note-box {
+        .tag-sig { background: rgba(6, 182, 212, 0.2); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.4); }
+        .tag-gnd { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.4); }
+
+        /* Step Grid */
+        .step-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem; margin-top: 1rem;
+        }
+        .step-box {
+            background-color: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 1.5rem; position: relative;
+        }
+        .step-num {
+            position: absolute; top: 1rem; right: 1rem; font-size: 1.8rem; font-weight: 800;
+            color: rgba(244, 63, 94, 0.25); font-family: 'JetBrains Mono', monospace;
+        }
+        .step-box h4 { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+        .step-box p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* Formula Box */
+        .formula-card {
+            background: linear-gradient(135deg, #18182b 0%, #111827 100%);
+            border: 1px solid #374151; border-radius: var(--radius-md); padding: 1.5rem; margin-top: 1.5rem;
+        }
+        .formula-math {
+            font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; color: #38bdf8;
+            background: #090d16; padding: 0.85rem 1.25rem; border-radius: 0.5rem;
+            border: 1px solid #1e293b; display: inline-block; margin: 0.75rem 0;
+        }
+
+        /* Warning Notice */
+        .alert-box {
             background: rgba(244, 63, 94, 0.1); border-left: 4px solid var(--accent-rose);
             padding: 1.25rem; border-radius: 0 0.5rem 0.5rem 0; margin-top: 1.5rem;
         }
-        .note-box h4 {
-            color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.5rem;
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        .note-box p, .note-box li { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.4rem; }
-        .note-box ul { padding-left: 1.25rem; }
+        .alert-box h4 { color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+        .alert-box p, .alert-box li { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+        .alert-box ul { padding-left: 1.25rem; margin-top: 0.4rem; }
+
         .code-box {
             font-family: 'JetBrains Mono', monospace; background: #090d16;
-            border: 1px solid #1e293b; padding: 1rem; border-radius: 0.5rem;
-            font-size: 0.85rem; color: #38bdf8; overflow-x: auto; margin-top: 1rem;
+            border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.5rem;
+            font-size: 0.85rem; color: #38bdf8; overflow-x: auto; margin-top: 1rem; line-height: 1.6;
         }
     </style>
 </head>
 <body>
-<div class="container">    <header>
-        <span class="badge">Component Test 04</span>
-        <h1>12V LJ12A3 Inductive Metal Proximity Classifier</h1>
-        <p class="subtitle">Hardware: LJ12A3 Inductive Metal Sensor &bull; 10k&Omega;/4.7k&Omega; Voltage Divider (LJC18A3 Capacitive Sensor Omitted &bull; Pin D5 Spare)</p>
-    </header><div class="nav-bar"><a href="../index.html" class="nav-link">🏠 Master Hub</a><a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & Button</a><a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (HX711)</a><a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a><a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link active">Test 04: Metal Sensor</a><a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a><a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a><a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a><a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a></div>    <div class="card">
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <span class="badge">Isolated Bench Test 04</span>
+        <h1>12V LJ12A3-4-Z/BX Inductive Metal Proximity Classifier</h1>
+        <p class="subtitle">Full Wire Pinout &bull; Resistor Divider Safety (~3.8V Logic) &bull; NPN Open-Collector Metal Rejection</p>
+    </header>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <a href="../index.html" class="nav-link">🏠 Master Hub</a>
+        <a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & 3-Button</a>
+        <a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (Archived)</a>
+        <a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a>
+        <a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link active">Test 04: Metal Sensor</a>
+        <a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a>
+        <a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a>
+        <a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a>
+        <a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a>
+    </div>
+
+    <!-- 1. Sensor Hardware Specifications Card -->
+    <div class="card">
         <div class="card-title">
-            <div class="icon">⚡</div>
-            Interactive Wiring Schematic (LJ12A3 Inductive Metal Sensor & Resistor Divider)
+            <div class="icon">&#128269;</div>
+            LJ12A3-4-Z/BX Hardware Specifications & Wire Color Identification
         </div>
+
+        <div class="specs-grid">
+            <div class="spec-box" style="border-left: 4px solid #b45309;">
+                <div class="spec-label">Brown Wire (BN)</div>
+                <div class="spec-val" style="color: #f59e0b;">+12V DC Positive</div>
+                <div class="spec-sub">Connects directly to the 12V 10A PSU rail. Operates from 6V to 36V DC.</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #3b82f6;">
+                <div class="spec-label">Blue Wire (BU)</div>
+                <div class="spec-val" style="color: #60a5fa;">GND Negative</div>
+                <div class="spec-sub">Connects to Common Star Ground (shared with Arduino GND and 12V PSU -).</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #cbd5e1;">
+                <div class="spec-label">Black Wire (BK)</div>
+                <div class="spec-val" style="color: #f8fafc;">NO Signal Output</div>
+                <div class="spec-sub">NPN Normally Open. Pulls to GND when metal is detected. Connects to 10k/4.7k divider!</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #f43f5e;">
+                <div class="spec-label">Sensing Distance</div>
+                <div class="spec-val" style="color: #fb7185;">4 mm Rated</div>
+                <div class="spec-sub">4 mm for steel/iron; ~1.5 mm to 2.0 mm for aluminum soda cans. High-frequency eddy current field.</div>
+            </div>
+        </div>
+
+        <div class="formula-card">
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Why You MUST Use a 10k&Omega; / 4.7k&Omega; Voltage Divider:</h4>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                The LJ12A3 sensor operates on <strong>12V DC</strong>. When no metal is present, its internal open-collector pullup outputs <strong>12V</strong>. An Arduino Uno digital pin (ATmega328P) has an absolute maximum rating of <strong>5.5V</strong>. Feeding 12V directly into Arduino Pin D6 will <strong>instantly destroy the Arduino microcontroller</strong>!
+            </p>
+            <div class="formula-math">
+                V_out = V_in &times; [ R2 / (R1 + R2) ] = 12V &times; [ 4.7k / (10k + 4.7k) ] = 12V &times; 0.3197 = 3.84V DC
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.92rem;">
+                <strong>3.84V</strong> is well above the minimum Arduino logic HIGH threshold (3.0V), and completely safe below the 5.0V maximum rating!
+            </p>
+        </div>
+    </div>
+
+    <!-- 2. Interactive SVG Wiring Schematic -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#9889;</div>
+            Interactive Wiring Schematic (LJ12A3, Resistor Divider, & Arduino Uno)
+        </div>
+
         <div class="svg-container">
-            <svg viewBox="0 0 1000 480" width="1000" height="480" xmlns="http://www.w3.org/2000/svg">
-                <rect width="1000" height="480" fill="#090d16" rx="8"/>
+            <svg viewBox="0 0 1060 520" width="1060" height="520" xmlns="http://www.w3.org/2000/svg">
+                <!-- Background -->
+                <rect width="1060" height="520" fill="#090d16" rx="10"/>
+
+                <!-- 12V Power Bus Rail -->
+                <rect x="40" y="40" width="16" height="440" rx="4" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5"/>
+                <text x="48" y="260" fill="#fca5a5" font-family="JetBrains Mono" font-size="11" font-weight="800" text-anchor="middle" transform="rotate(-90 48 260)">+12V POWER SUPPLY RAIL</text>
+
+                <!-- Common Star GND Rail -->
+                <rect x="75" y="40" width="16" height="440" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+                <text x="83" y="260" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="800" text-anchor="middle" transform="rotate(-90 83 260)">COMMON STAR GROUND RAIL</text>
+
+                <!-- LJ12A3 Sensor Housing -->
+                <rect x="150" y="160" width="220" height="150" rx="10" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+                <rect x="135" y="195" width="15" height="80" rx="3" fill="#3b82f6" stroke="#60a5fa" stroke-width="1.5"/>
+                <text x="142" y="240" fill="#ffffff" font-family="JetBrains Mono" font-size="9" font-weight="700" text-anchor="middle" transform="rotate(-90 142 240)">BLUE SENSING FACE</text>
                 
-                <!-- 12V Rail -->
-                <rect x="40" y="40" width="14" height="400" rx="3" fill="#7f1d1d" stroke="#ef4444"/>
-                <text x="47" y="240" fill="#fca5a5" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" transform="rotate(-90 47 240)">+12V POWER RAIL</text>
-
-                <!-- Star GND -->
-                <rect x="70" y="40" width="14" height="400" rx="3" fill="#1e293b" stroke="#64748b"/>
-                <text x="77" y="240" fill="#cbd5e1" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" transform="rotate(-90 77 240)">COMMON STAR GND</text>
-
-                <!-- Arduino Uno -->
-                <rect x="680" y="60" width="280" height="360" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
-                <text x="820" y="100" fill="#60a5fa" font-size="15" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
+                <text x="260" y="190" fill="#fca5a5" font-size="13" font-weight="800" text-anchor="middle">LJ12A3-4-Z/BX</text>
+                <text x="260" y="210" fill="#94a3b8" font-size="10.5" font-weight="600" text-anchor="middle">Inductive Proximity Sensor</text>
                 
-                <circle cx="680" cy="180" r="6" fill="#64748b"/>
-                <text x="695" y="184" fill="#94a3b8" font-family="JetBrains Mono" font-size="10.5" font-weight="700">D5: SPARE (NC / Unassigned)</text>
+                <!-- Sensor Rear LED -->
+                <circle cx="350" cy="235" r="8" fill="#7f1d1d" stroke="#ef4444" stroke-width="2"/>
+                <text x="350" y="260" fill="#fca5a5" font-size="8.5" font-weight="700" text-anchor="middle">REAR LED</text>
 
-                <circle cx="680" cy="240" r="6" fill="#ef4444"/>
-                <text x="695" y="244" fill="#f87171" font-family="JetBrains Mono" font-size="10.5" font-weight="700">D6 (Inductive Metal In)</text>
+                <!-- Sensor Terminals -->
+                <circle cx="370" cy="185" r="5" fill="#b45309"/>
+                <text x="360" y="180" fill="#fbbf24" font-family="JetBrains Mono" font-size="9.5" font-weight="700" text-anchor="end">BN (+12V)</text>
+                
+                <circle cx="370" cy="210" r="5" fill="#3b82f6"/>
+                <text x="360" y="214" fill="#93c5fd" font-family="JetBrains Mono" font-size="9.5" font-weight="700" text-anchor="end">BU (GND)</text>
 
-                <!-- Sensors -->
-                <!-- LJC18A3 Capacitive Omitted Notice -->
-                <rect x="140" y="80" width="220" height="120" rx="8" fill="#1e293b" stroke="#475569" stroke-dasharray="4"/>
-                <text x="250" y="130" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle">LJC18A3 OMITTED</text>
-                <text x="250" y="150" fill="#64748b" font-size="9.5" text-anchor="middle">(Capacitive Sensor Removed)</text>
+                <circle cx="370" cy="285" r="5" fill="#f8fafc"/>
+                <text x="360" y="289" fill="#ffffff" font-family="JetBrains Mono" font-size="9.5" font-weight="700" text-anchor="end">BK (Signal NO)</text>
 
-                <!-- LJ12A3 Inductive -->
-                <rect x="140" y="260" width="220" height="120" rx="8" fill="#450a0a" stroke="#f87171" stroke-width="2"/>
-                <text x="250" y="285" fill="#fecaca" font-size="11" font-weight="700" text-anchor="middle">LJ12A3 INDUCTIVE</text>
-                <text x="250" y="305" fill="#94a3b8" font-size="9" text-anchor="middle">Metal Detector (12V)</text>
+                <!-- Breadboard Resistor Divider Block -->
+                <rect x="470" y="150" width="220" height="250" rx="10" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+                <text x="580" y="180" fill="#fbbf24" font-size="13" font-weight="800" text-anchor="middle">BREADBOARD DIVIDER</text>
+                
+                <!-- 10k Resistor -->
+                <rect x="510" y="210" width="140" height="35" rx="5" fill="#1f2937" stroke="#eab308" stroke-width="1.5"/>
+                <text x="580" y="232" fill="#fef08a" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="middle">R1: 10k&Omega; Resistor</text>
+                
+                <!-- Center Tap Node -->
+                <circle cx="580" cy="280" r="7" fill="#06b6d4" stroke="#22d3ee" stroke-width="2"/>
+                <text x="580" y="302" fill="#67e8f9" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle">Safe Tap (~3.84V)</text>
 
-                <!-- Resistor Divider on Breadboard -->
-                <rect x="420" y="270" width="180" height="100" rx="6" fill="#111827" stroke="#f59e0b" stroke-width="1.5"/>
-                <text x="510" y="295" fill="#fbbf24" font-size="10" font-weight="700" text-anchor="middle">DIVIDER (10k & 4.7k)</text>
-                <text x="510" y="320" fill="#fca5a5" font-family="JetBrains Mono" font-size="10" text-anchor="middle">12V &rarr; ~3.83V Out</text>
+                <!-- 4.7k Resistor -->
+                <rect x="510" y="325" width="140" height="35" rx="5" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
+                <text x="580" y="347" fill="#a7f3d0" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="middle">R2: 4.7k&Omega; Resistor</text>
 
-                <!-- Connecting Wires -->
-                <path class="wire" d="M 360 320 L 420 320" stroke="#ef4444" stroke-width="2.5" fill="none"/>
-                <path class="wire" d="M 600 320 L 680 240" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                <!-- Arduino Uno Box -->
+                <rect x="770" y="60" width="260" height="400" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
+                <text x="900" y="100" fill="#60a5fa" font-size="16" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
+                
+                <!-- Arduino Pins -->
+                <!-- Pin D6 -->
+                <circle cx="770" cy="180" r="6" fill="#f43f5e"/>
+                <text x="785" y="184" fill="#fb7185" font-family="JetBrains Mono" font-size="11" font-weight="700">D6 (Inductive Metal IN)</text>
+
+                <!-- Pin D5 Spare -->
+                <circle cx="770" cy="225" r="6" fill="#64748b"/>
+                <text x="785" y="229" fill="#94a3b8" font-family="JetBrains Mono" font-size="10.5" font-weight="600">D5: SPARE (NC / Omitted)</text>
+
+                <!-- Pin D13 Red LED -->
+                <circle cx="770" cy="270" r="6" fill="#ef4444"/>
+                <text x="785" y="274" fill="#f87171" font-family="JetBrains Mono" font-size="10.5" font-weight="600">D13 (Red Alert LED)</text>
+
+                <!-- Pin A2 Green LED -->
+                <circle cx="770" cy="315" r="6" fill="#10b981"/>
+                <text x="785" y="319" fill="#34d399" font-family="JetBrains Mono" font-size="10.5" font-weight="600">A2 (Green Ready LED)</text>
+
+                <!-- Arduino GND -->
+                <circle cx="770" cy="380" r="6" fill="#64748b"/>
+                <text x="785" y="384" fill="#cbd5e1" font-family="JetBrains Mono" font-size="10.5" font-weight="600">GND (Common Ground)</text>
+
+                <!-- WIRING PATHS -->
+                <!-- 12V to Sensor Brown Wire -->
+                <path class="wire" d="M 56 185 L 370 185" stroke="#b45309" stroke-width="2.5" fill="none"/>
+                
+                <!-- Star GND to Sensor Blue Wire -->
+                <path class="wire" d="M 91 210 L 370 210" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+
+                <!-- Sensor Black Wire to Top of 10k Resistor -->
+                <path class="wire" d="M 370 285 L 430 285 L 430 227 L 510 227" stroke="#f8fafc" stroke-width="2.5" fill="none"/>
+
+                <!-- 10k to Center Node -->
+                <line x1="580" y1="245" x2="580" y2="273" stroke="#eab308" stroke-width="2.5"/>
+
+                <!-- Center Node to 4.7k -->
+                <line x1="580" y1="287" x2="580" y2="325" stroke="#10b981" stroke-width="2.5"/>
+
+                <!-- Center Node to Arduino D6 (Scaled ~3.84V Output) -->
+                <path class="wire" d="M 587 280 L 710 280 L 710 180 L 770 180" stroke="#06b6d4" stroke-width="3" fill="none"/>
+
+                <!-- Bottom of 4.7k to Star GND -->
+                <path class="wire" d="M 510 342 L 440 342 L 440 430 L 91 430" stroke="#64748b" stroke-width="2.5" fill="none"/>
+
+                <!-- Arduino GND to Star GND -->
+                <path class="wire" d="M 770 380 L 730 380 L 730 450 L 91 450" stroke="#64748b" stroke-width="2.5" fill="none"/>
             </svg>
         </div>
     </div>
+
+    <!-- 3. Pin-by-Pin Connection Matrix -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#128203;</div>
+            Complete Hardware Interconnection Matrix
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Component & Wire</th>
+                    <th>Color Code</th>
+                    <th>Connected Destination</th>
+                    <th>Voltage Domain</th>
+                    <th>Electrical Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>LJ12A3 Positive</strong></td>
+                    <td><span class="pin-tag" style="background:#78350f; color:#fef3c7;">BN / Brown</span></td>
+                    <td><span class="pin-tag tag-pwr">+12V PSU Rail</span></td>
+                    <td>12.0V DC</td>
+                    <td>Powers internal oscillator coil & comparator circuit</td>
+                </tr>
+                <tr>
+                    <td><strong>LJ12A3 Negative</strong></td>
+                    <td><span class="pin-tag" style="background:#1e3a8a; color:#bfdbfe;">BU / Blue</span></td>
+                    <td><span class="pin-tag tag-gnd">Common Star GND</span></td>
+                    <td>0V Ground</td>
+                    <td>Ground return for sensor (5–36VDC Negative)</td>
+                </tr>
+                <tr>
+                    <td><strong>LJ12A3 Signal Out</strong></td>
+                    <td><span class="pin-tag" style="background:#334155; color:#ffffff;">BK / Black</span></td>
+                    <td><span class="pin-tag tag-bb">10k&Omega; Resistor (Lead 1)</span></td>
+                    <td>12V / 0V NPN</td>
+                    <td>Normally Open open-collector output</td>
+                </tr>
+                <tr>
+                    <td><strong>Resistor Divider Node</strong></td>
+                    <td><span class="pin-tag tag-sig">Cyan Jumper</span></td>
+                    <td><span class="pin-tag tag-uno">Arduino Uno Pin D6</span></td>
+                    <td>~3.84V / 0V</td>
+                    <td>Safe scaled logic input (Active LOW = Metal detected)</td>
+                </tr>
+                <tr>
+                    <td><strong>Divider Lower Leg</strong></td>
+                    <td><span class="pin-tag tag-bb">4.7k&Omega; Resistor</span></td>
+                    <td><span class="pin-tag tag-gnd">Common Star GND</span></td>
+                    <td>0V Ground</td>
+                    <td>Pulls voltage divider node down to ground</td>
+                </tr>
+                <tr>
+                    <td><strong>Red Alert LED (+)</strong></td>
+                    <td><span class="pin-tag tag-pwr">Red Wire</span></td>
+                    <td><span class="pin-tag tag-uno">Arduino Uno Pin D13</span></td>
+                    <td>5V Logic</td>
+                    <td>Visual instant rejection warning (Active HIGH)</td>
+                </tr>
+                <tr>
+                    <td><strong>Green Ready LED (+)</strong></td>
+                    <td><span class="pin-tag tag-bb">Green Wire</span></td>
+                    <td><span class="pin-tag tag-uno">Arduino Uno Pin A2</span></td>
+                    <td>5V Logic</td>
+                    <td>Visual non-metal / ready status (Active HIGH)</td>
+                </tr>
+                <tr>
+                    <td><strong>Arduino Uno Ground</strong></td>
+                    <td><span class="pin-tag tag-gnd">Black Wire</span></td>
+                    <td><span class="pin-tag tag-gnd">Common Star GND</span></td>
+                    <td>0V Ground</td>
+                    <td>Common voltage reference between 12V and 5V domains</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 4. Logic Truth Table & Operation -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#9878;</div>
+            NPN Open-Collector Detection Logic & Truth Table
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Object in Chute</th>
+                    <th>Sensor Face</th>
+                    <th>Sensor Rear LED</th>
+                    <th>Black Wire Voltage</th>
+                    <th>Pin D6 Voltage</th>
+                    <th>D6 State</th>
+                    <th>System Verdict</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Empty / Clear Chute</strong></td>
+                    <td>Air (> 4mm)</td>
+                    <td><span class="pin-tag tag-gnd">OFF</span></td>
+                    <td>~12.0V</td>
+                    <td><strong>~3.84V</strong></td>
+                    <td><span class="pin-tag tag-uno">HIGH (1)</span></td>
+                    <td><strong style="color: #34d399;">READY / ACCEPT</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Plastic Bottle (PET)</strong></td>
+                    <td>Non-metallic</td>
+                    <td><span class="pin-tag tag-gnd">OFF</span></td>
+                    <td>~12.0V</td>
+                    <td><strong>~3.84V</strong></td>
+                    <td><span class="pin-tag tag-uno">HIGH (1)</span></td>
+                    <td><strong style="color: #34d399;">READY (Green LED ON)</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Aluminum Soda Can</strong></td>
+                    <td>Within ~1.5–2mm</td>
+                    <td><span class="pin-tag tag-pwr">ON (Red)</span></td>
+                    <td>~0.0V (clamped)</td>
+                    <td><strong>~0.05V</strong></td>
+                    <td><span class="pin-tag tag-pwr">LOW (0)</span></td>
+                    <td><strong style="color: #fb7185;">REJECT (Red LED ON)</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Iron / Steel Object</strong></td>
+                    <td>Within 4mm</td>
+                    <td><span class="pin-tag tag-pwr">ON (Red)</span></td>
+                    <td>~0.0V (clamped)</td>
+                    <td><strong>~0.05V</strong></td>
+                    <td><span class="pin-tag tag-pwr">LOW (0)</span></td>
+                    <td><strong style="color: #fb7185;">REJECT (Red LED ON)</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="alert-box">
+            <h4>&#9888; CRITICAL CHASSIS MOUNTING WARNING:</h4>
+            <ul>
+                <li><strong>Do NOT mount the LJ12A3 directly into a steel chassis plate!</strong> Inductive sensors detect all ferrous and conductive metals. Screwing the threaded barrel into a steel wall will cause the sensor to stay <strong>PERMANENTLY TRIGGERED</strong>.</li>
+                <li>Always use an <strong>acrylic plate, 3D-printed PETG collar, or wooden chute bracket</strong> with at least <strong>15 mm radial clearance</strong> from metallic cabinet framing.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 5. Step-by-Step Bench Testing & Calibration Guide -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">&#9989;</div>
+            Step-by-Step Bench Testing & Calibration Procedure
+        </div>
+
+        <div class="step-grid">
+            <div class="step-box">
+                <div class="step-num">1</div>
+                <h4>Multimeter Safety Pre-Check</h4>
+                <p>Before plugging the divider output into Arduino Pin D6, turn on the 12V PSU and measure between the center tap and GND using a Digital Multimeter. <strong>Confirm it reads between 3.7V and 3.9V DC.</strong> If it reads 12V, check your 4.7k ground connection immediately!</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">2</div>
+                <h4>Verify Rear Indicator LED</h4>
+                <p>Bring a steel key, coin, or screwdriver within 4 mm of the blue plastic sensor head. Observe the red LED on the back of the LJ12A3. It should light up brightly when metal is close and extinguish when moved away.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">3</div>
+                <h4>Upload Sketch & Open Monitor</h4>
+                <p>Open <code>04_proximity_metal_plastic_test.ino</code> in Arduino IDE. Set baud rate to <strong>115200 baud</strong>. Watch the live serial stream update from <code>[READY ]</code> to <code>[REJECT]</code> as you present objects.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num">4</div>
+                <h4>Calibrate 2–3 mm Chute Air Gap</h4>
+                <p>Test with a real Coca-Cola/Sprite aluminum can vs a 1.5L and Mismo plastic bottle. Because aluminum has lower magnetic permeability than iron, position the sensor face so inserted cans pass within <strong>2 mm to 3 mm</strong> of the blue face.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (115200 baud):</h4>
+            <div class="code-box">
+==========================================================<br>
+ PCBCES Test 04: 12V LJ12A3 Inductive Metal Sensor Test    <br>
+ Wiring: BN-&gt;+12V | BU-&gt;GND | BK-&gt;10k/4.7k Divider-&gt;D6    <br>
+ Logic: HIGH (~3.8V) = Clear | LOW (~0.0V) = Metal Detected<br>
+ (LJC18A3 Capacitive Sensor Omitted - Pin D5 is Spare)    <br>
+==========================================================<br>
+Pin D6: [HIGH (~3.8V)] | Inductive Status: [READY ] --&gt; Clear / Non-Metal (Plastic Bottle)<br>
+Pin D6: [HIGH (~3.8V)] | Inductive Status: [READY ] --&gt; Clear / Non-Metal (Plastic Bottle)<br>
+Pin D6: [LOW  (~0.0V)] | Inductive Status: [REJECT] --&gt; METALLIC OBJECT DETECTED!<br>
+Pin D6: [LOW  (~0.0V)] | Inductive Status: [REJECT] --&gt; METALLIC OBJECT DETECTED!<br>
+Pin D6: [HIGH (~3.8V)] | Inductive Status: [READY ] --&gt; Clear / Non-Metal (Plastic Bottle)
+            </div>
+        </div>
+    </div>
 </div>
+
 </body>
 </html>
