@@ -23,9 +23,11 @@ The system logic follows an intuitive sequence:
    - **Valid Bottle:** Servo opens the trapdoor to 90° to drop the bottle into the internal storage bin; returns to 0° standby; count increments (e.g., `1/5`), green light blinks.
    - **Invalid Bottle:** Servo flap holds at 0° (stays closed); buzzer sounds alert, red light blinks, LCD prompts `"Pls Remove Item"` for customer manual retrieval from entry chute.
 5. **Coin Payout:** Once the target count is satisfied (5 bottles for 1.5L/1.75L = ₱20.00 [20 coins] or 10 bottles for 290 ML = ₱3.00 [3 coins]), the system triggers the Coin Hopper (220V AC / 12V DC) to dispense the exact target, emits a completion beep, and resets to Standby.
-6. **Bin Full Monitoring & GSM SMS Alert:**
-   - When the internal bin fills up (detected via sensor and/or total bottle count capacity, e.g. 50 bottles), the system locks the chute, displays `"BIN FULL / SYSTEM PAUSED"` on the LCD, and **sends an SMS alert to the admin's phone number**:
-     `"ALERT: PCBCES Storage Bin is FULL! Please empty the collection bin to resume operations."`
+6. **Bin Full Monitoring & Hopper Low-Coin GSM SMS Alerts:**
+   - **Storage Bin Full (IR Sensor on Pin D5 & Quota Tracking):** When the internal storage bin fills up (detected by physical IR beam on D5 continuously blocked or 30 bottles deposited), the system locks the trapdoor flap, displays `"BIN IS FULL!"` on the LCD, and **sends an SMS alert to the admin's phone**:
+     `"ALERT: PCBCES Bottle Storage Bin is FULL! Machine is locked. Please empty bin."`
+   - **Hopper Low/Empty Coin Alert (Smart Optical Sensor Timeout):** If the coin hopper runs during payout but fails to dispense the required coins due to being empty or jammed, the system immediately shuts off the motor, prompts `"LOW/NO COINS! CALL ADMIN"` on the LCD, and **sends an SMS alert to the admin's phone**:
+     `"ALERT: PCBCES Coin Hopper is EMPTY or LOW ON COINS! Dispense timed out. Please refill 1-peso coins."`
 
 ---
 
@@ -35,14 +37,13 @@ The system logic follows an intuitive sequence:
 |---|---|---|
 | **Arduino Uno** | Available | Main Microcontroller |
 | **16x2 LCD + PCF8574 I2C Backpack** | Available (Soldered) | Uses A4 (SDA) and A5 (SCL) |
-| **GSM SIM Module (e.g. SIM800L / SIM900A)** | **Newly Added** | Sends SMS alerts when bin is full to admin's phone |
+| **GSM SIM Module (SIM800L)** | **Active** | Sends SMS alerts when bin is full or coins run low to admin's phone |
 | **Coin Hopper (220V AC / 12V DC)** | Available | Dispenses ₱1 coins (switched by 5V Relay, optical count on D7) |
 | **5V Relay Module** | Available | Switches 220V AC Live (or 12V DC) to the Coin Hopper |
-| **LJC18A3-B-Z/BX Capacitive Sensor** | **Omitted** | Omitted to prevent sensor drift & simplify wiring; D5 is spare |
-| **LJ12A3-4-Z/BX Inductive Sensor** | Available | 12V powered, detects & rejects metal |
-| **IR Obstacle Avoidance Sensor** | Available | Bottle chute entry trigger or bin level check |
-| **HX711 Load Cell + 1kg Bar** | **Omitted / Retired** | Omitted in favor of high-reliability non-contact classification |
-| **HC-SR04+ Ultrasonic Sensor** | Available | Bottle height differentiation or bin depth check |
+| **IR Entry Sensor** | Available | Bottle chute entry trigger (Pin D4, Active LOW) |
+| **IR Bin-Full Sensor** | Available | Top of bottle storage bin detector (Pin D5, Active LOW) |
+| **LJ12A3-4-Z/BX Inductive Sensor** | Available | 12V powered, detects & rejects metal (Pin D6 via 10k/4.7k divider) |
+| **HC-SR04+ Ultrasonic Sensor** | Available | Ceiling top-down bottle height classification in 43cm chamber (D2 Trig, D3 Echo) |
 | **MG996R Servo Motor** | Available | Flap / trapdoor sorting mechanism |
 | **DIYMORE 2315 Active Buzzer** | Available | Audible error and success alerts |
 | **Green & Red Indicator Lights** | Available | Visual status indicators |

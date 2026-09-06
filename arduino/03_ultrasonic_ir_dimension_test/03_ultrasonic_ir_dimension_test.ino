@@ -12,16 +12,18 @@
  * Pin Connections:
  * - HC-SR04 Trig -> D2
  * - HC-SR04 Echo -> D3
- * - IR Sensor OUT -> D4 (Active LOW when bottle is present)
- * - VCC -> 5V Rail
- * - GND -> Common GND Rail
+ * - IR Sensor OUT (Entry)   -> D4 (Active LOW when bottle is present)
+ * - IR Sensor OUT (Bin-Full)-> D5 (Active LOW when bottle storage bin is full)
+ * - VCC                     -> 5V Rail
+ * - GND                     -> Common GND Rail
  * 
- * Last Updated: 2026-09-06 18:35:00 (+08:00)
+ * Last Updated: 2026-09-07 02:43:00 (+08:00)
  */
 
 const int TRIG_PIN = 2;
 const int ECHO_PIN = 3;
 const int IR_PIN = 4;
+const int IR_BIN_PIN = 5;
 
 const int CHAMBER_HEIGHT_CM = 43; // Physical distance from ceiling HC-SR04 to floor trapdoor
 const int DIST_1_5L_MIN = 7;      // 1.5L/1.75L cap is ~7-15 cm from ceiling (~28-36 cm tall bottle)
@@ -78,26 +80,28 @@ void setup() {
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
   pinMode(IR_PIN, INPUT);
+  pinMode(IR_BIN_PIN, INPUT);
 
   Serial.println(F("=========================================================="));
-  Serial.println(F(" PCBCES Test 03: Vertical Chamber Distance & Height Check "));
+  Serial.println(F(" PCBCES Test 03: Height & Dual IR Sensors (Entry & Bin)   "));
   Serial.println(F(" Total Height: 43 cm (Ceiling Sensor to Base Trapdoor)     "));
-  Serial.println(F(" 1.5L/1.75L: 7-15 cm to cap | 290 ML: 26-27 cm to cap     "));
+  Serial.println(F(" Pins: D2 Trig | D3 Echo | D4 IR Entry | D5 IR Bin Full   "));
   Serial.println(F("=========================================================="));
 }
 
 void loop() {
   bool bottleAtEntry = (digitalRead(IR_PIN) == LOW);
+  bool binIsFull = (digitalRead(IR_BIN_PIN) == LOW);
   long distToCap = getDistanceCm();
   long approxHeight = (CHAMBER_HEIGHT_CM > distToCap) ? (CHAMBER_HEIGHT_CM - distToCap) : 0;
 
-  Serial.print(F("IR Entry: ["));
+  Serial.print(F("IR Entry (D4): ["));
   Serial.print(bottleAtEntry ? F("BOTTLE PRESENT") : F("CLEAR         "));
-  Serial.print(F("] | Chamber Distance: "));
+  Serial.print(F("] | Bin Full (D5): ["));
+  Serial.print(binIsFull ? F("BIN FULL!") : F("CLEAR    "));
+  Serial.print(F("] | Cap Dist: "));
   Serial.print(distToCap);
-  Serial.print(F(" cm (~Height: "));
-  Serial.print(approxHeight);
-  Serial.print(F(" cm) | Classification: "));
+  Serial.print(F(" cm | "));
 
   if (bottleAtEntry) {
     if (distToCap >= DIST_1_5L_MIN && distToCap <= DIST_1_5L_MAX) {
@@ -110,7 +114,7 @@ void loop() {
       Serial.println(F("UNKNOWN / UNALIGNED BOTTLE"));
     }
   } else {
-    Serial.println(F("Waiting for insertion..."));
+    Serial.println(F("Waiting for bottle insertion..."));
   }
 
   delay(400);

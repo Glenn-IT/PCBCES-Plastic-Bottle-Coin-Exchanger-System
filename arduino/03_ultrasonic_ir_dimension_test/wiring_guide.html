@@ -294,11 +294,18 @@
                     <td>Ground Reference</td>
                 </tr>
                 <tr>
-                    <td><strong>IR Obstacle Sensor</strong></td>
-                    <td><span class="pin-tag tag-sig">OUT</span></td>
+                    <td><strong>IR Entry Sensor</strong></td>
+                    <td><span class="pin-tag tag-bb">OUT</span></td>
                     <td><span class="pin-tag tag-uno">Arduino D4</span></td>
                     <td>White / Purple</td>
                     <td>Active LOW signal: 0V when bottle enters chamber, 5V when clear</td>
+                </tr>
+                <tr>
+                    <td><strong>IR Bin-Full Sensor</strong></td>
+                    <td><span class="pin-tag tag-bb">OUT</span></td>
+                    <td><span class="pin-tag tag-uno">Arduino D5</span></td>
+                    <td>Orange / White</td>
+                    <td>Active LOW signal: 0V when bottle storage bin is full (triggers SMS)</td>
                 </tr>
             </tbody>
         </table>
@@ -423,14 +430,14 @@
             <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (43 cm Vertical Chamber):</h4>
             <div class="code-box">
 ==========================================================<br>
- PCBCES Test 03: Vertical Chamber Distance & Height Check <br>
+ PCBCES Test 03: Height & Dual IR Sensors (Entry & Bin)   <br>
  Total Height: 43 cm (Ceiling Sensor to Base Trapdoor)     <br>
- 1.5L/1.75L: 7-15 cm to cap | 290 ML: 26-27 cm to cap     <br>
+ Pins: D2 Trig | D3 Echo | D4 IR Entry | D5 IR Bin Full   <br>
 ==========================================================<br>
-IR Entry: [CLEAR         ] | Chamber Distance: 43 cm (~Height: 0 cm)  | Classification: Waiting for insertion...<br>
-IR Entry: [BOTTLE PRESENT] | Chamber Distance: 11 cm (~Height: 32 cm) | Classification: 1.5L / 1.75L BOTTLE DETECTED (NEAR)<br>
-IR Entry: [BOTTLE PRESENT] | Chamber Distance: 26 cm (~Height: 17 cm) | Classification: 290 ML BOTTLE DETECTED (FAR)<br>
-IR Entry: [CLEAR         ] | Chamber Distance: 43 cm (~Height: 0 cm)  | Classification: Waiting for insertion...
+IR Entry (D4): [CLEAR         ] | Bin Full (D5): [CLEAR    ] | Cap Dist: 43 cm | Waiting for bottle insertion...<br>
+IR Entry (D4): [BOTTLE PRESENT] | Bin Full (D5): [CLEAR    ] | Cap Dist: 11 cm | 1.5L / 1.75L BOTTLE DETECTED (NEAR)<br>
+IR Entry (D4): [BOTTLE PRESENT] | Bin Full (D5): [CLEAR    ] | Cap Dist: 26 cm | 290 ML BOTTLE DETECTED (FAR)<br>
+IR Entry (D4): [CLEAR         ] | Bin Full (D5): [BIN FULL!] | Cap Dist: 43 cm | Waiting for bottle insertion...
             </div>
         </div>
     </div>

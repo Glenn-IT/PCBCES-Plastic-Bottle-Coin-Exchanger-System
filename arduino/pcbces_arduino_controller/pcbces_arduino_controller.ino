@@ -1,7 +1,7 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
- * Last Updated: 2026-09-06 21:16:00 (+08:00)
+ * Last Updated: 2026-09-07 02:42:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
@@ -118,7 +118,7 @@ long readChamberDistance() {
   return samples[NUM_SAMPLES / 2];
 }
 
-// GSM SMS Alert
+// GSM SMS Alerts
 void sendBinFullSMS() {
   Serial.println(F("[GSM] Sending Bin-Full Alert to Admin..."));
   gsm.println("AT+CMGF=1");
@@ -127,13 +127,28 @@ void sendBinFullSMS() {
   gsm.print(ADMIN_PHONE_NUMBER);
   gsm.println("\"");
   delay(400);
-  gsm.print("ALERT: PCBCES Storage Bin is FULL (");
+  gsm.print("ALERT: PCBCES Bottle Storage Bin is FULL (");
   gsm.print(totalBinBottles);
-  gsm.print(" bottles)! Machine is paused. Please empty bin.");
+  gsm.print(" bottles / IR Beam Blocked)! Machine is locked. Please empty bin.");
   delay(400);
   gsm.write(26); // Ctrl+Z
   delay(3000);
-  Serial.println(F("[GSM] SMS Dispatch command executed."));
+  Serial.println(F("[GSM] Bin-Full SMS command executed."));
+}
+
+void sendLowCoinSMS() {
+  Serial.println(F("[GSM] Sending Low/Empty Coin Alert to Admin..."));
+  gsm.println("AT+CMGF=1");
+  delay(400);
+  gsm.print("AT+CMGS=\"");
+  gsm.print(ADMIN_PHONE_NUMBER);
+  gsm.println("\"");
+  delay(400);
+  gsm.print("ALERT: PCBCES Coin Hopper is EMPTY or LOW ON COINS! Dispense timed out. Please refill 1-peso coins.");
+  delay(400);
+  gsm.write(26); // Ctrl+Z
+  delay(3000);
+  Serial.println(F("[GSM] Low-Coin SMS command executed."));
 }
 
 void showMenuLCD() {
@@ -194,6 +209,7 @@ void setup() {
 
   // Sensors & Actuators
   pinMode(PIN_IR_ENTRY, INPUT);
+  pinMode(PIN_IR_BIN_FULL, INPUT); // IR Obstacle Sensor at Top of Bottle Storage Bin (Active LOW)
   pinMode(PIN_IND_METAL, INPUT);
   pinMode(PIN_COIN_PULSE, INPUT_PULLUP);
   pinMode(PIN_ULTRASONIC_TRIG, OUTPUT);
@@ -378,8 +394,12 @@ void loop() {
       currentDepositCount++;
       totalBinBottles++;
 
-      // Check Bin Capacity
-      if (totalBinBottles >= MAX_BIN_CAPACITY) {
+      // Check Bin Capacity: either bottle quota limit OR physical IR beam blocked at top of bin
+      bool binSensorBlocked = (digitalRead(PIN_IR_BIN_FULL) == LOW);
+      if (totalBinBottles >= MAX_BIN_CAPACITY || binSensorBlocked) {
+        Serial.print(F("[BIN ALERT] "));
+        if (binSensorBlocked) Serial.println(F("Physical IR Bin-Full Beam Blocked!"));
+        else Serial.println(F("Software Max Capacity Reached!"));
         currentState = STATE_BIN_FULL_LOCKED;
         break;
       }
@@ -457,21 +477,36 @@ void loop() {
         }
 
         if (millis() - payoutStart > payoutTimeout) {
-          Serial.println(F("[PAYOUT ERROR] Hopper timeout (Low coins?)"));
+          Serial.println(F("[PAYOUT ERROR] Hopper timeout: Low coins / Empty hopper detected!"));
           break;
         }
         delay(2);
       }
 
       digitalWrite(PIN_RELAY_HOPPER, HIGH); // Stop Hopper Motor
-      soundSuccess();
 
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("PAYOUT COMPLETE!");
-      lcd.setCursor(0, 1);
-      lcd.print("Thank You! :)   ");
-      delay(3000);
+      if (coinsDispensed < requiredCoinsPayout) {
+        // Hopper is empty or jammed!
+        soundError();
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("LOW/NO COINS!   ");
+        lcd.setCursor(0, 1);
+        lcd.print("CALL ADMIN      ");
+        
+        // Trigger automated SMS to machine owner
+        sendLowCoinSMS();
+        delay(4000);
+      } else {
+        // Payout successfully completed
+        soundSuccess();
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("PAYOUT COMPLETE!");
+        lcd.setCursor(0, 1);
+        lcd.print("Thank You! :)   ");
+        delay(3000);
+      }
 
       currentDepositCount = 0;
       currentState = STATE_STANDBY_MENU;

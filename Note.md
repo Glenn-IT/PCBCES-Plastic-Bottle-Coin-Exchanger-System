@@ -1,7 +1,7 @@
-Coin Hopper for Coin Changer / Bill changer / Coin counting machine
-[REMOVED/OMITTED] LJC18A3-B-Z/BX NPN Proximity Switch (Capacitive sensor omitted to eliminate drift & simplify wiring; Pin D5 is Spare GPIO)
-LJ12A34Z/BX Inductive Proximity Sensor Probe Cable NPN 3-Wire Metal Induction Photoelectric Switch Sensor LJ12A3-4-Z/BX
-IR Infrared Obstacle Avoidance Sensor Module Smart Electronics New for Arduino Diy Smart Car Robot Reflective Photoelectric 3pin
+Coin Hopper for Coin Changer / Bill changer / Coin counting machine (220V AC / 12V DC)
+IR Infrared Obstacle Avoidance Sensor (Bin-Full Sensor on Pin D5: alerts admin via SMS when storage bin is full)
+LJ12A34Z/BX Inductive Proximity Sensor Probe Cable NPN 3-Wire Metal Induction Photoelectric Switch Sensor LJ12A3-4-Z/BX (Pin D6)
+IR Infrared Obstacle Avoidance Sensor Module (Chute Entry Sensor on Pin D4)
 [REMOVED/OMITTED] Load Cell Amplifier HX711 & Straight Bar Load Cell Weight Sensor 1kg (Replaced with non-contact Ultrasonic & Inductive Proximity sensing for high durability and zero mechanical wear)
 Dedicated 3-Button Control Interface (Green: 1.5L/1.75L on D10, Blue: 290 ML / Mismo on A0, Red: Cancel/Restart on A1)
 Digital Robot Servo Motor (180 Rotation) – MG996R MG996 360°

@@ -54,10 +54,12 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | | GND | Common GND | |
 | | Trig | Arduino **D2** | Trigger pulse (Ceiling sensor down into 43cm chamber) |
 | | Echo | Arduino **D3** | Echo from bottle cap: 1.5L/1.75L near (7-15cm), 290 ML far (26-27cm) |
-| **IR Obstacle Sensor** | VCC | 5V Bus | |
-| | GND | Common GND | |
-| | OUT | Arduino **D4** | Active LOW when bottle blocks beam |
-| **Spare Pin D5** | NC | Arduino **D5** | Reserved for future expansion (LJC18A3 omitted) |
+| **IR Entry Sensor** | VCC | 5V Bus | Bottle entry detect |
+| | GND | Common GND | Ground |
+| | OUT | Arduino **D4** | Active LOW when bottle enters cradle |
+| **IR Bin-Full Sensor** | VCC | 5V Bus | Bottle storage bin level monitor |
+| | GND | Common GND | Ground |
+| | OUT | Arduino **D5** | Active LOW when bottle collection bin is full (Triggers SMS) |
 | **LJ12A3 Inductive** | Brown (+V) | 12V Rail | |
 | | Blue (GND) | Common GND | |
 | | Black (Signal) | Voltage Divider (10k/4.7k) -> Arduino **D6** | Metal rejection trigger |
