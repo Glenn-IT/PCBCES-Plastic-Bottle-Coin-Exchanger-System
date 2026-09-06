@@ -284,7 +284,7 @@
             <label class="filter-chip checked">
                 <input type="checkbox" id="chk-hopper" checked>
                 <span class="chip-color" style="background: #a855f7;"></span>
-                <span class="chip-text">🪙 12V Coin Hopper & 5V Relay</span>
+                <span class="chip-text">🪙 Coin Hopper & 5V Relay (220V AC / 12V DC)</span>
             </label>
             <label class="filter-chip checked">
                 <input type="checkbox" id="chk-servo" checked>
@@ -470,11 +470,11 @@
                     <circle cx="830" cy="665" r="6" fill="#ef4444" class="term-dot"/>
                     <text x="815" y="669" fill="#f87171" font-size="10.5" font-family="JetBrains Mono" font-weight="700" text-anchor="end">D13: Red LED</text>
                 </g>
-                <!-- 3A. 12V COIN HOPPER & 5V RELAY MODULE -->
+                <!-- 3A. COIN HOPPER & 5V RELAY MODULE -->
                 <g id="grp-actuator-hopper" class="subsystem-group" data-module="hopper">
                     <rect x="910" y="40" width="550" height="150" rx="10" fill="#111827" stroke="#a855f7" stroke-width="2.5"/>
                     <rect x="930" y="55" width="510" height="30" rx="4" fill="#1f2937"/>
-                    <text x="1185" y="75" fill="#c084fc" font-size="13" font-weight="800" text-anchor="middle">12V COIN HOPPER & 5V RELAY PAYOUT STAGE</text>
+                    <text x="1185" y="75" fill="#c084fc" font-size="13" font-weight="800" text-anchor="middle">COIN HOPPER & 5V RELAY PAYOUT STAGE</text>
 
                     <!-- Relay Box -->
                     <rect x="930" y="95" width="220" height="80" rx="6" fill="#1e1b4b" stroke="#6366f1"/>
@@ -486,10 +486,10 @@
 
                     <!-- Hopper Motor Box -->
                     <rect x="1180" y="95" width="260" height="80" rx="6" fill="#2e1065" stroke="#a855f7"/>
-                    <text x="1310" y="115" fill="#e9d5ff" font-size="11" font-weight="700" text-anchor="middle">12V COIN HOPPER MOTOR</text>
+                    <text x="1310" y="115" fill="#e9d5ff" font-size="11" font-weight="700" text-anchor="middle">COIN HOPPER MOTOR (220V AC / 12V DC)</text>
                     <text x="1310" y="132" fill="#c084fc" font-size="9.5" text-anchor="middle">Switched via Relay COM & NO Contacts</text>
                     <circle cx="1180" cy="155" r="6" fill="#a855f7" class="term-dot"/>
-                    <text x="1195" y="159" fill="#e9d5ff" font-size="10" font-family="JetBrains Mono">Coin Pulse Line (via 10k/4.7k &rarr; D7)</text>
+                    <text x="1195" y="159" fill="#e9d5ff" font-size="10" font-family="JetBrains Mono">Pulse Line (5V TTL or Divider &rarr; D7)</text>
                 </g>
 
                 <!-- 3B. BOTTLE SENSORS CLUSTER -->
@@ -723,15 +723,15 @@
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D7</span></td>
-                        <td>12V Coin Hopper Counter</td>
-                        <td>Digital In via 10k/4.7k</td>
+                        <td>Coin Hopper Pulse Counter</td>
+                        <td>Digital In (5V TTL or ~3.8V via divider)</td>
                         <td>Falling pulse counter (1 pulse = 1 dispensed coin)</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D8</span></td>
                         <td>5V Relay Module</td>
                         <td>Digital Output (5V)</td>
-                        <td>Switches 12V DC power to Hopper motor</td>
+                        <td>Switches 220V AC Live (or 12V DC) to Hopper motor</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-uno">D9</span></td>

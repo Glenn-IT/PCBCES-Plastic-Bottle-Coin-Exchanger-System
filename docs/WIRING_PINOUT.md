@@ -61,12 +61,14 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | **LJ12A3 Inductive** | Brown (+V) | 12V Rail | |
 | | Blue (GND) | Common GND | |
 | | Black (Signal) | Voltage Divider (10k/4.7k) -> Arduino **D6** | Metal rejection trigger |
-| **12V Coin Hopper** | 12V VCC | 12V Rail via Relay (COM to 12V+, NO to Hopper+) | Switched power |
-| | GND | Common GND | |
-| | Coin Signal | Voltage Divider (10k/4.7k) -> Arduino **D7** | 1 pulse = 1 coin dispensed |
-| **5V Relay Module** | VCC | 5V Bus | |
-| | GND | Common GND | |
-| | IN | Arduino **D8** | Relay trigger |
+| **Coin Hopper (220V AC / 12V DC)**| Motor Live/VCC | 220V AC Live (or 12V+) via Relay NO contact (Wall Live into COM) | Switched motor power |
+| | Motor Neutral/GND| 220V AC Neutral (or Common GND) | Motor return line |
+| | Sensor VCC | 5V Bus (YT LP-08 A01 Pin 1) | Optical sensor DC power |
+| | Sensor GND | Common GND (YT LP-08 A01 Pin 3) | Optical sensor ground |
+| | Sensor Signal | Arduino **D7** (YT LP-08 A01 Pin 2 SIG direct 5V TTL) | 1 pulse = 1 coin dispensed (falling edge) |
+| **5V Relay Module** | VCC | 5V Bus | Low voltage logic power |
+| | GND | Common GND | Low voltage ground |
+| | IN | Arduino **D8** | Relay trigger (Active LOW) |
 | **MG996R Servo** | Red (+V) | 5V Bus (with 1000µF capacitor across + & -) | High torque servo |
 | | Brown (GND) | Common GND | |
 | | Orange (Signal)| Arduino **D9 (PWM)** | Controls trapdoor gate (0° Standby / Reject, 90° Accept Drop) |

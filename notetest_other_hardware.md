@@ -64,24 +64,31 @@
 
 ---
 
-## 4. Test 06: 12V Coin Hopper & 5V Relay Payout Module
+## 4. Test 06: Coin Hopper & 5V Relay Payout Module (220V AC / 12V DC)
 
 ### Hardware Components:
-* 12V DC Coin Hopper (Dispenses ₱1.00 coins)
-* 5V Single-Channel Relay Module (Pin D8, active LOW)
-* 10kΩ / 4.7kΩ or 5kΩ Voltage Divider (Pin D7 interrupt)
+* Coin Hopper (Dispenses ₱1.00 coins — standard models use 220V AC or 12V DC motor)
+* 5V Single-Channel Relay Module (Pin D8, active LOW, switches 220V AC Live line or 12V DC + line)
+* Optical Coin Sensor:
+  * **YT LP-08 A01 Sensor Board (5V DC TTL):** Directly powered by 5V DC and GND; SIG connects directly to Arduino Pin D7 (Normally HIGH idle, active LOW on coin detect). No voltage divider required.
+  * *Legacy 12V Pulse Sensors:* Scaled to safe ~3.8V via 10kΩ / 4.7kΩ divider.
 
 ### Real Chassis Installation & Calibration:
 1. **Pulse Line Interfacing (Pin D7):**
-   - The optical count switch inside the hopper pulls the signal line LOW when a coin passes through the exit eye.
-   - Verify the 10k/(4.7k or 5k) voltage divider scales the pulse to **~3.8V – 4.0V DC** into Pin D7.
-   - Software interrupt debounce is calibrated to **60 ms** to eliminate contact bounce.
-2. **Hopper Dispense Ramp Angle:**
+   - The optical sensor switch inside the hopper pulls the signal line LOW when a coin passes through the exit eye.
+   - For 5V sensor boards (YT LP-08 A01), connect SIG directly to Pin D7.
+   - Software edge polling with **60 ms lockout debounce** eliminates double-counting on exit.
+2. **220V AC Mains Wiring & Safety:**
+   - 220V AC Wall Plug Live wire enters Relay `COM`.
+   - Relay `NO` (Normally Open) connects to Hopper motor Live wire (Brown).
+   - 220V AC Wall Plug Neutral wire connects directly to Hopper motor Neutral wire (Blue) with heatshrink or terminal block.
+   - Ground wire (Green/Yellow) connects directly to chassis earth ground.
+3. **Hopper Dispense Ramp Angle:**
    - Mount the hopper securely with at least a **30°–45° gravity ramp** leading to the exterior coin return cup.
    - Ensure the coin exit path has no sharp edges or burrs that could cause coin jams.
-3. **Electrical Noise Isolation (Flyback Diode):**
-   - The hopper DC motor creates inductive flyback spikes when turned OFF.
-   - Verify that the relay module includes an optocoupler and flyback protection diode. Ensure all 12V, 5V, and Arduino grounds meet at a single **common star ground point**.
+4. **Electrical Noise Isolation (Flyback & AC Snubbing):**
+   - Verify that the relay module includes optocoupler isolation to isolate AC line inductive kickback from the 5V Arduino microcontroller.
+   - Ensure Arduino and 5V DC sensor grounds share a solid ground reference.
 
 ---
 

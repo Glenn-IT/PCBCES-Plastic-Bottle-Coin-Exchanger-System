@@ -22,7 +22,7 @@ The system logic follows an intuitive sequence:
 4. **Accept / Reject Mechanism (MG996R Servo):**
    - **Valid Bottle:** Servo opens the trapdoor to 90° to drop the bottle into the internal storage bin; returns to 0° standby; count increments (e.g., `1/5`), green light blinks.
    - **Invalid Bottle:** Servo flap holds at 0° (stays closed); buzzer sounds alert, red light blinks, LCD prompts `"Pls Remove Item"` for customer manual retrieval from entry chute.
-5. **Coin Payout:** Once the target count is satisfied (5 bottles for 1.5L/1.75L = ₱20.00 [20 coins] or 10 bottles for 290 ML = ₱3.00 [3 coins]), the system triggers the 12V Coin Hopper to dispense the exact target, emits a completion beep, and resets to Standby.
+5. **Coin Payout:** Once the target count is satisfied (5 bottles for 1.5L/1.75L = ₱20.00 [20 coins] or 10 bottles for 290 ML = ₱3.00 [3 coins]), the system triggers the Coin Hopper (220V AC / 12V DC) to dispense the exact target, emits a completion beep, and resets to Standby.
 6. **Bin Full Monitoring & GSM SMS Alert:**
    - When the internal bin fills up (detected via sensor and/or total bottle count capacity, e.g. 50 bottles), the system locks the chute, displays `"BIN FULL / SYSTEM PAUSED"` on the LCD, and **sends an SMS alert to the admin's phone number**:
      `"ALERT: PCBCES Storage Bin is FULL! Please empty the collection bin to resume operations."`
@@ -36,8 +36,8 @@ The system logic follows an intuitive sequence:
 | **Arduino Uno** | Available | Main Microcontroller |
 | **16x2 LCD + PCF8574 I2C Backpack** | Available (Soldered) | Uses A4 (SDA) and A5 (SCL) |
 | **GSM SIM Module (e.g. SIM800L / SIM900A)** | **Newly Added** | Sends SMS alerts when bin is full to admin's phone |
-| **12V Coin Hopper** | Available | Dispenses ₱1 coins (switched by 5V Relay) |
-| **5V Relay Module** | Available | Switches 12V power to the Coin Hopper |
+| **Coin Hopper (220V AC / 12V DC)** | Available | Dispenses ₱1 coins (switched by 5V Relay, optical count on D7) |
+| **5V Relay Module** | Available | Switches 220V AC Live (or 12V DC) to the Coin Hopper |
 | **LJC18A3-B-Z/BX Capacitive Sensor** | **Omitted** | Omitted to prevent sensor drift & simplify wiring; D5 is spare |
 | **LJ12A3-4-Z/BX Inductive Sensor** | Available | 12V powered, detects & rejects metal |
 | **IR Obstacle Avoidance Sensor** | Available | Bottle chute entry trigger or bin level check |
