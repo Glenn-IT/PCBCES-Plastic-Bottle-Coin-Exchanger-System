@@ -2,7 +2,7 @@
  * =============================================================================
  * PCBCES - Combined Demo Chassis Test Controller (Tests 01, 03, 04, 05, 06)
  * Plastic Bottle Coin Exchanger System — Bench & Demo Rig Edition
- * Last Updated: 2026-09-07 17:56:00 (+08:00)
+ * Last Updated: 2026-09-07 18:01:00 (+08:00)
  * =============================================================================
  * 
  * Integrated Modules:
@@ -395,8 +395,16 @@ void loop() {
         lcd.setCursor(0, 0);
         lcd.print("BOTTLE DETECTED ");
         lcd.setCursor(0, 1);
+        lcd.print("Align Bottle 2s ");
+        soundBeep(70);
+        delay(1000);
+
+        lcd.setCursor(0, 1);
+        lcd.print("Scanning in 1s..");
+        delay(1000);
+
+        lcd.setCursor(0, 1);
         lcd.print("Scanning Sensors");
-        delay(600); // Allow bottle to settle on the cradle
         currentState = STATE_VALIDATE_BOTTLE;
       }
       break;
