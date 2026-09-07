@@ -17,7 +17,7 @@
  * - VCC                     -> 5V Rail
  * - GND                     -> Common GND Rail
  * 
- * Last Updated: 2026-09-07 02:43:00 (+08:00)
+ * Last Updated: 2026-09-07 17:56:00 (+08:00)
  */
 
 const int TRIG_PIN = 2;

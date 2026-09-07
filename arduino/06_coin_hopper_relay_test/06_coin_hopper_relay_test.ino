@@ -1,7 +1,7 @@
 /*
  * PCBCES - Test 06: Coin Hopper & 5V Relay Payout Test
  * Hardware: Arduino Uno, 5V Relay Module, 220V/12V Coin Hopper, YT LP-08 A01 Sensor Board
- * Last Updated: 2026-09-06 21:16:00 (+08:00)
+ * Last Updated: 2026-09-07 17:42:00 (+08:00)
  * 
  * Clean Edge-Detection Polling (No PCINT / No Serial Ghost Triggering)
  * 
@@ -9,10 +9,13 @@
  * - Accurately detect each coin pulse as it passes the optical sensor
  * - Dispense 3 coins (₱3.00 for 290 ML quota)
  * - Dispense 20 coins (₱20.00 for 1.5L/1.75L quota)
+ * - 5-Second Motor Auto-Cutoff: If no coin is detected for 5 seconds (hopper empty/jammed),
+ *   automatically stops the motor to protect hardware from running dry.
  */
 
 const int RELAY_PIN = 8;
 const int COIN_PULSE_PIN = 7;
+const unsigned long COIN_TIMEOUT_MS = 5000; // 5-second safety cutoff if no coins detected
 
 volatile int coinsDispensed = 0;
 int currentTargetCoins = 3;
@@ -57,6 +60,24 @@ void stopPayout() {
   Serial.println(F(">>> Relay OFF -> Motor Stopped."));
   Serial.println(F("=================================================="));
   Serial.println(F("Send '1' to dispense 3 coins, or '2' to dispense 20 coins:"));
+}
+
+void timeoutPayout() {
+  // Cut power to hopper motor due to timeout (no coins detected)
+  digitalWrite(RELAY_PIN, HIGH);
+  isDispensing = false;
+
+  Serial.println();
+  Serial.println(F("=================================================="));
+  Serial.println(F(">>> [TIMEOUT ALERT] NO COINS DETECTED FOR 5 SECONDS!"));
+  Serial.println(F(">>> Hopper is EMPTY, low on coins, or jammed."));
+  Serial.print(F(">>> Motor stopped automatically. Coins Dispensed: "));
+  Serial.print(coinsDispensed);
+  Serial.print(F(" / "));
+  Serial.println(currentTargetCoins);
+  Serial.println(F(">>> (Note: In Master Controller, this triggers Low-Coin SMS to Admin)"));
+  Serial.println(F("=================================================="));
+  Serial.println(F("Refill coins, then send '1' (3 coins) or '2' (20 coins):"));
 }
 
 void setup() {
@@ -113,6 +134,11 @@ void loop() {
     }
   }
   lastPinState = currentPinState;
+
+  // 5-Second Auto-Cutoff: Stop motor if no coins detected for 5 seconds
+  if (isDispensing && (millis() - lastPulseTime >= COIN_TIMEOUT_MS)) {
+    timeoutPayout();
+  }
 
   // Handle Serial Commands
   if (Serial.available()) {
