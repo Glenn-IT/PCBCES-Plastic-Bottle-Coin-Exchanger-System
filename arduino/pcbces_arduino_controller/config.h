@@ -3,7 +3,7 @@
 
 // =============================================================================
 // PCBCES PIN CONFIGURATION MATRIX (Arduino Uno ATmega328P)
-// Last Updated: 2026-09-07 17:56:00 (+08:00)
+// Last Updated: 2026-09-16 23:30:00 (+08:00)
 // =============================================================================
 
 // Dedicated 3-Button User Interface Pins (INPUT_PULLUP to GND)
@@ -13,7 +13,7 @@
 
 // Analog & I2C Pins
 #define PIN_LED_GREEN       A2   // Green LED (Acceptance / Ready Indicator)
-#define PIN_GSM_TX          A3   // SoftwareSerial TX (To GSM SIM800L RX)
+#define PIN_GSM_TX          A3   // SoftwareSerial TX (To GSM SIM800L RX / SIM900A 5VR)
 #define PIN_I2C_SDA         A4   // 16x2 LCD I2C Data
 #define PIN_I2C_SCL         A5   // 16x2 LCD I2C Clock
 
@@ -27,7 +27,7 @@
 #define PIN_COIN_PULSE       7   // 12V Coin Hopper Counter (via 10k/4.7k or 5k divider)
 #define PIN_RELAY_HOPPER     8   // 5V Relay Module (Controls 12V Hopper Motor)
 #define PIN_SERVO_TRAPDOOR   9   // MG996R PWM Trapdoor Flap
-#define PIN_GSM_RX          11   // SoftwareSerial RX (From GSM SIM800L TX)
+#define PIN_GSM_RX          11   // SoftwareSerial RX (From GSM SIM800L TX / SIM900A 5VT)
 #define PIN_BUZZER          12   // DIYMORE Active 5V Buzzer
 #define PIN_LED_RED         13   // Red LED (Rejection / Fault Indicator)
 

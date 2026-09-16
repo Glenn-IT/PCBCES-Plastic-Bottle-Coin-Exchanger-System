@@ -12,6 +12,7 @@ Green and Red Light Bulb
 16x2 LCD module Blue
 LM2596 Buck Converter DC-DC Step Down Converter Power Supply Module
 S-120-12 Usual 120w 12vdc 10a Single Group Switching Power Supply Ac 110v / 220v To Dc 12v
+SIMCom SIM900A (S2-1040U-Z1K0H) GSM/GPRS Module (Bin-Full SMS Dispatcher: 5VT to D11 RX, 5VR to A3 TX, 5V 2A power rail)
 
 This are my hardware components now what im building is
 
@@ -24,3 +25,4 @@ The user selects via 3 dedicated buttons:
 - Button Blue (A0): Selects 290 ML mode (10 pcs quota = 3 PHP)
 - Button Red (A1): System restart / cancel transaction at any time, resetting count and returning to start.
 When a bottle is inserted, sensors verify non-metal and correct dimensions. If valid, the servo trapdoor opens 90 degrees to drop the bottle into the bin. If invalid, the buzzer alerts, red LED blinks, and LCD prompts 'Pls try again'. Once the target count is satisfied, the 12V hopper dispenses the coins (20 coins for 1.5L/1.75L, 3 coins for 290 ML).
+- Safety Feature (Test 08): Coin Hopper motor auto-stops if no coin dispenses for 5 seconds (empty/jammed), sounding the buzzer and sending an automated Low-Coin SMS alert to the admin via the GSM module.

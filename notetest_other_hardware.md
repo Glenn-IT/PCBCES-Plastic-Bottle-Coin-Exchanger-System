@@ -92,29 +92,60 @@
 
 ---
 
-## 5. Test 07: SIM800L GSM SMS Module
+## 5. Test 07: SIM900A / SIM800L GSM SMS Module
 
 ### Hardware Components:
-* SIM800L GPRS/GSM Module
-* 4.0V–4.3V Power Rail (from dedicated LM2596 buck converter or 1N4007 silicon diode drop)
-* Arduino D11 (RX) & A3 (TX) SoftwareSerial
+* **SIMCom SIM900A (Chip Model: S2-1040U-Z1K0H)** / SIM800L GSM/GPRS Module
+* 5.0V DC Power Rail (from LM2596 DC-DC Buck Converter; 2.0A peak burst capability)
+* 1000 µF to 2200 µF 16V Low-ESR Decoupling Capacitor across module VCC & GND
+* Arduino SoftwareSerial: **5VT &rarr; Pin D11 (RX)** and **5VR &larr; Pin A3 (TX)**
+* External SMA GSM Antenna
 
 ### Real Chassis Installation & Calibration:
-1. **Antenna Placement in Metal Enclosure (Crucial):**
+1. **Direct 5.0V Rail & Burst Decoupling Capacitor:**
+   - The SIM900A breakout board has onboard 5V regulation and logic level shifting (`5VT` and `5VR`).
+   - Power the `VCC` pin directly from the **LM2596 5.0V rail** (do NOT use the Arduino 5V pin!).
+   - Solder or place a **1000 µF to 2200 µF low-ESR capacitor** directly across `VCC` and `GND` at the module header to absorb the 2.0A cellular burst transmission spikes without dropping voltage.
+2. **Logic Level Wiring (5VT & 5VR):**
+   - Connect module **`5VT`** (5V TTL Transmit) &rarr; Arduino Uno **`D11`** (SoftwareSerial RX).
+   - Connect module **`5VR`** (5V TTL Receive) &larr; Arduino Uno **`A3`** (SoftwareSerial TX).
+   - Common ground: Connect module **`GND`** to the common system ground rail (shared with Arduino Uno and LM2596 Buck).
+3. **Antenna Placement in Metal Enclosure (Crucial):**
    - **WARNING:** A steel or aluminum chassis acts as a **Faraday cage** and will block cellular signals!
-   - If using a metal machine cabinet, replace the small onboard spring antenna with an **external IPEX-to-SMA cable** and mount a magnetic / stub GSM antenna **OUTSIDE the cabinet roof**.
-2. **2A Burst Decoupling Capacitor:**
-   - When the SIM800L transmits SMS bursts, it draws up to **2.0A for several milliseconds**.
-   - Solder a **1000 µF to 2200 µF low-ESR capacitor** directly between the SIM800L module's `VCC` and `GND` pins to prevent sudden brownout module reboots.
-3. **SIM Card Preparation:**
-   - Ensure the micro-SIM card has:
-     * PIN lock **disabled**.
+   - Mount an **external SMA magnetic / stub GSM antenna OUTSIDE the machine cabinet roof** using a chassis-mount bulkhead extension cable.
+4. **SIM Card Preparation & Status LED:**
+   - Ensure the SIM card (Smart, Globe, TNT, or TM) has:
+     * PIN lock **disabled** (test in a phone first).
      * Active prepaid load / SMS balance.
-     * Valid Philippines format recipient number in `config.h` (e.g., `+639XXXXXXXXX`).
+     * Valid Philippines recipient phone number in sketch (e.g., `+639XXXXXXXXX`).
+   - Observe the onboard **NET LED**:
+     * Fast flash (~800ms): Module is searching for a network.
+     * Slow steady flash (~3000ms / 3 seconds): Module is registered on the cellular network and ready for SMS dispatch!
 
 ---
 
-## 6. Pre-Flight Integration Checklist (Chassis Transfer)
+## 6. Test 08: Coin Hopper & GSM SMS Low-Coin / Jam Alert System
+
+### Hardware Components:
+* 12V/220V Coin Hopper & 5V Relay (Pin D8)
+* Coin Hopper Optical Pulse Sensor (Pin D7)
+* SIMCom SIM900A (S2-1040U-Z1K0H) / SIM800L GSM Module (Pins D11 & A3)
+* Active 5V Buzzer (Pin D12) & Red Fault LED (Pin D13)
+
+### Real Chassis Installation & Calibration:
+1. **5-Second Dry-Run Motor Protection:**
+   - If the coin hopper runs out of coins during a dispense cycle, allowing the motor to spin continuously will overheat the motor and strip internal gears.
+   - The safety firmware measures the duration since the last optical falling pulse on Pin D7. If **5.0 seconds elapses with 0 coins detected**, Pin D8 instantly cuts relay power to stop the hopper motor.
+2. **Automated Low-Coin / Jam Emergency Dispatch:**
+   - Once the 5-second timer trips, the controller commands the GSM modem to send an SMS text alert to the machine administrator phone:
+     `"ALERT: PCBCES Coin Hopper is EMPTY or JAMMED! No coin dispensed for 5 seconds during payout..."`
+   - Simultaneously, the machine sounds an acoustic alarm on Pin D12 and illuminates the Red Fault LED on Pin D13.
+3. **Recovery Procedure:**
+   - The technician replenishes 1-peso coins into the hopper hopper bowl and restarts or resets the machine via Button Red (Pin A1).
+
+---
+
+## 7. Pre-Flight Integration Checklist (Chassis Transfer)
 
 | Subsystem | Key Verification Task | Acceptance Criteria |
 |---|---|---|
@@ -125,3 +156,5 @@
 | **Servo Angles** | Test flap positions at 0° (Standby/Reject) and 90° (Accept) | Smooth travel, no motor humming at 0° rest |
 | **Hopper Payout** | Run `06_coin_hopper_relay_test.ino` | Dispenses exactly 3 coins (₱3.00) or 20 coins (₱20.00) and halts |
 | **GSM Signal** | Run `07_sim800l_gsm_sms_test.ino` | Returns `+CSQ: > 14` and sends test SMS |
+| **Hopper + GSM** | Run `08_coin_hopper_gsm_low_coin_test.ino` | 5s empty hopper cutoff triggers motor halt & emergency SMS |
+

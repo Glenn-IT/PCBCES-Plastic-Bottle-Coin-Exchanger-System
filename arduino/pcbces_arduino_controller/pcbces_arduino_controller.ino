@@ -1,7 +1,7 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
- * Last Updated: 2026-09-07 18:01:00 (+08:00)
+ * Last Updated: 2026-09-16 23:30:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
@@ -16,7 +16,7 @@
  * - LJ12A3 Inductive Sensor (Metallic Object Rejection)
  * - MG996R Metal Gear Servo (Accept/Reject Trapdoor Flap)
  * - 220V/12V Coin Hopper & 5V Relay (20.00 PHP or 3.00 PHP Payout)
- * - SIM800L GSM Module (Storage Bin Full SMS Telemetry)
+ * - SIM900A / SIM800L GSM Module (Storage Bin Full SMS Telemetry on 5VT->D11, 5VR<-A3)
  * - Pin D5: Spare / Unassigned GPIO (LJC18A3 Capacitive Sensor omitted)
  */
 
@@ -201,6 +201,12 @@ bool checkCancelButton() {
 void setup() {
   Serial.begin(115200);
   gsm.begin(9600);
+
+  // Auto-baud sync for GSM modem (SIM900A / SIM800L)
+  delay(1000);
+  gsm.println("AT");
+  delay(200);
+  gsm.println("AT");
 
   // 3 Dedicated Buttons (Internal Pullups to GND)
   pinMode(PIN_BTN_GREEN, INPUT_PULLUP);

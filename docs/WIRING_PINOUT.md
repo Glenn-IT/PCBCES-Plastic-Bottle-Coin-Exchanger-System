@@ -14,10 +14,11 @@ You have two main power rails + dedicated supply for the GSM module:
    - Powers **Arduino Uno** (into `5V` pin).
    - Powers **MG996R Servo Motor** (MUST NOT be powered from Arduino 5V board pin; use the 5V bus).
    - Powers **16x2 LCD I2C Backpack**, **HC-SR04**, **IR sensor**, **Buzzer**, and **Relay coil**.
-3. **GSM SIM Module Power (SIM800L: 3.7V – 4.4V)**:
+3. **GSM SIM Module Power (SIM900A: 5.0V / SIM800L: 3.7V – 4.4V)**:
    - **DO NOT** connect to Arduino 5V or 3.3V pin (it will drop network or cause Arduino to reboot during SMS transmit).
-   - **Best Method:** From the 5V rail, put a **1N4007 Diode** in series (Anode to 5V, Cathode to SIM800L VCC). This drops ~0.7V, giving a clean ~4.3V.
-   - Connect your **1000µF 16V capacitor** directly across SIM800L `VCC` and `GND` to supply the 2A instantaneous burst current required for GSM transmission.
+   - **SIM900A (SIMCom S2-1040U-Z1K0H):** Connect `VCC` directly to the **LM2596 5.0V regulated bus**.
+   - **SIM800L:** From the 5V rail, put a **1N4007 Diode** in series (Anode to 5V, Cathode to SIM800L VCC) for ~4.3V.
+   - Connect your **1000µF 16V capacitor** directly across module `VCC` and `GND` to supply the 2A instantaneous burst current required for GSM transmission.
 
 > [!IMPORTANT]
 > **COMMON GROUND:** The negative (`-V` / `GND`) of the 12V power supply, the output GND of the LM2596 buck converter, the GSM module GND, and all Arduino `GND` pins **MUST be connected together**.
@@ -76,10 +77,10 @@ Sensor Signal Wire (12V) ───[ 10kΩ Resistor ]───┬───> Ardui
 | | Orange (Signal)| Arduino **D9 (PWM)** | Controls trapdoor gate (0° Standby / Reject, 90° Accept Drop) |
 | **Button Green (1.5L)** | Leg 1 | Arduino **D10** | Selects 1.5L / 1.75L mode (5 pcs quota = ₱20.00, `INPUT_PULLUP`) |
 | | Leg 2 | Common GND | |
-| **GSM SIM Module** | VCC | 4.3V Rail (via 1N4007 from 5V + 1000µF cap) | Needs 3.7V - 4.4V with 2A burst |
-| | GND | Common GND | |
-| | SIM TX | Arduino **D11 (SoftwareSerial RX)** | Receives AT responses |
-| | SIM RX | Arduino **A3 (SoftwareSerial TX)** (via 1k/2k divider or direct) | Sends AT commands |
+| **GSM Module (SIM900A / SIM800L)** | VCC | 5V Bus (SIM900A) / 4.3V Rail (SIM800L) + 1000µF cap | 2A burst current capable |
+| | GND | Common GND | Common system ground |
+| | 5VT / SIM TX | Arduino **D11 (SoftwareSerial RX)** | Receives AT responses |
+| | 5VR / SIM RX | Arduino **A3 (SoftwareSerial TX)** | Sends AT commands |
 | **Active Buzzer** | Positive (+) | Arduino **D12** | Active buzzer beeps when HIGH |
 | | Negative (-) | Common GND | |
 | **Red Light / LED** | Anode (+) | Arduino **D13** (via 220Ω resistor) | Rejection indicator |

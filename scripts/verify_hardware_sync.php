@@ -134,6 +134,22 @@ if (file_exists($baseDir . '/AGENTS.md') && file_exists($baseDir . '/GEMINI.md')
     $allOk = false;
 }
 
+// 8. Check Test 08 (Hopper & GSM Low-Coin Alert)
+$t8_ino = $baseDir . '/arduino/08_coin_hopper_gsm_low_coin_test/08_coin_hopper_gsm_low_coin_test.ino';
+$t8_guide = $baseDir . '/arduino/08_coin_hopper_gsm_low_coin_test/wiring_guide.html';
+if (file_exists($t8_ino) && file_exists($t8_guide)) {
+    $c8 = file_get_contents($t8_ino);
+    if (strpos($c8, 'COIN_TIMEOUT_MS = 5000') === false) {
+        echo "[FAIL] Test 08 missing 5-second timeout define\n";
+        $allOk = false;
+    } else {
+        echo "[PASS] Test 08 (Hopper + GSM 5s Low-Coin Alert) verified.\n";
+    }
+} else {
+    echo "[FAIL] Missing Test 08 files\n";
+    $allOk = false;
+}
+
 echo "--------------------------------------------------\n";
 if ($allOk) {
     echo "[SUCCESS] ALL FILES 100% SYNCHRONIZED AND CONSISTENT!\n";

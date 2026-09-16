@@ -294,7 +294,7 @@
             <label class="filter-chip checked">
                 <input type="checkbox" id="chk-gsm" checked>
                 <span class="chip-color" style="background: #eab308;"></span>
-                <span class="chip-text">📱 SIM800L GSM SMS Module</span>
+                <span class="chip-text">📱 SIM900A / SIM800L GSM SMS Module</span>
             </label>
             <label class="filter-chip checked">
                 <input type="checkbox" id="chk-ui" checked>
@@ -538,19 +538,19 @@
                     <text x="1185" y="625" fill="#9ca3af" font-size="9.5" text-anchor="middle">Power: 5V Rail (with 1000µF Decoupling Capacitor across + & -)</text>
                 </g>
 
-                <!-- 3D. SIM800L GSM SMS MODULE -->
+                <!-- 3D. SIM900A / SIM800L GSM SMS MODULE -->
                 <g id="grp-module-gsm" class="subsystem-group" data-module="gsm">
                     <rect x="910" y="670" width="550" height="105" rx="10" fill="#111827" stroke="#eab308" stroke-width="2.5"/>
                     <rect x="930" y="685" width="510" height="28" rx="4" fill="#1f2937"/>
-                    <text x="1185" y="704" fill="#fde047" font-size="12.5" font-weight="800" text-anchor="middle">SIM800L GSM/GPRS MODULE (BIN FULL SMS NOTIFIER)</text>
+                    <text x="1185" y="704" fill="#fde047" font-size="12.5" font-weight="800" text-anchor="middle">SIM900A / SIM800L GSM MODULE (BIN FULL SMS NOTIFIER)</text>
 
                     <circle cx="910" cy="735" r="6" fill="#eab308" class="term-dot"/>
-                    <text x="925" y="739" fill="#fde047" font-size="10" font-family="JetBrains Mono">SIM TX &rarr; Arduino D11 (SoftwareSerial RX)</text>
+                    <text x="925" y="739" fill="#fde047" font-size="10" font-family="JetBrains Mono">SIM TX (5VT) &rarr; Arduino D11 (SoftwareSerial RX)</text>
 
                     <circle cx="910" cy="755" r="6" fill="#eab308" class="term-dot"/>
-                    <text x="925" y="759" fill="#fde047" font-size="10" font-family="JetBrains Mono">SIM RX &larr; Arduino A3 (SoftwareSerial TX)</text>
+                    <text x="925" y="759" fill="#fde047" font-size="10" font-family="JetBrains Mono">SIM RX (5VR) &larr; Arduino A3 (SoftwareSerial TX)</text>
 
-                    <text x="1350" y="745" fill="#9ca3af" font-size="9.5" text-anchor="middle">Power: 4.3V @ 2A Peak</text>
+                    <text x="1350" y="745" fill="#9ca3af" font-size="9.5" text-anchor="middle">Power: 5.0V (SIM900A) / 4.3V (SIM800L) @ 2A</text>
                 </g>
 
                 <!-- 3E. USER INTERFACE -->
@@ -816,8 +816,8 @@
             <div class="callout callout-rose">
                 <div class="callout-icon">⚠️</div>
                 <div class="callout-text">
-                    <h4>Do NOT Power SIM800L or MG996R from Arduino 5V Pin!</h4>
-                    <p>The Arduino Uno onboard 5V regulator can only output ~400mA. The MG996R servo draws up to 1.5A peak and the SIM800L draws 2A bursts during transmission. Always power them from the <strong>LM2596 5V rail</strong> backed by the 1000µF capacitor!</p>
+                    <h4>Do NOT Power SIM900A, SIM800L, or MG996R from Arduino 5V Pin!</h4>
+                    <p>The Arduino Uno onboard 5V regulator can only output ~400mA. The MG996R servo draws up to 1.5A peak and the SIM900A/SIM800L draws 2A bursts during transmission. Always power them from the <strong>LM2596 5V rail</strong> backed by the 1000µF capacitor!</p>
                 </div>
             </div>
 

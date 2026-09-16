@@ -795,10 +795,10 @@
                 </tr>
                 <tr>
                     <td><span class="pin-tag tag-uno">D11</span></td>
-                    <td><strong>SIM800L GSM Module</strong></td>
+                    <td><strong>SIM900A / SIM800L GSM Module</strong></td>
                     <td>SoftwareSerial RX</td>
-                    <td>4.0V - 4.3V Logic Safe</td>
-                    <td>Receives AT command responses and network status from SIM800L TX</td>
+                    <td>5V TTL / 4.3V Logic Safe</td>
+                    <td>Receives AT command responses and network status from GSM 5VT / TX</td>
                     <td><a href="07_sim800l_gsm_sms_test/wiring_guide.html" style="color: var(--accent-amber); font-weight: 700; text-decoration: none;">Test 07 Guide &rarr;</a></td>
                 </tr>
                 <tr>
@@ -843,10 +843,10 @@
                 </tr>
                 <tr>
                     <td><span class="pin-tag tag-uno">A3</span></td>
-                    <td><strong>SIM800L GSM Module</strong></td>
+                    <td><strong>SIM900A / SIM800L GSM Module</strong></td>
                     <td>SoftwareSerial TX</td>
-                    <td>4.0V - 4.3V Logic Safe</td>
-                    <td>Sends AT SMS transmission commands to SIM800L RX for bin-full dispatch</td>
+                    <td>5V TTL / 4.3V Logic Safe</td>
+                    <td>Sends AT SMS transmission commands to GSM 5VR / RX for bin-full dispatch</td>
                     <td><a href="07_sim800l_gsm_sms_test/wiring_guide.html" style="color: var(--accent-amber); font-weight: 700; text-decoration: none;">Test 07 Guide &rarr;</a></td>
                 </tr>
                 <tr>
@@ -936,10 +936,20 @@
         <div class="test-card">
             <div>
                 <span class="card-tag" style="background: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.3);">TEST 07</span>
-                <h3>SIM800L GSM SMS Bin-Full Alert</h3>
-                <p>SoftwareSerial on D11 RX / A3 TX with dedicated 4.3V rail for transmitting automatic SMS text alerts to the admin phone when machine reaches full capacity (30 bottles).</p>
+                <h3>SIM900A / SIM800L GSM SMS Bin-Full Alert</h3>
+                <p>SoftwareSerial on D11 RX (5VT) / A3 TX (5VR) with 5.0V / 4.3V 2A power rail for transmitting automatic SMS text alerts to the admin phone when machine reaches full capacity (30 bottles).</p>
             </div>
             <a href="07_sim800l_gsm_sms_test/wiring_guide.html" class="btn btn-amber">View Test 07 Guide &rarr;</a>
+        </div>
+
+        <!-- Test 08 -->
+        <div class="test-card">
+            <div>
+                <span class="card-tag" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">TEST 08</span>
+                <h3>Coin Hopper &amp; GSM Low-Coin Alert</h3>
+                <p>Safety integration test: Relay D8 + Optical Pulse D7 + SIM900A/SIM800L (D11/A3). Auto-halts motor if no coin passes for 5 seconds and dispatches an emergency SMS alert to admin.</p>
+            </div>
+            <a href="08_coin_hopper_gsm_low_coin_test/wiring_guide.html" class="btn btn-purple">View Test 08 Guide &rarr;</a>
         </div>
     </div>
 
@@ -975,10 +985,10 @@
                         <td>Arduino Uno 5V Pin, MG996R Servo, 16x2 LCD, HC-SR04, IR, Relay VCC, Buzzer</td>
                     </tr>
                     <tr>
-                        <td><span class="pin-tag tag-gsm">4.30V GSM Rail</span></td>
-                        <td>4.30V DC</td>
+                        <td><span class="pin-tag tag-gsm">GSM Power Rail</span></td>
+                        <td>5.00V / 4.30V DC</td>
                         <td>2.0A Bursts</td>
-                        <td>SIM800L VCC & GND (via 1N4007 forward drop + 1000µF Low-ESR buffer capacitor)</td>
+                        <td>SIM900A (VCC 5V) / SIM800L (via diode drop) + 1000µF Low-ESR buffer capacitor</td>
                     </tr>
                     <tr>
                         <td><span class="pin-tag tag-gnd">Common Star Ground</span></td>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test 07: SIM800L GSM SMS Bin-Full Alert — PCBCES</title>
+    <title>Test 07: SIM900A / SIM800L GSM SMS Bin-Full Alert — PCBCES</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,6 +21,8 @@
             --accent-purple: #8b5cf6;
             --accent-yellow: #eab308;
             --active-accent: #eab308;
+            --radius-md: 0.75rem;
+            --bg-surface: #131d31;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -45,7 +47,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(234, 179, 8, 0.15);
             color: var(--active-accent);
             border: 1px solid var(--active-accent);
             margin-bottom: 0.75rem;
@@ -59,7 +61,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        p.subtitle { color: var(--text-secondary); font-size: 1.05rem; }
+        p.subtitle { color: var(--text-secondary); font-size: 1.05rem; max-width: 800px; margin: 0 auto; }
         .nav-bar {
             display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem;
         }
@@ -82,9 +84,23 @@
             align-items: center; gap: 0.75rem; color: var(--text-primary);
         }
         .card-title .icon {
-            width: 32px; height: 32px; border-radius: 0.5rem; background: rgba(59, 130, 246, 0.2);
+            width: 32px; height: 32px; border-radius: 0.5rem; background: rgba(234, 179, 8, 0.2);
             color: var(--active-accent); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
         }
+        .specs-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem; margin-bottom: 1.5rem;
+        }
+        .spec-box {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 1rem 1.2rem;
+            transition: border-color 0.2s;
+        }
+        .spec-box:hover { border-color: var(--active-accent); }
+        .spec-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); font-weight: 700; margin-bottom: 0.25rem; }
+        .spec-val { font-size: 1.1rem; font-weight: 800; color: #fff; }
+        .spec-sub { font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem; }
+
         .svg-container {
             width: 100%; overflow-x: auto; background: #090d16; border-radius: 0.75rem;
             padding: 1.5rem 1rem; border: 1px solid #1e293b;
@@ -96,9 +112,10 @@
         }
         .wire:hover { stroke-width: 4.5px !important; filter: drop-shadow(0 0 6px currentColor); }
         @keyframes dash { to { stroke-dashoffset: -1000; } }
+
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; }
         th {
-            background-color: #0f172a; color: var(--text-secondary); font-weight: 600;
+            background-color: #0c1220; color: var(--text-secondary); font-weight: 600;
             padding: 0.85rem 1rem; border-bottom: 2px solid var(--border-color);
             text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
         }
@@ -112,72 +129,367 @@
         .tag-bb { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
         .tag-pwr { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
         .tag-gsm { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
-        .note-box {
+        .tag-gnd { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.4); }
+
+        .step-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem; margin-top: 1rem;
+        }
+        .step-box {
+            background-color: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 1.5rem; position: relative;
+        }
+        .step-num {
+            position: absolute; top: 1rem; right: 1rem; font-size: 1.8rem; font-weight: 800;
+            color: rgba(234, 179, 8, 0.25); font-family: 'JetBrains Mono', monospace;
+        }
+        .step-box h4 { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+        .step-box p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+
+        .alert-box {
             background: rgba(244, 63, 94, 0.1); border-left: 4px solid var(--accent-rose);
             padding: 1.25rem; border-radius: 0 0.5rem 0.5rem 0; margin-top: 1.5rem;
         }
-        .note-box h4 {
-            color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.5rem;
-            display: flex; align-items: center; gap: 0.5rem;
+        .alert-box h4 { color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+        .alert-box p, .alert-box li { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+        .alert-box ul { padding-left: 1.25rem; margin-top: 0.4rem; }
+
+        .callout-box {
+            background: rgba(234, 179, 8, 0.1); border-left: 4px solid var(--active-accent);
+            padding: 1.25rem; border-radius: 0 0.5rem 0.5rem 0; margin-top: 1.5rem;
         }
-        .note-box p, .note-box li { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.4rem; }
-        .note-box ul { padding-left: 1.25rem; }
+        .callout-box h4 { color: var(--active-accent); font-size: 1rem; margin-bottom: 0.4rem; }
+        .callout-box p { color: var(--text-secondary); font-size: 0.9rem; }
+
         .code-box {
             font-family: 'JetBrains Mono', monospace; background: #090d16;
-            border: 1px solid #1e293b; padding: 1rem; border-radius: 0.5rem;
-            font-size: 0.85rem; color: #38bdf8; overflow-x: auto; margin-top: 1rem;
+            border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.5rem;
+            font-size: 0.85rem; color: #38bdf8; overflow-x: auto; margin-top: 1rem; line-height: 1.6;
         }
     </style>
 </head>
 <body>
-<div class="container">    <header>
+<div class="container">
+    <header>
         <span class="badge">Component Test 07</span>
-        <h1>SIM800L GSM SMS Bin-Full Notification System</h1>
-        <p class="subtitle">Hardware: SIM800L GSM Module &bull; SoftwareSerial (D11 RX, A3 TX) &bull; 4.3V Power Rail &bull; 1000µF Capacitor</p>
-    </header><div class="nav-bar"><a href="../index.html" class="nav-link">🏠 Master Hub</a><a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & Button</a><a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (HX711)</a><a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a><a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a><a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a><a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a><a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link active">Test 07: GSM SMS Alert</a><a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a></div>    <div class="card">
+        <h1>SIM900A / SIM800L GSM SMS Bin-Full Dispatcher</h1>
+        <p class="subtitle">Hardware: SIMCom SIM900A (S2-1040U-Z1K0H) &bull; SoftwareSerial (D11 RX, A3 TX) &bull; 5.0V / 2A Power Rail &bull; 1000µF Low-ESR Buffer</p>
+    </header>
+
+    <div class="nav-bar">
+        <a href="../index.html" class="nav-link">🏠 Master Hub</a>
+        <a href="../01_lcd_button_menu_test/wiring_guide.html" class="nav-link">Test 01: LCD & Button</a>
+        <a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (HX711)</a>
+        <a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a>
+        <a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal / Plastic</a>
+        <a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link">Test 05: Servo Trapdoor</a>
+        <a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a>
+        <a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link active">Test 07: GSM SMS Alert</a>
+        <a href="../08_coin_hopper_gsm_low_coin_test/wiring_guide.html" class="nav-link">Test 08: Hopper + GSM Alert</a>
+        <a href="../pcbces_arduino_controller/wiring_guide.html" class="nav-link">🚀 Full Controller</a>
+    </div>
+
+    <!-- Subsystem Specs -->
+    <div class="specs-grid">
+        <div class="spec-box">
+            <div class="spec-label">GSM Core Module</div>
+            <div class="spec-val" style="color: #fde047;">SIMCom SIM900A</div>
+            <div class="spec-sub">Chip P/N: S2-1040U-Z1K0H (Dual-Band 900/1800 MHz)</div>
+        </div>
+        <div class="spec-box">
+            <div class="spec-label">Operating Voltage</div>
+            <div class="spec-val" style="color: #38bdf8;">5.0V DC (VCC5)</div>
+            <div class="spec-sub">From LM2596 Buck Converter (NOT Arduino 5V pin!)</div>
+        </div>
+        <div class="spec-box">
+            <div class="spec-label">Peak RF Burst Current</div>
+            <div class="spec-val" style="color: #fb7185;">2.0 Amperes</div>
+            <div class="spec-sub">Buffered by 1000µF–2200µF Low-ESR Capacitor</div>
+        </div>
+        <div class="spec-box">
+            <div class="spec-label">Uno Serial Interface</div>
+            <div class="spec-val" style="color: #34d399;">9600 bps TTL</div>
+            <div class="spec-sub">5VT &rarr; D11 (RX) | 5VR &larr; A3 (TX)</div>
+        </div>
+    </div>
+
+    <!-- Interactive SVG Schematic -->
+    <div class="card">
         <div class="card-title">
             <div class="icon">📱</div>
-            Interactive Wiring Schematic (SIM800L GSM SMS Transmitter)
+            Interactive Wiring Schematic — SIM900A (SIMCom S2-1040U-Z1K0H) Module
         </div>
         <div class="svg-container">
-            <svg viewBox="0 0 1000 420" width="1000" height="420" xmlns="http://www.w3.org/2000/svg">
-                <rect width="1000" height="420" fill="#090d16" rx="8"/>
+            <svg viewBox="0 0 1100 480" width="1100" height="480" xmlns="http://www.w3.org/2000/svg">
+                <rect width="1100" height="480" fill="#090d16" rx="8"/>
                 
-                <!-- Arduino Uno Box -->
-                <rect x="60" y="60" width="300" height="300" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
-                <text x="210" y="100" fill="#60a5fa" font-size="16" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
+                <!-- 12V Switching Power Supply -->
+                <rect x="30" y="50" width="170" height="130" rx="10" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+                <text x="115" y="85" fill="#f8fafc" font-size="13" font-weight="800" text-anchor="middle">S-120-12 PSU</text>
+                <text x="115" y="105" fill="#94a3b8" font-size="10" text-anchor="middle">12V DC / 10A Output</text>
                 
-                <circle cx="360" cy="170" r="6" fill="#eab308"/>
-                <text x="345" y="174" fill="#fde047" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">D11 (SoftSerial RX &larr; TX)</text>
+                <circle cx="170" cy="140" r="5" fill="#ef4444"/>
+                <text x="160" y="144" fill="#fca5a5" font-family="JetBrains Mono" font-size="9" font-weight="700" text-anchor="end">+12V</text>
+                <circle cx="170" cy="160" r="5" fill="#64748b"/>
+                <text x="160" y="164" fill="#cbd5e1" font-family="JetBrains Mono" font-size="9" font-weight="700" text-anchor="end">GND</text>
 
-                <circle cx="360" cy="220" r="6" fill="#eab308"/>
-                <text x="345" y="224" fill="#fde047" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">A3 (SoftSerial TX &rarr; RX)</text>
+                <!-- LM2596 Step-Down Buck Converter -->
+                <rect x="250" y="50" width="190" height="140" rx="10" fill="#131d31" stroke="#38bdf8" stroke-width="2"/>
+                <text x="345" y="80" fill="#38bdf8" font-size="13" font-weight="800" text-anchor="middle">LM2596 DC-DC BUCK</text>
+                <text x="345" y="100" fill="#94a3b8" font-size="9.5" text-anchor="middle">Tuned: 5.0V DC (3A Max)</text>
+                
+                <!-- Buck Terminals -->
+                <circle cx="250" cy="140" r="5" fill="#ef4444"/>
+                <text x="262" y="144" fill="#fca5a5" font-family="JetBrains Mono" font-size="9" font-weight="700">IN+</text>
+                <circle cx="250" cy="160" r="5" fill="#64748b"/>
+                <text x="262" y="164" fill="#cbd5e1" font-family="JetBrains Mono" font-size="9" font-weight="700">IN-</text>
 
-                <circle cx="360" cy="290" r="6" fill="#64748b"/>
-                <text x="345" y="294" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">GND (Common)</text>
+                <circle cx="440" cy="140" r="5" fill="#ef4444"/>
+                <text x="428" y="144" fill="#fca5a5" font-family="JetBrains Mono" font-size="9" font-weight="700" text-anchor="end">OUT+ (5.0V)</text>
+                <circle cx="440" cy="160" r="5" fill="#64748b"/>
+                <text x="428" y="164" fill="#cbd5e1" font-family="JetBrains Mono" font-size="9" font-weight="700" text-anchor="end">OUT- (GND)</text>
 
-                <!-- Power Rail 4.3V -->
-                <rect x="440" y="60" width="16" height="300" rx="4" fill="#713f12" stroke="#eab308"/>
-                <text x="448" y="210" fill="#fde047" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" transform="rotate(-90 448 210)">4.3V GSM POWER RAIL</text>
+                <!-- 1000uF Buffer Capacitor -->
+                <rect x="475" y="115" width="40" height="65" rx="6" fill="#0f172a" stroke="#eab308" stroke-width="1.5"/>
+                <text x="495" y="145" fill="#fde047" font-size="9" font-weight="800" text-anchor="middle">1000µF</text>
+                <text x="495" y="160" fill="#94a3b8" font-size="8" text-anchor="middle">16V Low-ESR</text>
 
-                <!-- SIM800L Module Box -->
-                <rect x="580" y="80" width="360" height="260" rx="12" fill="#1e1b4b" stroke="#eab308" stroke-width="2.5"/>
-                <text x="760" y="120" fill="#fef08a" font-size="15" font-weight="800" text-anchor="middle">SIM800L GSM / GPRS MODULE</text>
-                <text x="760" y="145" fill="#9ca3af" font-size="10.5" text-anchor="middle">Prepaid SIM (Smart / Globe / TNT / TM)</text>
+                <!-- Arduino Uno R3 -->
+                <rect x="60" y="240" width="300" height="210" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2.5"/>
+                <text x="210" y="275" fill="#60a5fa" font-size="16" font-weight="800" text-anchor="middle">ARDUINO UNO R3</text>
+                <text x="210" y="295" fill="#94a3b8" font-size="10.5" text-anchor="middle">PCBCES Master Controller</text>
+                
+                <circle cx="360" cy="335" r="6" fill="#eab308"/>
+                <text x="345" y="339" fill="#fde047" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">D11 (SoftSerial RX &larr; 5VT)</text>
 
-                <circle cx="580" cy="170" r="6" fill="#eab308"/>
-                <text x="595" y="174" fill="#fde047" font-family="JetBrains Mono" font-size="10.5" font-weight="700">TX Pin</text>
+                <circle cx="360" cy="375" r="6" fill="#38bdf8"/>
+                <text x="345" y="379" fill="#7dd3fc" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">A3 (SoftSerial TX &rarr; 5VR)</text>
 
-                <circle cx="580" cy="220" r="6" fill="#eab308"/>
-                <text x="595" y="224" fill="#fde047" font-family="JetBrains Mono" font-size="10.5" font-weight="700">RX Pin</text>
+                <circle cx="360" cy="415" r="6" fill="#64748b"/>
+                <text x="345" y="419" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="end">GND (Common)</text>
 
-                <circle cx="580" cy="270" r="6" fill="#f97316"/>
-                <text x="595" y="274" fill="#fb923c" font-family="JetBrains Mono" font-size="10.5" font-weight="700">VCC (4.0V - 4.3V)</text>
+                <!-- SIM900A Breakout Board -->
+                <rect x="580" y="70" width="460" height="360" rx="14" fill="#1e1b4b" stroke="#eab308" stroke-width="2.5"/>
+                <text x="810" y="105" fill="#fef08a" font-size="17" font-weight="800" text-anchor="middle">SIM900A GSM / GPRS MODULE</text>
+                <text x="810" y="125" fill="#cbd5e1" font-size="11.5" text-anchor="middle">SIMCom S2-1040U-Z1K0H Core Chip</text>
+                
+                <!-- SIM900A Chip Metal Shield -->
+                <rect x="710" y="145" width="200" height="150" rx="8" fill="#312e81" stroke="#a5b4fc" stroke-width="1.5"/>
+                <text x="810" y="200" fill="#ffffff" font-family="JetBrains Mono" font-size="13" font-weight="800" text-anchor="middle">SIMCom</text>
+                <text x="810" y="225" fill="#c7d2fe" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="middle">SIM900A</text>
+                <text x="810" y="250" fill="#94a3b8" font-family="JetBrains Mono" font-size="9" text-anchor="middle">S2-1040U-Z1K0H</text>
 
-                <!-- Wires -->
-                <path class="wire" d="M 360 170 L 580 170" stroke="#eab308" stroke-width="2.5" fill="none"/>
-                <path class="wire" d="M 360 220 L 580 220" stroke="#eab308" stroke-width="2.5" fill="none"/>
+                <!-- SIM Card Tray Graphic -->
+                <rect x="940" y="165" width="80" height="110" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+                <text x="980" y="215" fill="#fde047" font-size="10" font-weight="700" text-anchor="middle">PREPAID</text>
+                <text x="980" y="235" fill="#cbd5e1" font-size="9" text-anchor="middle">SIM CARD</text>
+                <text x="980" y="255" fill="#94a3b8" font-size="8" text-anchor="middle">(Smart/Globe)</text>
+
+                <!-- Status LED -->
+                <circle cx="670" cy="180" r="7" fill="#10b981"/>
+                <text x="670" y="205" fill="#34d399" font-size="9" font-weight="700" text-anchor="middle">NET LED</text>
+                <text x="670" y="218" fill="#94a3b8" font-size="8" text-anchor="middle">Slow: 3s blink</text>
+
+                <!-- Pin Terminals on SIM900A -->
+                <circle cx="580" cy="190" r="6" fill="#ef4444"/>
+                <text x="595" y="194" fill="#fca5a5" font-family="JetBrains Mono" font-size="11" font-weight="700">VCC (5V / VCC5 Input &bull; 2A Peak)</text>
+
+                <circle cx="580" cy="240" r="6" fill="#64748b"/>
+                <text x="595" y="244" fill="#cbd5e1" font-family="JetBrains Mono" font-size="11" font-weight="700">GND (Power & Signal Ground)</text>
+
+                <circle cx="580" cy="335" r="6" fill="#eab308"/>
+                <text x="595" y="339" fill="#fde047" font-family="JetBrains Mono" font-size="11" font-weight="700">5VT (5V TTL Transmit &rarr; Uno D11)</text>
+
+                <circle cx="580" cy="375" r="6" fill="#38bdf8"/>
+                <text x="595" y="379" fill="#7dd3fc" font-family="JetBrains Mono" font-size="11" font-weight="700">5VR (5V TTL Receive &larr; Uno A3)</text>
+
+                <!-- External SMA Antenna -->
+                <path d="M 810 70 L 810 25 L 870 25" stroke="#f59e0b" stroke-width="3" fill="none"/>
+                <circle cx="875" cy="25" r="5" fill="#f59e0b"/>
+                <text x="890" y="29" fill="#fde047" font-size="11" font-weight="700">External SMA GSM Antenna</text>
+
+                <!-- Power Wires -->
+                <!-- 12V from PSU to Buck -->
+                <path class="wire" d="M 170 140 L 250 140" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                <path class="wire" d="M 170 160 L 250 160" stroke="#64748b" stroke-width="2.5" fill="none"/>
+
+                <!-- 5V from Buck to SIM900A VCC via Capacitor -->
+                <path class="wire" d="M 440 140 L 475 140 M 515 140 L 580 190" stroke="#ef4444" stroke-width="3" fill="none"/>
+                <path class="wire" d="M 440 160 L 475 160 M 515 160 L 580 240" stroke="#64748b" stroke-width="3" fill="none"/>
+
+                <!-- Signal Wires -->
+                <!-- D11 (Uno RX) to 5VT (SIM900A TX) -->
+                <path class="wire" d="M 360 335 L 580 335" stroke="#eab308" stroke-width="2.5" fill="none"/>
+                
+                <!-- A3 (Uno TX) to 5VR (SIM900A RX) -->
+                <path class="wire" d="M 360 375 L 580 375" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+
+                <!-- Ground wire from Uno GND to Star Ground -->
+                <path class="wire" d="M 360 415 L 540 415 L 540 240 L 580 240" stroke="#64748b" stroke-width="2.5" fill="none"/>
             </svg>
+        </div>
+    </div>
+
+    <!-- Complete Pin Connection Matrix Table -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">🔌</div>
+            Pin Connection & Logic Level Table
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>SIM900A Pin</th>
+                    <th>Destination Device</th>
+                    <th>Target Pin</th>
+                    <th>Logic / Voltage Domain</th>
+                    <th>Wire Color</th>
+                    <th>Functional Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">5VT</span></td>
+                    <td>Arduino Uno R3</td>
+                    <td><span class="pin-tag tag-uno">D11</span></td>
+                    <td>5V TTL Serial (UART)</td>
+                    <td style="color: #fde047; font-weight: 600;">Yellow</td>
+                    <td>Module Transmit &rarr; SoftwareSerial RX (Receives AT responses from GSM)</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">5VR</span></td>
+                    <td>Arduino Uno R3</td>
+                    <td><span class="pin-tag tag-uno">A3</span></td>
+                    <td>5V TTL Serial (UART)</td>
+                    <td style="color: #38bdf8; font-weight: 600;">Blue</td>
+                    <td>SoftwareSerial TX &rarr; Module Receive (Sends AT SMS dispatch commands)</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">VCC (5V)</span></td>
+                    <td>LM2596 Buck Converter</td>
+                    <td><span class="pin-tag tag-pwr">OUT+ (+5.0V)</span></td>
+                    <td>5.0V DC (2A Peak)</td>
+                    <td style="color: #f87171; font-weight: 600;">Red</td>
+                    <td>Primary GSM RF power rail (Decoupled with 1000µF Low-ESR capacitor)</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">GND</span></td>
+                    <td>Common Star Ground</td>
+                    <td><span class="pin-tag tag-gnd">GND Rail</span></td>
+                    <td>0.00V Reference</td>
+                    <td style="color: #cbd5e1; font-weight: 600;">Black / Grey</td>
+                    <td>Common ground reference linking Arduino Uno GND and LM2596 OUT-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="alert-box">
+            <h4>⚠️ CRITICAL HARDWARE NOTICE: Do NOT Power SIM900A from Arduino Uno 5V Pin!</h4>
+            <p>The Arduino Uno onboard 5V linear regulator can only supply up to ~400mA before thermal throttling or browning out. The SIM900A RF power amplifier draws <strong>burst currents up to 2.0 Amperes</strong> during cellular transmission. If connected to the Uno 5V pin, the Uno will continuously reset and the SIM card will fail to register.</p>
+            <ul>
+                <li>Power the SIM900A <code>VCC</code> pin directly from the <strong>LM2596 5V Buck Converter rail</strong>.</li>
+                <li>Connect a <strong>1000µF to 2200µF electrolytic buffer capacitor</strong> across <code>VCC</code> and <code>GND</code> right at the SIM900A board pins.</li>
+                <li>Ensure the LM2596 output is calibrated with a Digital Multimeter to exactly <strong>5.0V &plusmn; 0.1V</strong> before wiring.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Step-by-Step Bench Calibration & Testing -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">🛠️</div>
+            Step-by-Step Assembly & Calibration Checklist
+        </div>
+        <div class="step-grid">
+            <div class="step-box">
+                <span class="step-num">01</span>
+                <h4>Calibrate 5.0V Buck Rail</h4>
+                <p>Power the LM2596 module with 12V from the S-120-12 PSU. Turn the brass multi-turn potentiometer on the buck converter until your DMM reads exactly 5.0V DC across OUT+ and OUT-. Turn off PSU before continuing.</p>
+            </div>
+            <div class="step-box">
+                <span class="step-num">02</span>
+                <h4>Solder Buffer Capacitor</h4>
+                <p>Place a 1000µF or 2200µF 16V electrolytic capacitor directly across the SIM900A VCC and GND pins. Respect polarity: negative stripe &minus; connects to GND; long leg + connects to VCC.</p>
+            </div>
+            <div class="step-box">
+                <span class="step-num">03</span>
+                <h4>Wire 5VT & 5VR Serial Lines</h4>
+                <p>Connect SIM900A <strong>5VT</strong> to Arduino <strong>D11</strong> (SoftwareSerial RX). Connect SIM900A <strong>5VR</strong> to Arduino <strong>A3</strong> (SoftwareSerial TX). <em>Do not use 3VT/3VR for Uno 5V TTL logic.</em></p>
+            </div>
+            <div class="step-box">
+                <span class="step-num">04</span>
+                <h4>Prepare & Insert SIM Card</h4>
+                <p>Insert a Standard or Mini-SIM (Smart, Globe, TNT, or TM) into the SIM900A slot with the notched corner aligned as labeled on the chassis. Verify beforehand that the SIM has active airtime credit and <strong>PIN lock is disabled</strong>.</p>
+            </div>
+            <div class="step-box">
+                <span class="step-num">05</span>
+                <h4>Attach External GSM Antenna</h4>
+                <p>Screw the SMA duck/stub antenna tightly onto the gold antenna jack. If building into a metallic machine enclosure, route the antenna cable outside the cabinet to prevent the metal walls acting as a Faraday cage.</p>
+            </div>
+            <div class="step-box">
+                <span class="step-num">06</span>
+                <h4>Verify Network Registration</h4>
+                <p>Power on the machine. Watch the onboard <strong>NET LED</strong>: it blinks rapidly (every 800ms) while searching. Once successfully connected to the cell tower, it slows down to a steady blink once every <strong>3 seconds</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Serial Diagnostic Commands -->
+    <div class="card">
+        <div class="card-title">
+            <div class="icon">💬</div>
+            Serial Monitor Diagnostic Commands & Test Suite
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Upload <code>07_sim800l_gsm_sms_test.ino</code> to your Arduino Uno and open the Serial Monitor at <strong>115200 baud</strong> with <strong>Both NL & CR</strong> selected. The sketch automatically sends AT synchronizations and offers the following keystroke commands:
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Command Key</th>
+                    <th>AT Query Sent</th>
+                    <th>Expected Successful Response</th>
+                    <th>Diagnostic Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">t</span></td>
+                    <td><code>AT+CMGF=1</code> &amp; <code>AT+CMGS</code></td>
+                    <td><code>+CMGS: &lt;idx&gt; OK</code></td>
+                    <td>Transmits test bin-full SMS notification to the administrator phone.</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">s</span></td>
+                    <td><code>AT+CSQ</code></td>
+                    <td><code>+CSQ: 18,0 OK</code></td>
+                    <td>Cellular signal strength. Value &gt; 12 indicates good transmission quality.</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">n</span></td>
+                    <td><code>AT+CREG?</code></td>
+                    <td><code>+CREG: 0,1 OK</code> or <code>+CREG: 0,5 OK</code></td>
+                    <td>Network registration. 1 = Registered Home Network, 5 = Registered Roaming.</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">c</span></td>
+                    <td><code>AT+CPIN?</code></td>
+                    <td><code>+CPIN: READY OK</code></td>
+                    <td>SIM card status. Confirms SIM is inserted and unlocked.</td>
+                </tr>
+                <tr>
+                    <td><span class="pin-tag tag-gsm">o</span></td>
+                    <td><code>AT+COPS?</code></td>
+                    <td><code>+COPS: 0,0,"SMART",0 OK</code></td>
+                    <td>Displays active cellular carrier name (Smart, Globe, etc.).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout-box">
+            <h4>💡 Direct Passthrough Mode</h4>
+            <p>You can type any standard AT command directly into the Serial Monitor input box (e.g. <code>ATI</code> for firmware revision, <code>AT+CBC</code> for supply voltage, or <code>AT&amp;W</code> to save settings) and view the raw cellular modem output in real time.</p>
         </div>
     </div>
 </div>

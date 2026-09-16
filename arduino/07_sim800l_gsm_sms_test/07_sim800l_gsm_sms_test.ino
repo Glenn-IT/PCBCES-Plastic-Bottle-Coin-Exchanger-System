@@ -1,47 +1,78 @@
 /*
- * PCBCES - Test 07: SIM800L GSM Module SMS Bin-Full Notification Test
- * Hardware: Arduino Uno, SIM800L GSM/GPRS Module, 4.3V Power Rail
- * Last Updated: 2026-09-06 14:30:41 (+08:00)
+ * PCBCES - Test 07: GSM Module SMS Bin-Full Notification Test
+ * Hardware: Arduino Uno, SIMCom SIM900A (S2-1040U-Z1K0H) / SIM800L GSM/GPRS Module, 5V 2A Power Rail
+ * Last Updated: 2026-09-16 23:28:00 (+08:00)
  * 
- * Pin Connections:
- * - SIM800L TX -> Arduino D11 (SoftwareSerial RX)
- * - SIM800L RX -> Arduino A3  (SoftwareSerial TX)
- * - SIM800L VCC -> 4.3V Power Rail (via 1N4007 from 5V + 1000uF Cap)
- * - SIM800L GND -> Common GND Rail
+ * Pin Connections (SIM900A Mini V3.9.2 / V4.0):
+ * - SIM900A 5VT (Module TX) -> Arduino Uno D11 (SoftwareSerial RX)
+ * - SIM900A 5VR (Module RX) -> Arduino Uno A3  (SoftwareSerial TX)
+ * - SIM900A VCC (5V / VCC5) -> LM2596 5.0V Buck Output (2A Peak, with 1000uF Buffer Cap)
+ * - SIM900A GND             -> Common System Ground Rail (Arduino GND + LM2596 GND)
+ * 
+ * Note for SIM800L Users (Alternative Module):
+ * - SIM800L TX -> Arduino D11, SIM800L RX -> Arduino A3, VCC -> 4.3V Diode Drop Rail
  * 
  * Operation:
- * - Checks AT command responsiveness
+ * - Automatically performs auto-baud rate synchronization on startup (9600 baud)
+ * - Checks AT command communication and SIM card detection (AT+CPIN?)
  * - Checks signal strength (AT+CSQ) and network registration (AT+CREG?)
  * - Sends SMS alert: "ALERT: PCBCES Storage Bin is FULL! Please empty bin."
+ * - Interactive passthrough mode: Type any AT command into Serial Monitor!
  */
 
 #include <SoftwareSerial.h>
 
 // SoftwareSerial pins (RX on D11, TX on A3)
+// D11 connects to SIM900A 5VT pin
+// A3 connects to SIM900A 5VR pin
 SoftwareSerial gsm(11, A3);
 
 // REPLACE WITH YOUR TEST PHONE NUMBER (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
 const char ADMIN_PHONE[] = "+639123456789";
 
 void sendSMS(const char* number, const char* message) {
-  Serial.print(F("Dispatching SMS to "));
+  Serial.println(F("\n--------------------------------------------------"));
+  Serial.print(F("[SMS] Dispatching Bin-Full SMS to: "));
   Serial.println(number);
+  Serial.println(F("--------------------------------------------------"));
 
-  gsm.println("AT+CMGF=1"); // Text mode
+  // Set SMS mode to text format (AT+CMGF=1)
+  gsm.println("AT+CMGF=1");
   delay(500);
 
+  // Set recipient phone number
   gsm.print("AT+CMGS=\"");
   gsm.print(number);
   gsm.println("\"");
   delay(500);
 
+  // Send message body
   gsm.print(message);
   delay(500);
 
-  gsm.write(26); // ASCII code 26 = Ctrl+Z to send message
-  delay(4000); // Wait for SMS gateway response
+  // Send Ctrl+Z (ASCII 26) to tell module to transmit SMS
+  gsm.write(26);
+  Serial.println(F("[SMS] Waiting for cellular network confirmation..."));
+  
+  // Wait up to 5 seconds for network acknowledge
+  unsigned long startWait = millis();
+  while (millis() - startWait < 5000) {
+    while (gsm.available()) {
+      char c = gsm.read();
+      Serial.write(c);
+    }
+  }
 
-  Serial.println(F("SMS command transmitted! Check admin phone."));
+  Serial.println(F("\n[SMS] Transmission command complete. Check phone for SMS!"));
+}
+
+void printGSMResponse(unsigned long timeoutMs = 1500) {
+  unsigned long start = millis();
+  while (millis() - start < timeoutMs) {
+    while (gsm.available()) {
+      Serial.write(gsm.read());
+    }
+  }
 }
 
 void setup() {
@@ -49,40 +80,81 @@ void setup() {
   gsm.begin(9600);
 
   Serial.println(F("=================================================="));
-  Serial.println(F(" PCBCES Test 07: SIM800L GSM Module Tester       "));
+  Serial.println(F(" PCBCES Test 07: SIM900A / SIM800L GSM Tester    "));
+  Serial.println(F(" Module: SIMCom SIM900A (S2-1040U-Z1K0H)         "));
+  Serial.println(F(" Pinout: 5VT -> Uno D11 (RX) | 5VR -> Uno A3 (TX)"));
+  Serial.println(F(" Power : 5.0V from LM2596 Buck (2A Burst Capable) "));
   Serial.println(F("=================================================="));
-  Serial.println(F("Checking AT communication..."));
+  Serial.println(F("[INFO] Initializing communication with GSM module..."));
 
-  delay(2000);
-  gsm.println("AT");
-  delay(1000);
+  // Auto-baud synchronization: SIM900A locks baud rate upon receiving AT
+  delay(1500);
+  for (int i = 0; i < 3; i++) {
+    gsm.println("AT");
+    delay(400);
+  }
   
+  // Flush any pending startup bytes
   while (gsm.available()) {
-    Serial.write(gsm.read());
+    gsm.read();
   }
 
-  Serial.println(F("\nCommands:"));
-  Serial.println(F(" 't' -> Send Test SMS Alert"));
-  Serial.println(F(" 's' -> Check Signal Quality (AT+CSQ)"));
-  Serial.println(F(" 'n' -> Check Network Registration (AT+CREG?)"));
+  // Test AT communication
+  Serial.println(F("[TEST 1] Handshake (AT)..."));
+  gsm.println("AT");
+  printGSMResponse(1000);
+
+  // Test SIM Card Ready
+  Serial.println(F("\n[TEST 2] Checking SIM Card (AT+CPIN?)..."));
+  gsm.println("AT+CPIN?");
+  printGSMResponse(1200);
+
+  // Test Signal Quality
+  Serial.println(F("\n[TEST 3] Checking Cellular Signal (AT+CSQ)..."));
+  gsm.println("AT+CSQ");
+  printGSMResponse(1200);
+
+  // Test Network Registration
+  Serial.println(F("\n[TEST 4] Network Registration Status (AT+CREG?)..."));
+  gsm.println("AT+CREG?");
+  printGSMResponse(1200);
+
+  Serial.println(F("\n=================================================="));
+  Serial.println(F(" READY! Available Commands (type in Serial Monitor):"));
+  Serial.println(F("  't' -> Send Test Bin-Full SMS alert to ADMIN_PHONE"));
+  Serial.println(F("  's' -> Query Signal Strength (AT+CSQ)"));
+  Serial.println(F("  'n' -> Query Network Registration (AT+CREG?)"));
+  Serial.println(F("  'c' -> Check SIM PIN Status (AT+CPIN?)"));
+  Serial.println(F("  'o' -> Check Network Operator / Carrier (AT+COPS?)"));
+  Serial.println(F("  Type any custom AT command directly (e.g. ATI)"));
+  Serial.println(F("=================================================="));
 }
 
 void loop() {
-  // Forward serial monitor to GSM
+  // Forward commands from Serial Monitor to GSM module
   if (Serial.available()) {
     char c = Serial.read();
     if (c == 't' || c == 'T') {
-      sendSMS(ADMIN_PHONE, "ALERT: PCBCES Storage Bin is FULL! Please empty the collection bin to resume operations.");
+      sendSMS(ADMIN_PHONE, "ALERT: PCBCES Storage Bin is FULL! Please empty the collection bin to resume bottle deposits.");
     } else if (c == 's' || c == 'S') {
+      Serial.println(F("\n>> AT+CSQ (Signal Quality)"));
       gsm.println("AT+CSQ");
     } else if (c == 'n' || c == 'N') {
+      Serial.println(F("\n>> AT+CREG? (Network Registration)"));
       gsm.println("AT+CREG?");
+    } else if (c == 'c' || c == 'C') {
+      Serial.println(F("\n>> AT+CPIN? (SIM Card Status)"));
+      gsm.println("AT+CPIN?");
+    } else if (c == 'o' || c == 'O') {
+      Serial.println(F("\n>> AT+COPS? (Cellular Operator)"));
+      gsm.println("AT+COPS?");
     } else {
+      // Direct raw passthrough
       gsm.write(c);
     }
   }
 
-  // Forward GSM responses to Serial Monitor
+  // Forward GSM module responses to Serial Monitor
   if (gsm.available()) {
     Serial.write(gsm.read());
   }
