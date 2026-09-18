@@ -1,7 +1,7 @@
 /*
  * PCBCES - Test 08: Coin Hopper & GSM SMS Low-Coin / Jam Alert Test
  * Hardware: Arduino Uno, 5V Relay, 12V/220V Coin Hopper, SIM900A / SIM800L GSM Module
- * Last Updated: 2026-09-18 21:50:00 (+08:00)
+ * Last Updated: 2026-09-18 22:20:00 (+08:00)
  * 
  * Pin Connections:
  * - Pin D8  -> 5V Relay Module IN (Switches Coin Hopper Motor Power)
@@ -189,9 +189,75 @@ void timeoutPayout() {
   Serial.println(F("\nRefill coins into hopper, then enter '1' or '2' to test again."));
 }
 
+bool autoSyncGSMBaud() {
+  const long candidateBauds[] = { 9600, 115200, 38400, 19200, 57600, 4800 };
+  const int count = sizeof(candidateBauds) / sizeof(candidateBauds[0]);
+
+  Serial.println(F("[GSM] Probing communication baud rates..."));
+
+  for (int i = 0; i < count; i++) {
+    long testBaud = candidateBauds[i];
+    Serial.print(F("  -> Testing "));
+    Serial.print(testBaud);
+    Serial.print(F(" baud... "));
+
+    gsm.begin(testBaud);
+    delay(150);
+    while (gsm.available()) gsm.read();
+
+    bool detected = false;
+    for (int attempt = 0; attempt < 3; attempt++) {
+      gsm.print("AT\r\n");
+      unsigned long start = millis();
+      String resp = "";
+      while (millis() - start < 450) {
+        while (gsm.available()) {
+          char c = gsm.read();
+          resp += c;
+          if (resp.indexOf("OK") != -1) {
+            detected = true;
+            break;
+          }
+        }
+        if (detected) break;
+      }
+      if (detected) break;
+      delay(150);
+    }
+
+    if (detected) {
+      Serial.println(F("[LOCKED! Handshake OK]"));
+      if (testBaud != 9600) {
+        Serial.println(F("  -> Reconfiguring module to 9600 baud for stable SoftwareSerial..."));
+        gsm.print("AT+IPR=9600\r\n");
+        delay(250);
+        gsm.print("AT&W\r\n");
+        delay(250);
+        gsm.begin(9600);
+        delay(150);
+        while (gsm.available()) gsm.read();
+        Serial.println(F("  -> Module baud locked to 9600 permanently!"));
+      }
+      return true;
+    } else {
+      Serial.println(F("[No reply]"));
+    }
+  }
+
+  // Fallback: Default to 9600 and train autobaud
+  Serial.println(F("[WARN] No standard response. Training auto-baud at 9600 baud..."));
+  gsm.begin(9600);
+  delay(200);
+  for (int i = 0; i < 5; i++) {
+    gsm.print("AT\r\n");
+    delay(300);
+  }
+  while (gsm.available()) gsm.read();
+  return false;
+}
+
 void setup() {
   Serial.begin(115200);
-  gsm.begin(9600);
 
   // Relay Setup (Active LOW: HIGH = OFF)
   pinMode(PIN_RELAY_HOPPER, OUTPUT);
@@ -211,14 +277,8 @@ void setup() {
   digitalWrite(PIN_LED_GREEN, LOW);
 
   // Synchronize GSM Auto-Baud (SIM900A / SIM800L)
-  delay(1200);
-  for (int i = 0; i < 3; i++) {
-    gsm.println("AT");
-    delay(300);
-  }
-  while (gsm.available()) {
-    gsm.read();
-  }
+  delay(2500);
+  autoSyncGSMBaud();
 
   Serial.println(F("=================================================="));
   Serial.println(F(" PCBCES Test 08: Hopper & GSM Low-Coin / Jam Test "));

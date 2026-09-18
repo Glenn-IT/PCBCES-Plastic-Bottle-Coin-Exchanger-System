@@ -1,7 +1,7 @@
 /*
  * PCBCES - Test 07: GSM Module SMS Bin-Full Notification Test
  * Hardware: Arduino Uno, SIMCom SIM900A (S2-1040U-Z1K0H) / SIM800L GSM/GPRS Module, 5V 2A Power Rail
- * Last Updated: 2026-09-18 21:50:00 (+08:00)
+ * Last Updated: 2026-09-18 22:20:00 (+08:00)
  * 
  * Pin Connections (SIM900A Mini V3.9.2 / V4.0):
  * - SIM900A 5VT (Module TX) -> Arduino Uno D11 (SoftwareSerial RX)
@@ -89,14 +89,89 @@ void printGSMResponse(unsigned long timeoutMs = 1500) {
   unsigned long start = millis();
   while (millis() - start < timeoutMs) {
     while (gsm.available()) {
-      Serial.write(gsm.read());
+      char c = gsm.read();
+      // Print readable ASCII characters, newline and carriage return
+      if ((c >= 32 && c <= 126) || c == '\r' || c == '\n') {
+        Serial.write(c);
+      } else if ((uint8_t)c == 0xFF || (uint8_t)c == 0x00) {
+        // Suppress pure framing noise
+      } else {
+        Serial.write(c);
+      }
     }
   }
 }
 
+// Probes common GSM baud rates, finds active rate, and locks module to 9600 baud
+bool autoSyncGSMBaud() {
+  const long candidateBauds[] = { 9600, 115200, 38400, 19200, 57600, 4800 };
+  const int count = sizeof(candidateBauds) / sizeof(candidateBauds[0]);
+
+  Serial.println(F("[GSM] Probing communication baud rates..."));
+
+  for (int i = 0; i < count; i++) {
+    long testBaud = candidateBauds[i];
+    Serial.print(F("  -> Testing "));
+    Serial.print(testBaud);
+    Serial.print(F(" baud... "));
+
+    gsm.begin(testBaud);
+    delay(150);
+    while (gsm.available()) gsm.read();
+
+    bool detected = false;
+    for (int attempt = 0; attempt < 3; attempt++) {
+      gsm.print("AT\r\n");
+      unsigned long start = millis();
+      String resp = "";
+      while (millis() - start < 450) {
+        while (gsm.available()) {
+          char c = gsm.read();
+          resp += c;
+          if (resp.indexOf("OK") != -1) {
+            detected = true;
+            break;
+          }
+        }
+        if (detected) break;
+      }
+      if (detected) break;
+      delay(150);
+    }
+
+    if (detected) {
+      Serial.println(F("[LOCKED! Handshake OK]"));
+      if (testBaud != 9600) {
+        Serial.println(F("  -> Reconfiguring module to 9600 baud for stable SoftwareSerial..."));
+        gsm.print("AT+IPR=9600\r\n");
+        delay(250);
+        gsm.print("AT&W\r\n");
+        delay(250);
+        gsm.begin(9600);
+        delay(150);
+        while (gsm.available()) gsm.read();
+        Serial.println(F("  -> Module baud locked to 9600 permanently!"));
+      }
+      return true;
+    } else {
+      Serial.println(F("[No reply]"));
+    }
+  }
+
+  // Fallback: Default to 9600 and train autobaud
+  Serial.println(F("[WARN] No standard response. Training auto-baud at 9600 baud..."));
+  gsm.begin(9600);
+  delay(200);
+  for (int i = 0; i < 5; i++) {
+    gsm.print("AT\r\n");
+    delay(300);
+  }
+  while (gsm.available()) gsm.read();
+  return false;
+}
+
 void setup() {
   Serial.begin(115200);
-  gsm.begin(9600);
 
   Serial.println(F("=================================================="));
   Serial.println(F(" PCBCES Test 07: SIM900A / SIM800L GSM Tester    "));
@@ -108,20 +183,23 @@ void setup() {
   Serial.println(F("=================================================="));
   Serial.println(F("[INFO] Initializing communication with GSM module..."));
 
-  // Auto-baud synchronization: SIM900A locks baud rate upon receiving AT
-  delay(1500);
-  for (int i = 0; i < 3; i++) {
-    gsm.println("AT");
-    delay(400);
-  }
-  
-  // Flush any pending startup bytes
-  while (gsm.available()) {
-    gsm.read();
+  // Give GSM module 2.5 seconds to settle internal baseband
+  delay(2500);
+
+  // Probe and synchronize baud rate
+  bool connected = autoSyncGSMBaud();
+
+  if (!connected) {
+    Serial.println(F("\n[CHECKLIST] Module did not respond with 'OK':"));
+    Serial.println(F(" 1. Check Power: VCC must be 5.0V (2A burst capable)."));
+    Serial.println(F(" 2. Check 1000uF capacitor across VCC and GND."));
+    Serial.println(F(" 3. Check Ground: Common GND between LM2596 and Uno GND."));
+    Serial.println(F(" 4. Check Pins: 5VT -> Uno D11 (RX), 5VR -> Uno A3 (TX)."));
+    Serial.println(F(" 5. Check NET LED on SIM900A (Fast blink = searching)."));
   }
 
   // Test AT communication
-  Serial.println(F("[TEST 1] Handshake (AT)..."));
+  Serial.println(F("\n[TEST 1] Handshake (AT)..."));
   gsm.println("AT");
   printGSMResponse(1000);
 
