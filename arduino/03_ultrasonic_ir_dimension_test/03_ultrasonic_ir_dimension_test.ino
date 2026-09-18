@@ -1,13 +1,13 @@
 /*
  * PCBCES - Test 03: Ultrasonic HC-SR04 & IR Obstacle Sensor Test
- * Vertical Top-Down Chamber Setup (Ceiling Sensor to Floor Trapdoor: 43 cm Calibrated)
+ * Vertical Top-Down Chamber Setup (Ceiling Sensor to Floor Trapdoor: 31 cm Calibrated)
  * Hardware: Arduino Uno, HC-SR04+ Ultrasonic Sensor, IR Obstacle Sensor
  * 
  * Vertical Measurement Logic:
- * - Total Chamber Height (Ceiling HC-SR04 to Trapdoor Base): 43 cm
- * - Empty Chamber: ~41 cm - 45 cm
- * - 1.5L / 1.75L Bottle (~30-33 cm height): Cap is NEAR sensor -> 7 cm to 15 cm
- * - 290 ML Bottle (~16-17 cm height): Cap is FAR from sensor -> 26 cm to 27 cm
+ * - Total Chamber Height (Ceiling HC-SR04 to Trapdoor Base): 31 cm
+ * - Empty Chamber: ~29 cm - 33 cm
+ * - 1.5L / 1.75L Bottle: Cap is NEAR sensor -> 11 cm to 12 cm
+ * - 290 ML Bottle: Cap is FAR from sensor -> 23 cm to 24 cm
  * 
  * Pin Connections:
  * - HC-SR04 Trig -> D2
@@ -17,7 +17,7 @@
  * - VCC                     -> 5V Rail
  * - GND                     -> Common GND Rail
  * 
- * Last Updated: 2026-09-07 17:56:00 (+08:00)
+ * Last Updated: 2026-09-18 20:56:00 (+08:00)
  */
 
 const int TRIG_PIN = 2;
@@ -25,11 +25,11 @@ const int ECHO_PIN = 3;
 const int IR_PIN = 4;
 const int IR_BIN_PIN = 5;
 
-const int CHAMBER_HEIGHT_CM = 43; // Physical distance from ceiling HC-SR04 to floor trapdoor
-const int DIST_1_5L_MIN = 7;      // 1.5L/1.75L cap is ~7-15 cm from ceiling (~28-36 cm tall bottle)
-const int DIST_1_5L_MAX = 15;
-const int DIST_290ML_MIN = 26;    // 290 ML cap is ~26-27 cm from ceiling (~16-17 cm tall bottle)
-const int DIST_290ML_MAX = 27;
+const int CHAMBER_HEIGHT_CM = 31; // Physical distance from ceiling HC-SR04 to floor trapdoor
+const int DIST_1_5L_MIN = 11;      // 1.5L/1.75L cap is ~11-12 cm from ceiling
+const int DIST_1_5L_MAX = 12;
+const int DIST_290ML_MIN = 23;    // 290 ML cap is ~23-24 cm from ceiling
+const int DIST_290ML_MAX = 24;
 
 // Backward-compatibility aliases
 const int DIST_MISMO_MIN = DIST_290ML_MIN;
@@ -84,7 +84,7 @@ void setup() {
 
   Serial.println(F("=========================================================="));
   Serial.println(F(" PCBCES Test 03: Height & Dual IR Sensors (Entry & Bin)   "));
-  Serial.println(F(" Total Height: 43 cm (Ceiling Sensor to Base Trapdoor)     "));
+  Serial.println(F(" Total Height: 31 cm (Ceiling Sensor to Base Trapdoor)     "));
   Serial.println(F(" Pins: D2 Trig | D3 Echo | D4 IR Entry | D5 IR Bin Full   "));
   Serial.println(F("=========================================================="));
 }

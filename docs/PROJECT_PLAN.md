@@ -18,7 +18,7 @@ The system logic follows an intuitive sequence:
 3. **Sensor Verification (Non-Contact Classification Architecture):**
    - **Metal Detection (LJ12A3-4-Z/BX):** Rejects metallic cans or foreign objects.
    - **Insertion Detection (IR Obstacle Sensor):** Detects object placed into the inspection cradle.
-   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 43 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.75L bottles (7–15 cm to ceiling) from shorter 290 ML bottles (26–27 cm to ceiling). *(Note: LJC18A3 Capacitive Sensor and HX711 Load Cell omitted).*
+   - **Dimensional Discrimination (HC-SR04 Ultrasonic):** Mounted at the ceiling of the 31 cm vertical chamber, measuring top-down distance to the bottle cap to distinguish tall 1.5L / 1.75L bottles (11–12 cm to ceiling) from shorter 290 ML bottles (23–24 cm to ceiling). *(Note: LJC18A3 Capacitive Sensor and HX711 Load Cell omitted).*
 4. **Accept / Reject Mechanism (MG996R Servo):**
    - **Valid Bottle:** Servo opens the trapdoor to 90° to drop the bottle into the internal storage bin; returns to 0° standby; count increments (e.g., `1/5`), green light blinks.
    - **Invalid Bottle:** Servo flap holds at 0° (stays closed); buzzer sounds alert, red light blinks, LCD prompts `"Pls Remove Item"` for customer manual retrieval from entry chute.
@@ -43,7 +43,7 @@ The system logic follows an intuitive sequence:
 | **IR Entry Sensor** | Available | Bottle chute entry trigger (Pin D4, Active LOW) |
 | **IR Bin-Full Sensor** | Available | Top of bottle storage bin detector (Pin D5, Active LOW) |
 | **LJ12A3-4-Z/BX Inductive Sensor** | Available | 12V powered, detects & rejects metal (Pin D6 via 10k/4.7k divider) |
-| **HC-SR04+ Ultrasonic Sensor** | Available | Ceiling top-down bottle height classification in 43cm chamber (D2 Trig, D3 Echo) |
+| **HC-SR04+ Ultrasonic Sensor** | Available | Ceiling top-down bottle height classification in 31cm chamber (D2 Trig, D3 Echo) |
 | **MG996R Servo Motor** | Available | Flap / trapdoor sorting mechanism |
 | **DIYMORE 2315 Active Buzzer** | Available | Audible error and success alerts |
 | **Green & Red Indicator Lights** | Available | Visual status indicators |

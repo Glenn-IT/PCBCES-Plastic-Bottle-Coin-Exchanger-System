@@ -19,8 +19,8 @@
 | Pin | Type | Device Attached | Voltage Domain | Primary Role | Bench Test Reference |
 |---|---|---|---|---|---|
 | **D0 / D1** | Hardware UART | USB Serial | 5V TTL | Reserved for PC Serial Monitor / Web Bridge | [Serial Monitor](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/index.html) |
-| **D2** | Digital Output | HC-SR04 Trigger | 5V Logic | 10µs ultrasonic pulse down into 43cm chamber | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
-| **D3** | Digital Input | HC-SR04 Echo | 5V Logic | Top-down echo to bottle cap: 1.5L/1.75L near (7-15cm), 290 ML far (26-27cm) | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
+| **D2** | Digital Output | HC-SR04 Trigger | 5V Logic | 10µs ultrasonic pulse down into 31cm chamber | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
+| **D3** | Digital Input | HC-SR04 Echo | 5V Logic | Top-down echo to bottle cap: 1.5L/1.75L near (11-12cm), 290 ML far (23-24cm) | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
 | **D4** | Digital Input | IR Obstacle Avoidance | 5V Logic | Active LOW bottle insertion beam detector | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
 | **D5** | Digital Input | IR Bin-Full Sensor | 5V Logic | Active LOW bottle storage bin full detector (Triggers GSM SMS) | [Test 03 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/03_ultrasonic_ir_dimension_test/wiring_guide.html) |
 | **D6** | Digital Input | LJ12A3 Inductive Metal | Scaled to ~3.8V | Detects metallic objects / instant reject | [Test 04 Guide](file:///C:/xampp/htdocs/PCBCES-Plastic-Bottle-Coin-Exchanger-System/arduino/04_proximity_metal_plastic_test/wiring_guide.html) |

@@ -231,7 +231,7 @@
         </div>
 
         <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1rem;">
-            This bench setup validates your <strong>Vertical Drop Chamber (43 cm physical height from bottom trapdoor to ceiling sensor)</strong>. The <strong>HC-SR04 ultrasonic transceiver</strong> is mounted at the top ceiling looking down at the bottle cap. A tall <strong>1.5L / 1.75L bottle</strong> (~30–33 cm) leaves a short distance of <strong>7 cm to 15 cm</strong> to the ceiling. A shorter <strong>290 ML bottle</strong> (~16–17 cm) sits lower down, measuring <strong>26 cm to 27 cm</strong> to the ceiling. The <strong>IR obstacle sensor</strong> is mounted on the entry wall to immediately wake up scanning when a bottle is inserted.
+            This bench setup validates your <strong>Vertical Drop Chamber (31 cm physical height from bottom trapdoor to ceiling sensor)</strong>. The <strong>HC-SR04 ultrasonic transceiver</strong> is mounted at the top ceiling looking down at the bottle cap. A tall <strong>1.5L / 1.75L bottle</strong> leaves a short distance of <strong>11 cm to 12 cm</strong> to the ceiling. A shorter <strong>290 ML bottle</strong> sits lower down, measuring <strong>23 cm to 24 cm</strong> to the ceiling. The <strong>IR obstacle sensor</strong> is mounted on the entry wall to immediately wake up scanning when a bottle is inserted.
         </p>
     </div>
 
@@ -347,7 +347,7 @@
                 <circle cx="650" cy="120" r="30" fill="#022c22" stroke="#34d399" stroke-width="2.5"/>
                 <circle cx="830" cy="120" r="30" fill="#022c22" stroke="#34d399" stroke-width="2.5"/>
                 <text x="740" y="100" fill="#6ee7b7" font-size="12" font-weight="800" text-anchor="middle">HC-SR04+ ULTRASONIC (CEILING TOP-DOWN)</text>
-                <text x="740" y="145" fill="#a7f3d0" font-size="9" text-anchor="middle">Ceiling to Trapdoor: 43 cm | 1.5L: 7-15cm | 290 ML: 26-27cm</text>
+                <text x="740" y="145" fill="#a7f3d0" font-size="9" text-anchor="middle">Ceiling to Trapdoor: 31 cm | 1.5L: 11-12cm | 290 ML: 23-24cm</text>
                 
                 <!-- HC-SR04 Pins -->
                 <circle cx="580" cy="95" r="5" fill="#ef4444"/>
@@ -428,17 +428,17 @@
         </div>
 
         <div style="margin-top: 1.5rem;">
-            <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (43 cm Vertical Chamber):</h4>
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (31 cm Vertical Chamber):</h4>
             <div class="code-box">
 ==========================================================<br>
  PCBCES Test 03: Height & Dual IR Sensors (Entry & Bin)   <br>
- Total Height: 43 cm (Ceiling Sensor to Base Trapdoor)     <br>
+ Total Height: 31 cm (Ceiling Sensor to Base Trapdoor)     <br>
  Pins: D2 Trig | D3 Echo | D4 IR Entry | D5 IR Bin Full   <br>
 ==========================================================<br>
-IR Entry (D4): [CLEAR         ] | Bin Full (D5): [CLEAR    ] | Cap Dist: 43 cm | Waiting for bottle insertion...<br>
+IR Entry (D4): [CLEAR         ] | Bin Full (D5): [CLEAR    ] | Cap Dist: 31 cm | Waiting for bottle insertion...<br>
 IR Entry (D4): [BOTTLE PRESENT] | Bin Full (D5): [CLEAR    ] | Cap Dist: 11 cm | 1.5L / 1.75L BOTTLE DETECTED (NEAR)<br>
-IR Entry (D4): [BOTTLE PRESENT] | Bin Full (D5): [CLEAR    ] | Cap Dist: 26 cm | 290 ML BOTTLE DETECTED (FAR)<br>
-IR Entry (D4): [CLEAR         ] | Bin Full (D5): [BIN FULL!] | Cap Dist: 43 cm | Waiting for bottle insertion...
+IR Entry (D4): [BOTTLE PRESENT] | Bin Full (D5): [CLEAR    ] | Cap Dist: 23 cm | 290 ML BOTTLE DETECTED (FAR)<br>
+IR Entry (D4): [CLEAR         ] | Bin Full (D5): [BIN FULL!] | Cap Dist: 31 cm | Waiting for bottle insertion...
             </div>
         </div>
     </div>

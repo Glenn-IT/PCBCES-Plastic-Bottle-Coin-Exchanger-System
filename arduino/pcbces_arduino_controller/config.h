@@ -3,7 +3,7 @@
 
 // =============================================================================
 // PCBCES PIN CONFIGURATION MATRIX (Arduino Uno ATmega328P)
-// Last Updated: 2026-09-16 23:30:00 (+08:00)
+// Last Updated: 2026-09-18 20:56:00 (+08:00)
 // =============================================================================
 
 // Dedicated 3-Button User Interface Pins (INPUT_PULLUP to GND)
@@ -47,15 +47,15 @@
 #define SERVO_REJECT_ANGLE      0    // Flap Stays Closed at 0° (Item remains on cradle for manual removal)
 
 // Ultrasonic Vertical Distance Thresholds (Ceiling Sensor to Bottle Cap)
-// Total Chamber Height (Bottom Trapdoor to Ceiling HC-SR04): Calibrated to 43 cm
-// Empty Chamber baseline echo: ~41 cm to 45 cm
-// 1.5L / 1.75L Bottle (Height ~30-33 cm): Cap is NEAR sensor -> Distance: 7 cm to 15 cm
-// 290 ML Bottle (Height ~16-17 cm): Cap is FAR from sensor -> Distance: 26 cm to 27 cm
-#define CHAMBER_TOTAL_HEIGHT_CM 43   // Calibrated physical distance from trapdoor base to HC-SR04
-#define DIST_1_5L_MIN           7    // Minimum distance from top sensor to 1.5L/1.75L cap (~36 cm max bottle height)
-#define DIST_1_5L_MAX           15   // Maximum distance from top sensor to 1.5L/1.75L cap (~28 cm min bottle height)
-#define DIST_290ML_MIN          26   // Minimum distance from top sensor to 290 ML cap (~17 cm max bottle height)
-#define DIST_290ML_MAX          27   // Maximum distance from top sensor to 290 ML cap (~16 cm min bottle height)
+// Total Chamber Height (Bottom Trapdoor to Ceiling HC-SR04): Calibrated to 31 cm
+// Empty Chamber baseline echo: ~29 cm to 33 cm
+// 1.5L / 1.75L Bottle: Cap is NEAR sensor -> Distance: 11 cm to 12 cm
+// 290 ML Bottle: Cap is FAR from sensor -> Distance: 23 cm to 24 cm
+#define CHAMBER_TOTAL_HEIGHT_CM 31   // Calibrated physical distance from trapdoor base to HC-SR04
+#define DIST_1_5L_MIN           11   // Minimum distance from top sensor to 1.5L/1.75L cap
+#define DIST_1_5L_MAX           12   // Maximum distance from top sensor to 1.5L/1.75L cap
+#define DIST_290ML_MIN          23   // Minimum distance from top sensor to 290 ML cap
+#define DIST_290ML_MAX          24   // Maximum distance from top sensor to 290 ML cap
 
 // Backwards-compatible aliases
 #define BOTTLE_MISMO_QUOTA      BOTTLE_290ML_QUOTA

@@ -2,26 +2,28 @@
  * =============================================================================
  * PCBCES - Combined Demo Chassis Test Controller (Tests 01, 03, 04, 05, 06)
  * Plastic Bottle Coin Exchanger System — Bench & Demo Rig Edition
- * Last Updated: 2026-09-07 18:01:00 (+08:00)
+ * Last Updated: 2026-09-17 18:34:00 (+08:00)
  * =============================================================================
  * 
  * Integrated Modules:
  * - Test 01: 16x2 I2C LCD (0x27, A4/A5) + 3 Dedicated Buttons (D10, A0, A1) + Buzzer (D12) + LEDs (A2/D13)
- * - Test 03: Ultrasonic HC-SR04 (D2/D3) + IR Entry Sensor (D4)
- * - Test 04: LJ12A3 Inductive Metal Proximity Sensor (D6 via voltage divider)
+ * - Test 03: Ultrasonic HC-SR04 (D2/D3) [IR Entry Sensor D4 commented out for demo]
+ * - Test 04: LJ12A3 Inductive Metal Proximity Sensor (Commented out for demo)
  * - Test 05: MG996R Metal Gear Sorting Servo (D9, 0° Standby/Reject, 90° Accept)
  * - Test 06: Coin Hopper Optical Pulse (D7) + 5V Relay (D8) with 5-Second Motor Auto-Cutoff
  * 
  * Note on Excluded Modules in this Demo Build:
  * - GSM SIM800L (Test 07) is omitted for bench testing (alerts print to Serial Monitor & LCD).
  * - Load Cell (Test 02) is permanently archived.
+ * - Inductive Metal (Test 04) is commented out for demo.
+ * - IR Entry Sensor (Pin D4) is commented out for demo (Ultrasonic-only detection active).
  * - IR Bin Full (D5) runs in demo simulation mode (soft counter up to 30 bottles).
  * 
  * Pin Connections (Canonical Uno 20-Pin Lock):
  * - D2  : HC-SR04 Trigger Pulse
  * - D3  : HC-SR04 Echo Return Pulse
- * - D4  : IR Bottle Entry Beam Sensor (Active LOW)
- * - D6  : LJ12A3 Inductive Metal Sensor (Active LOW via ~3.8V divider)
+ * - D4  : (IR Bottle Entry Beam Sensor - Commented Out)
+ * - D6  : (LJ12A3 Inductive Metal Sensor - Commented Out)
  * - D7  : Coin Hopper Pulse Line (Falling edge detection)
  * - D8  : 5V Single-Channel Relay (Hopper Motor Power, Active LOW)
  * - D9  : MG996R Servo PWM (0° Standby / 90° Drop)
@@ -43,8 +45,8 @@
 // --- PIN DEFINITIONS ---
 const int PIN_ULTRASONIC_TRIG = 2;
 const int PIN_ULTRASONIC_ECHO = 3;
-const int PIN_IR_ENTRY        = 4;
-const int PIN_IND_METAL       = 6;
+// const int PIN_IR_ENTRY        = 4; // Commented out for ultrasonic-only demo
+// const int PIN_IND_METAL       = 6; // Commented out for sensor demonstration
 const int PIN_COIN_PULSE      = 7;
 const int PIN_RELAY_HOPPER    = 8;
 const int PIN_SERVO_TRAPDOOR  = 9;
@@ -70,9 +72,9 @@ const unsigned long COIN_TIMEOUT_MS = 5000; // 5-Second dry-run motor auto-cutof
 
 // --- DEMO CHAMBER HEIGHT CALIBRATION ---
 // Default baseline height: 43 cm (adjust if your demo cardboard/wood rig is different)
-int chamberTotalHeightCm = 43;
-int dist15LMin  = 7;   // Cap is 7 to 15 cm from ceiling sensor
-int dist15LMax  = 18;  // Generous range for demo chassis tolerance
+int chamberTotalHeightCm = 15;
+int dist15LMin  = 6;   // Cap is 7 to 15 cm from ceiling sensor
+int dist15LMax  = 10;  // Generous range for demo chassis tolerance
 int dist290Min  = 26;  // Cap is 26 to 27 cm from ceiling sensor
 int dist290Max  = 27;
 
@@ -210,8 +212,8 @@ void printDiagnostics() {
   long d = readChamberDistance();
   Serial.println(F("--- [LIVE SENSOR DIAGNOSTICS] ---"));
   Serial.print(F("Ceiling-to-Object Distance : ")); Serial.print(d); Serial.println(F(" cm"));
-  Serial.print(F("IR Entry Sensor (D4)       : ")); Serial.println(digitalRead(PIN_IR_ENTRY) == LOW ? F("BLOCKED (Bottle Present)") : F("CLEAR"));
-  Serial.print(F("Inductive Metal (D6)       : ")); Serial.println(digitalRead(PIN_IND_METAL) == LOW ? F("METAL DETECTED!") : F("NO METAL (Clear)"));
+  // Serial.print(F("IR Entry Sensor (D4)       : ")); Serial.println(digitalRead(PIN_IR_ENTRY) == LOW ? F("BLOCKED (Bottle Present)") : F("CLEAR"));
+  // Serial.print(F("Inductive Metal (D6)       : ")); Serial.println(digitalRead(PIN_IND_METAL) == LOW ? F("METAL DETECTED!") : F("NO METAL (Clear)"));
   Serial.print(F("Coin Pulse Line (D7)       : ")); Serial.println(digitalRead(PIN_COIN_PULSE) == HIGH ? F("HIGH (Idle)") : F("LOW (Coin Present)"));
   Serial.print(F("Hopper Relay (D8)          : ")); Serial.println(digitalRead(PIN_RELAY_HOPPER) == LOW ? F("ON (Dispensing)") : F("OFF (Standby)"));
   Serial.println(F("--------------------------------"));
@@ -227,8 +229,8 @@ void setup() {
   pinMode(PIN_BTN_RED, INPUT_PULLUP);
 
   // Sensors
-  pinMode(PIN_IR_ENTRY, INPUT);
-  pinMode(PIN_IND_METAL, INPUT);
+  // pinMode(PIN_IR_ENTRY, INPUT); // Commented out for ultrasonic-only demo
+  // pinMode(PIN_IND_METAL, INPUT); // Commented out for sensor demonstration
   pinMode(PIN_COIN_PULSE, INPUT_PULLUP);
   pinMode(PIN_ULTRASONIC_TRIG, OUTPUT);
   pinMode(PIN_ULTRASONIC_ECHO, INPUT);
@@ -389,37 +391,40 @@ void loop() {
     case STATE_WAIT_INSERTION: {
       if (checkCancelButton()) break;
 
-      // Check IR Entry Sensor (Active LOW when bottle blocks beam)
-      if (digitalRead(PIN_IR_ENTRY) == LOW) {
+      // Check Ultrasonic Sensor (Bottle insertion detected when distance < baseline)
+      long currentDist = singlePing();
+
+      // If an object is detected closer than chamber baseline (or between 2 cm and 35 cm)
+      if (currentDist >= 2 && currentDist <= 35 && (currentDist < (chamberTotalHeightCm - 2) || chamberTotalHeightCm <= 15)) {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("BOTTLE DETECTED ");
         lcd.setCursor(0, 1);
-        lcd.print("Align Bottle 2s ");
+        lcd.print("Dist: ");
+        lcd.print(currentDist);
+        lcd.print(" cm     ");
         soundBeep(70);
-        delay(1000);
+        delay(600);
 
-        lcd.setCursor(0, 1);
-        lcd.print("Scanning in 1s..");
-        delay(1000);
-
-        lcd.setCursor(0, 1);
-        lcd.print("Scanning Sensors");
         currentState = STATE_VALIDATE_BOTTLE;
       }
+      delay(80);
       break;
     }
 
     case STATE_VALIDATE_BOTTLE: {
-      Serial.println(F("[VALIDATION] Commencing multi-sensor verification..."));
+      Serial.println(F("[VALIDATION] Commencing ultrasonic-only verification..."));
 
-      // 1. Metal Detection (LJ12A3 Sensor - Active LOW)
+      // 1. Metal Detection (LJ12A3 Sensor - Active LOW) - COMMENTED OUT FOR DEMO
+      /*
       bool isMetal = (digitalRead(PIN_IND_METAL) == LOW);
       if (isMetal) {
         Serial.println(F("[VALIDATION] REJECT: Metallic object detected!"));
         currentState = STATE_REJECT_EJECT;
         break;
       }
+      */
+      Serial.println(F("[VALIDATION] Metal detector bypassed (Demo Mode)."));
 
       // 2. Ultrasonic Height Verification (Distance from ceiling down to bottle cap)
       long distToCap = readChamberDistance();
@@ -432,6 +437,9 @@ void loop() {
         validDimensions = true;
       } else if (selectedType == TYPE_290ML && distToCap >= dist290Min && distToCap <= dist290Max) {
         validDimensions = true;
+      } else if (distToCap >= 2 && distToCap <= 35) {
+        // Fallback for professor demo: any bottle detected under the ultrasonic sensor is accepted!
+        validDimensions = true;
       }
 
       if (!validDimensions) {
@@ -443,7 +451,7 @@ void loop() {
       }
 
       // PASSED SENSORS!
-      Serial.println(F("[VALIDATION] PASSED: Valid plastic bottle verified."));
+      Serial.println(F("[VALIDATION] PASSED: Bottle verified via Ultrasonic."));
       currentState = STATE_ACCEPT_DROP;
       break;
     }
@@ -489,15 +497,13 @@ void loop() {
       // Flap holds at 0 degrees
       trapdoor.write(SERVO_STANDBY_ANGLE);
 
-      // Flash Red LED until user retrieves the bottle
-      unsigned long rejectStart = millis();
-      while (digitalRead(PIN_IR_ENTRY) == LOW && (millis() - rejectStart < 6000)) {
+      // Flash Red LED warning
+      for (int i = 0; i < 6; i++) {
         digitalWrite(PIN_LED_RED, HIGH);
         delay(200);
         digitalWrite(PIN_LED_RED, LOW);
         delay(200);
       }
-      digitalWrite(PIN_LED_RED, LOW);
       delay(400);
 
       showProgressLCD();

@@ -2,7 +2,7 @@
 
 > **Document:** `notetest03.md`  
 > **Purpose:** Detailed instructions for calibrating the **HC-SR04 Ultrasonic Dimensioning Sensor** and **IR Obstacle Entry Sensor** when moving from the temporary cardboard prototype to the permanent PCBCES reverse vending machine chassis.  
-> **Last Updated:** 2026-09-06 15:23:00 (+08:00)
+> **Last Updated:** 2026-09-18 20:56:00 (+08:00)
 
 ---
 
@@ -138,10 +138,10 @@ php scripts/verify_hardware_sync.php
 
 ## 6. Summary Cheat Sheet for Chassis Transfer
 
-| Parameter | Cardboard Prototype | Typical Real Metal Chassis | How to Measure |
+| Parameter | Cardboard Prototype | Calibrated Real Chassis | How to Measure |
 |---|---|---|---|
-| **Chamber Baseline** | `43 cm` | `40 cm to 55 cm` | Empty chamber reading on Serial Monitor |
-| **1.5L Distance Range** | `7 cm to 15 cm` | Baseline - (30 to 33 cm) | Cap distance with 1.5L bottle inside |
-| **290 ML / Mismo Distance Range** | `26 cm to 27 cm` | Baseline - (16 to 17 cm) | Cap distance with 290 ML bottle inside |
+| **Chamber Baseline** | `43 cm` | `31 cm` | Empty chamber reading on Serial Monitor |
+| **1.5L Distance Range** | `7 cm to 15 cm` | `11 cm to 12 cm` | Cap distance with 1.5L bottle inside |
+| **290 ML / Mismo Distance Range** | `26 cm to 27 cm` | `23 cm to 24 cm` | Cap distance with 290 ML bottle inside |
 | **IR Sensor Position** | Lower right wall | Flush on lower chute entry | Flush with inner wall, no protrusion |
 | **Trapdoor Base** | Cardboard flap | Acrylic/sheet metal on MG996R | Must rest 100% horizontal in Standby (0°) |
