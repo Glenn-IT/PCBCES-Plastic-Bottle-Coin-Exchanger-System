@@ -3,7 +3,7 @@
 
 // =============================================================================
 // PCBCES PIN CONFIGURATION MATRIX (Arduino Uno ATmega328P)
-// Last Updated: 2026-09-18 20:56:00 (+08:00)
+// Last Updated: 2026-09-18 21:50:00 (+08:00)
 // =============================================================================
 
 // Dedicated 3-Button User Interface Pins (INPUT_PULLUP to GND)
@@ -68,7 +68,9 @@
 #define HEIGHT_290ML_MIN        DIST_290ML_MIN
 #define HEIGHT_290ML_MAX        DIST_290ML_MAX
 
-// Admin SMS Recipient (Replace with actual phone number)
-#define ADMIN_PHONE_NUMBER      "+639123456789"
+// Admin SMS Recipients (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
+#define ADMIN_PHONE_1           "+639634299114"
+#define ADMIN_PHONE_2           "+639242074903"
+#define ADMIN_PHONE_NUMBER      ADMIN_PHONE_1  // Primary recipient alias
 
 #endif

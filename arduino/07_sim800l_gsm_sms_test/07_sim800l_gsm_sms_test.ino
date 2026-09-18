@@ -1,7 +1,7 @@
 /*
  * PCBCES - Test 07: GSM Module SMS Bin-Full Notification Test
  * Hardware: Arduino Uno, SIMCom SIM900A (S2-1040U-Z1K0H) / SIM800L GSM/GPRS Module, 5V 2A Power Rail
- * Last Updated: 2026-09-16 23:28:00 (+08:00)
+ * Last Updated: 2026-09-18 21:50:00 (+08:00)
  * 
  * Pin Connections (SIM900A Mini V3.9.2 / V4.0):
  * - SIM900A 5VT (Module TX) -> Arduino Uno D11 (SoftwareSerial RX)
@@ -27,8 +27,11 @@
 // A3 connects to SIM900A 5VR pin
 SoftwareSerial gsm(11, A3);
 
-// REPLACE WITH YOUR TEST PHONE NUMBER (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
-const char ADMIN_PHONE[] = "+639123456789";
+// Target Administrator Phone Numbers (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
+const char ADMIN_PHONE_1[] = "+639634299114";
+const char ADMIN_PHONE_2[] = "+639242074903";
+const char* const ADMIN_PHONES[] = { ADMIN_PHONE_1, ADMIN_PHONE_2 };
+const int NUM_ADMIN_PHONES = 2;
 
 void sendSMS(const char* number, const char* message) {
   Serial.println(F("\n--------------------------------------------------"));
@@ -54,9 +57,9 @@ void sendSMS(const char* number, const char* message) {
   gsm.write(26);
   Serial.println(F("[SMS] Waiting for cellular network confirmation..."));
   
-  // Wait up to 5 seconds for network acknowledge
+  // Wait up to 6 seconds for network acknowledge
   unsigned long startWait = millis();
-  while (millis() - startWait < 5000) {
+  while (millis() - startWait < 6000) {
     while (gsm.available()) {
       char c = gsm.read();
       Serial.write(c);
@@ -64,6 +67,22 @@ void sendSMS(const char* number, const char* message) {
   }
 
   Serial.println(F("\n[SMS] Transmission command complete. Check phone for SMS!"));
+}
+
+void sendAllAdmins(const char* message) {
+  Serial.println(F("\n=================================================="));
+  Serial.println(F(" [BROADCAST] Dispatching SMS to All Admin Phones  "));
+  Serial.println(F("=================================================="));
+  for (int i = 0; i < NUM_ADMIN_PHONES; i++) {
+    sendSMS(ADMIN_PHONES[i], message);
+    if (i < NUM_ADMIN_PHONES - 1) {
+      Serial.println(F("[BROADCAST] Waiting 2.5s buffer before next transmission..."));
+      delay(2500);
+    }
+  }
+  Serial.println(F("=================================================="));
+  Serial.println(F(" [BROADCAST] All transmissions completed!         "));
+  Serial.println(F("=================================================="));
 }
 
 void printGSMResponse(unsigned long timeoutMs = 1500) {
@@ -84,6 +103,8 @@ void setup() {
   Serial.println(F(" Module: SIMCom SIM900A (S2-1040U-Z1K0H)         "));
   Serial.println(F(" Pinout: 5VT -> Uno D11 (RX) | 5VR -> Uno A3 (TX)"));
   Serial.println(F(" Power : 5.0V from LM2596 Buck (2A Burst Capable) "));
+  Serial.println(F(" Phone 1: +639634299114                           "));
+  Serial.println(F(" Phone 2: +639242074903                           "));
   Serial.println(F("=================================================="));
   Serial.println(F("[INFO] Initializing communication with GSM module..."));
 
@@ -121,12 +142,14 @@ void setup() {
 
   Serial.println(F("\n=================================================="));
   Serial.println(F(" READY! Available Commands (type in Serial Monitor):"));
-  Serial.println(F("  't' -> Send Test Bin-Full SMS alert to ADMIN_PHONE"));
-  Serial.println(F("  's' -> Query Signal Strength (AT+CSQ)"));
-  Serial.println(F("  'n' -> Query Network Registration (AT+CREG?)"));
-  Serial.println(F("  'c' -> Check SIM PIN Status (AT+CPIN?)"));
+  Serial.println(F("  't' -> Send Test SMS to BOTH Phones (1 & 2)     "));
+  Serial.println(F("  '1' -> Send Test SMS to Phone 1 (+639634299114) "));
+  Serial.println(F("  '2' -> Send Test SMS to Phone 2 (+639242074903) "));
+  Serial.println(F("  's' -> Query Signal Strength (AT+CSQ)           "));
+  Serial.println(F("  'n' -> Query Network Registration (AT+CREG?)    "));
+  Serial.println(F("  'c' -> Check SIM PIN Status (AT+CPIN?)          "));
   Serial.println(F("  'o' -> Check Network Operator / Carrier (AT+COPS?)"));
-  Serial.println(F("  Type any custom AT command directly (e.g. ATI)"));
+  Serial.println(F("  Type any custom AT command directly (e.g. ATI)  "));
   Serial.println(F("=================================================="));
 }
 
@@ -135,7 +158,11 @@ void loop() {
   if (Serial.available()) {
     char c = Serial.read();
     if (c == 't' || c == 'T') {
-      sendSMS(ADMIN_PHONE, "ALERT: PCBCES Storage Bin is FULL! Please empty the collection bin to resume bottle deposits.");
+      sendAllAdmins("ALERT: PCBCES Storage Bin is FULL! Please empty the collection bin to resume bottle deposits.");
+    } else if (c == '1') {
+      sendSMS(ADMIN_PHONE_1, "ALERT: PCBCES Storage Bin is FULL! (Admin Phone 1 Test: 09634299114). Please empty bin.");
+    } else if (c == '2') {
+      sendSMS(ADMIN_PHONE_2, "ALERT: PCBCES Storage Bin is FULL! (Admin Phone 2 Test: 09242074903). Please empty bin.");
     } else if (c == 's' || c == 'S') {
       Serial.println(F("\n>> AT+CSQ (Signal Quality)"));
       gsm.println("AT+CSQ");

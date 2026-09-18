@@ -1,7 +1,7 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
- * Last Updated: 2026-09-18 20:56:00 (+08:00)
+ * Last Updated: 2026-09-18 21:50:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
@@ -119,36 +119,36 @@ long readChamberDistance() {
 }
 
 // GSM SMS Alerts
-void sendBinFullSMS() {
-  Serial.println(F("[GSM] Sending Bin-Full Alert to Admin..."));
+void sendRawSMS(const char* phoneNumber, const char* message) {
   gsm.println("AT+CMGF=1");
   delay(400);
   gsm.print("AT+CMGS=\"");
-  gsm.print(ADMIN_PHONE_NUMBER);
+  gsm.print(phoneNumber);
   gsm.println("\"");
   delay(400);
-  gsm.print("ALERT: PCBCES Bottle Storage Bin is FULL (");
-  gsm.print(totalBinBottles);
-  gsm.print(" bottles / IR Beam Blocked)! Machine is locked. Please empty bin.");
+  gsm.print(message);
   delay(400);
   gsm.write(26); // Ctrl+Z
   delay(3000);
-  Serial.println(F("[GSM] Bin-Full SMS command executed."));
+}
+
+void sendBinFullSMS() {
+  Serial.println(F("[GSM] Sending Bin-Full Alert to Admin Phones..."));
+  char msg[140];
+  snprintf(msg, sizeof(msg), "ALERT: PCBCES Storage Bin is FULL (%d bottles / IR Beam Blocked)! Machine is locked. Please empty bin.", totalBinBottles);
+  sendRawSMS(ADMIN_PHONE_1, msg);
+  delay(2000);
+  sendRawSMS(ADMIN_PHONE_2, msg);
+  Serial.println(F("[GSM] Bin-Full SMS command executed for all admins."));
 }
 
 void sendLowCoinSMS() {
-  Serial.println(F("[GSM] Sending Low/Empty Coin Alert to Admin..."));
-  gsm.println("AT+CMGF=1");
-  delay(400);
-  gsm.print("AT+CMGS=\"");
-  gsm.print(ADMIN_PHONE_NUMBER);
-  gsm.println("\"");
-  delay(400);
-  gsm.print("ALERT: PCBCES Coin Hopper is EMPTY or LOW ON COINS! Dispense timed out. Please refill 1-peso coins.");
-  delay(400);
-  gsm.write(26); // Ctrl+Z
-  delay(3000);
-  Serial.println(F("[GSM] Low-Coin SMS command executed."));
+  Serial.println(F("[GSM] Sending Low/Empty Coin Alert to Admin Phones..."));
+  const char* msg = "ALERT: PCBCES Coin Hopper is EMPTY or LOW ON COINS! Dispense timed out. Please refill 1-peso coins.";
+  sendRawSMS(ADMIN_PHONE_1, msg);
+  delay(2000);
+  sendRawSMS(ADMIN_PHONE_2, msg);
+  Serial.println(F("[GSM] Low-Coin SMS command executed for all admins."));
 }
 
 void showMenuLCD() {

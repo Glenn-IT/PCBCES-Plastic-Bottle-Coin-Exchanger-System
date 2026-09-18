@@ -1,7 +1,7 @@
 /*
  * PCBCES - Test 08: Coin Hopper & GSM SMS Low-Coin / Jam Alert Test
  * Hardware: Arduino Uno, 5V Relay, 12V/220V Coin Hopper, SIM900A / SIM800L GSM Module
- * Last Updated: 2026-09-16 23:55:00 (+08:00)
+ * Last Updated: 2026-09-18 21:50:00 (+08:00)
  * 
  * Pin Connections:
  * - Pin D8  -> 5V Relay Module IN (Switches Coin Hopper Motor Power)
@@ -22,10 +22,10 @@
 
 #include <SoftwareSerial.h>
 
-// SoftwareSerial for GSM (RX on D11, TX on A3)
+// SoftwareSerial (RX on D11 from GSM TX, TX on A3 to GSM RX)
 SoftwareSerial gsm(11, A3);
 
-// Pin Definitions
+// Hardware Pins
 const int PIN_RELAY_HOPPER = 8;
 const int PIN_COIN_PULSE   = 7;
 const int PIN_BUZZER       = 12;
@@ -35,8 +35,9 @@ const int PIN_LED_GREEN    = A2;
 // Safety Cutoff Threshold
 const unsigned long COIN_TIMEOUT_MS = 5000; // 5 seconds with no coin pulse triggers shutdown & SMS
 
-// Target Administrator Phone Number (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
-const char ADMIN_PHONE[] = "+639123456789";
+// Target Administrator Phone Numbers (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
+const char ADMIN_PHONE_1[] = "+639634299114";
+const char ADMIN_PHONE_2[] = "+639242074903";
 
 // Runtime Variables
 volatile int coinsDispensed = 0;
@@ -64,12 +65,9 @@ void soundAlarm() {
   }
 }
 
-void sendLowCoinSMS(int dispensed, int target) {
-  Serial.println(F("\n=================================================="));
-  Serial.println(F("[GSM ALERT] Dispatching Low-Coin / Empty SMS...   "));
+void sendLowCoinToNumber(const char* recipient, int dispensed, int target) {
   Serial.print(F("[GSM ALERT] Recipient: "));
-  Serial.println(ADMIN_PHONE);
-  Serial.println(F("=================================================="));
+  Serial.println(recipient);
 
   // Switch GSM to text mode
   gsm.println("AT+CMGF=1");
@@ -77,7 +75,7 @@ void sendLowCoinSMS(int dispensed, int target) {
 
   // Set recipient phone number
   gsm.print("AT+CMGS=\"");
-  gsm.print(ADMIN_PHONE);
+  gsm.print(recipient);
   gsm.println("\"");
   delay(400);
 
@@ -100,8 +98,16 @@ void sendLowCoinSMS(int dispensed, int target) {
       Serial.write(c);
     }
   }
+}
 
-  Serial.println(F("\n[GSM ALERT] SMS transmission cycle complete!"));
+void sendLowCoinSMS(int dispensed, int target) {
+  Serial.println(F("\n=================================================="));
+  Serial.println(F("[GSM ALERT] Dispatching Low-Coin SMS to Admins... "));
+  Serial.println(F("=================================================="));
+  sendLowCoinToNumber(ADMIN_PHONE_1, dispensed, target);
+  delay(2000);
+  sendLowCoinToNumber(ADMIN_PHONE_2, dispensed, target);
+  Serial.println(F("\n[GSM ALERT] SMS transmission cycle complete for all admins!"));
 }
 
 void startPayout(int target) {
