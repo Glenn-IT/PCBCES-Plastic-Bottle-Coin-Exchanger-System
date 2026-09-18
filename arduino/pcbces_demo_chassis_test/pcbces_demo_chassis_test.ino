@@ -1,39 +1,42 @@
 /*
  * =============================================================================
- * PCBCES - Combined Demo Chassis Test Controller (Tests 01, 03, 04, 05, 06, 07, 08)
+ * PCBCES - Combined Demo Chassis Test Controller (Tests 01, 03, 05, 06, 07, 08)
  * Plastic Bottle Coin Exchanger System — Bench & Demo Rig Edition
- * Last Updated: 2026-09-18 22:36:00 (+08:00)
+ * Last Updated: 2026-09-18 23:20:00 (+08:00)
  * =============================================================================
  * 
  * Integrated Modules:
  * - Test 01: 16x2 I2C LCD (0x27, A4/A5) + 3 Dedicated Buttons (D10, A0, A1) + Buzzer (D12) + LEDs (A2/D13)
- * - Test 03: Ultrasonic HC-SR04 (D2/D3) + Active LOW IR Bottle Entry Sensor (D4) + IR Bin-Full Sensor (D5)
- * - Test 04: LJ12A3 Inductive Metal Proximity Sensor (Pin D6, optional bench demo)
+ * - Test 03: Ultrasonic HC-SR04 (D2/D3) + IR Entry Sensor (D4) [Calibrated to 32 cm Chamber]
+ * - Test 04: LJ12A3 Inductive Metal Proximity Sensor (D6) -> [COMMENTED OUT / NOT WIRED IN DEMO RIG]
  * - Test 05: MG996R Metal Gear Sorting Servo (D9, 0° Standby/Reject, 90° Accept)
  * - Test 06: Coin Hopper Optical Pulse (D7) + 5V Relay (D8) with 5-Second Motor Auto-Cutoff
- * - Test 07: GSM SIM800L / SIM900A SMS Dispatcher (SoftSerial RX D11, TX A3)
- * - Test 08: Coin Hopper & GSM SMS Low-Coin / Jam Alert Integration (Automated 5s Timeout SMS)
+ * - Test 07: IR Bin-Full Sensor (D5) -> 10-Second Continuous Trigger Safety -> Automated SMS to Admins
+ * - Test 08: SIM900A / SIM800L GSM Module (D11/A3) -> Automated Low-Coin & Bin-Full SMS Alerts
+ * 
+ * Admin Phone Numbers (Synchronized with Test 07, Test 08 & config.h):
+ * - Primary:   +639634299114
+ * - Secondary: +639242074903
  * 
  * Pin Connections (Canonical Uno 20-Pin Lock):
- * - D0 / D1: Hardware UART (USB Serial Monitor & Commands at 115200 baud)
- * - D2     : HC-SR04 Trigger Pulse
- * - D3     : HC-SR04 Echo Return Pulse
- * - D4     : IR Bottle Entry Beam Sensor (Active LOW bottle detected)
- * - D5     : IR Bin-Full Sensor (Active LOW bin full detected)
- * - D6     : (LJ12A3 Inductive Metal Sensor - Optional bench demo)
- * - D7     : Coin Hopper Pulse Line (Falling edge detection via 10k/4.7k divider)
- * - D8     : 5V Single-Channel Relay (Hopper Motor Power, Active LOW)
- * - D9     : MG996R Servo PWM (0° Standby / 90° Drop)
- * - D10    : Button Green (1.5L / 1.75L Mode -> 5 pcs quota = 20 PHP)
- * - D11    : SoftwareSerial RX (From GSM SIM900A 5VT / SIM800L TX)
- * - D12    : Active 5V Buzzer
- * - D13    : Red LED (Fault / Reject Indicator)
- * - A0     : Button Blue (290 ML Mode -> 10 pcs quota = 3 PHP)
- * - A1     : Button Red (System Cancel / Restart)
- * - A2     : Green LED (Ready / Success Indicator)
- * - A3     : SoftwareSerial TX (To GSM SIM900A 5VR / SIM800L RX)
- * - A4     : I2C SDA (16x2 LCD)
- * - A5     : I2C SCL (16x2 LCD)
+ * - D2  : HC-SR04 Trigger Pulse
+ * - D3  : HC-SR04 Echo Return Pulse
+ * - D4  : IR Bottle Entry Beam Sensor (Active LOW)
+ * - D5  : IR Bin-Full Storage Sensor (Active LOW: 10-Second debounced SMS trigger)
+ * - D6  : LJ12A3 Inductive Metal Sensor [Commented Out / Unconnected]
+ * - D7  : Coin Hopper Pulse Line (Falling edge detection via divider)
+ * - D8  : 5V Single-Channel Relay (Hopper Motor Power, Active LOW)
+ * - D9  : MG996R Servo PWM (0° Standby / 90° Drop)
+ * - D10 : Button Green (1.5L / 1.75L Mode -> 5 pcs quota = 20 PHP)
+ * - D11 : SoftwareSerial RX (from GSM TX: SIM900A 5VT / SIM800L TX)
+ * - D12 : Active 5V Buzzer
+ * - D13 : Red LED (Fault / Reject Indicator)
+ * - A0  : Button Blue (290 ML Mode -> 10 pcs quota = 3 PHP)
+ * - A1  : Button Red (System Cancel / Restart)
+ * - A2  : Green LED (Ready / Success Indicator)
+ * - A3  : SoftwareSerial TX (to GSM RX: SIM900A 5VR / SIM800L RX)
+ * - A4  : I2C SDA (16x2 LCD)
+ * - A5  : I2C SCL (16x2 LCD)
  * =============================================================================
  */
 
@@ -42,28 +45,32 @@
 #include <Servo.h>
 #include <SoftwareSerial.h>
 
-// --- PIN DEFINITIONS (Canonical Uno 20-Pin Lock) ---
+// --- PIN DEFINITIONS ---
 const int PIN_ULTRASONIC_TRIG = 2;
 const int PIN_ULTRASONIC_ECHO = 3;
-const int PIN_IR_ENTRY        = 4;   // Active LOW bottle entry beam sensor
-const int PIN_IR_BIN_FULL     = 5;   // Active LOW bottle storage bin full sensor
-// const int PIN_IND_METAL    = 6;   // Commented out for sensor demonstration
+const int PIN_IR_ENTRY        = 4;
+const int PIN_IR_BIN_FULL     = 5;   // IR Obstacle Avoidance Sensor: Bin-Full detection (Active LOW)
+// const int PIN_IND_METAL    = 6;   // Inductive Metal Sensor (Commented out: hardware not connected)
 const int PIN_COIN_PULSE      = 7;
 const int PIN_RELAY_HOPPER    = 8;
 const int PIN_SERVO_TRAPDOOR  = 9;
 const int PIN_BTN_GREEN       = 10;
-const int PIN_GSM_RX          = 11;  // SoftwareSerial RX (From SIM900A 5VT / SIM800L TX)
+const int PIN_GSM_RX          = 11;  // D11 connects to SIM900A 5VT / SIM800L TX
 const int PIN_BUZZER          = 12;
 const int PIN_LED_RED         = 13;
 const int PIN_BTN_BLUE        = A0;
 const int PIN_BTN_RED         = A1;
 const int PIN_LED_GREEN       = A2;
-const int PIN_GSM_TX          = A3;  // SoftwareSerial TX (To SIM900A 5VR / SIM800L RX)
+const int PIN_GSM_TX          = A3;  // A3 connects to SIM900A 5VR / SIM800L RX
 
 // --- HARDWARE INSTANCES ---
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo trapdoor;
-SoftwareSerial gsm(PIN_GSM_RX, PIN_GSM_TX);
+SoftwareSerial gsm(PIN_GSM_RX, PIN_GSM_TX); // RX on D11, TX on A3
+
+// Target Administrator Phone Numbers (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
+const char ADMIN_PHONE_1[] = "+639634299114";
+const char ADMIN_PHONE_2[] = "+639242074903";
 
 // --- CONFIGURATION & QUOTAS ---
 const int BOTTLE_1_5L_QUOTA    = 5;   // 5 bottles = 20.00 PHP
@@ -74,16 +81,15 @@ const int SERVO_STANDBY_ANGLE  = 0;   // Closed / Cradle Rest / Rejection Hold
 const int SERVO_ACCEPT_ANGLE   = 90;  // Open / Drop into collection bin
 const unsigned long COIN_TIMEOUT_MS = 5000; // 5-Second dry-run motor auto-cutoff
 
-// Target Administrator Phone Numbers (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
-const char ADMIN_PHONE_1[] = "+639634299114";
-const char ADMIN_PHONE_2[] = "+639242074903";
+// --- IR SENSOR BIN FULL TRIGGER THRESHOLD ---
+const unsigned long BIN_FULL_HOLD_TIME_MS = 10000; // IR sensor must stay triggered for 10 continuous seconds
+unsigned long binBlockedStartTime = 0;
 
 // --- DEMO CHAMBER HEIGHT CALIBRATION ---
-// Baseline height: 32 cm (Calibrated on demo chassis)
 int chamberTotalHeightCm = 32;
 int dist15LMin  = 11;   // Cap is 11 to 12 cm from ceiling sensor
-int dist15LMax  = 12;   // Calibrated range
-int dist290Min  = 23;   // Cap is 23 to 24 cm from ceiling sensor
+int dist15LMax  = 12;  // Generous range for demo chassis tolerance
+int dist290Min  = 23;  // Cap is 23 to 24 cm from ceiling sensor
 int dist290Max  = 24;
 
 // --- STATE MACHINE ---
@@ -93,7 +99,8 @@ enum MachineState {
   STATE_VALIDATE_BOTTLE,
   STATE_ACCEPT_DROP,
   STATE_REJECT_EJECT,
-  STATE_PAYOUT_COINS
+  STATE_PAYOUT_COINS,
+  STATE_BIN_FULL_LOCKED
 };
 
 MachineState currentState = STATE_STANDBY_MENU;
@@ -126,12 +133,23 @@ void soundError() {
   }
 }
 
+void soundAlarm() {
+  for (int i = 0; i < 4; i++) {
+    digitalWrite(PIN_BUZZER, HIGH);
+    digitalWrite(PIN_LED_RED, HIGH);
+    delay(150);
+    digitalWrite(PIN_BUZZER, LOW);
+    digitalWrite(PIN_LED_RED, LOW);
+    delay(100);
+  }
+}
+
 void soundSuccess() {
   soundBeep(100); delay(60); soundBeep(180);
 }
 
-// --- GSM ALERT FUNCTIONS (From Test 08) ---
-void sendLowCoinToNumber(const char* recipient, int dispensed, int target) {
+// --- GSM SMS DISPATCH FUNCTIONS ---
+void sendSMSToRecipient(const char* recipient, const char* message) {
   Serial.print(F("[GSM ALERT] Recipient: "));
   Serial.println(recipient);
 
@@ -146,14 +164,10 @@ void sendLowCoinToNumber(const char* recipient, int dispensed, int target) {
   delay(400);
 
   // Compose SMS body
-  gsm.print("ALERT: PCBCES Coin Hopper is EMPTY or JAMMED! No coin dispensed for 5 seconds during payout. Dispensed: ");
-  gsm.print(dispensed);
-  gsm.print("/");
-  gsm.print(target);
-  gsm.print(" coins. Motor stopped. Please refill 1-peso coins.");
+  gsm.print(message);
   delay(400);
 
-  // Send Ctrl+Z (ASCII 26) to trigger cellular network transmission
+  // Send Ctrl+Z (ASCII 26) to trigger network transmission
   gsm.write(26);
   Serial.println(F("[GSM ALERT] Waiting for cellular confirmation..."));
 
@@ -166,29 +180,27 @@ void sendLowCoinToNumber(const char* recipient, int dispensed, int target) {
   }
 }
 
+void sendBinFullSMS() {
+  Serial.println(F("\n=================================================="));
+  Serial.println(F("[GSM ALERT] Storage Bin FULL for 10s! Dispatching SMS..."));
+  Serial.println(F("=================================================="));
+  const char* msg = "ALERT: PCBCES Storage Bin is FULL! IR Bin Sensor blocked for 10 seconds. Machine is locked. Please empty bin.";
+  sendSMSToRecipient(ADMIN_PHONE_1, msg);
+  delay(2000);
+  sendSMSToRecipient(ADMIN_PHONE_2, msg);
+  Serial.println(F("\n[GSM ALERT] Bin-Full SMS transmission complete for all admins!"));
+}
+
 void sendLowCoinSMS(int dispensed, int target) {
   Serial.println(F("\n=================================================="));
   Serial.println(F("[GSM ALERT] Dispatching Low-Coin SMS to Admins... "));
   Serial.println(F("=================================================="));
-  sendLowCoinToNumber(ADMIN_PHONE_1, dispensed, target);
+  char msg[140];
+  snprintf(msg, sizeof(msg), "ALERT: PCBCES Coin Hopper is EMPTY or JAMMED! No coin dispensed for 5 seconds during payout. Dispensed: %d/%d coins. Motor stopped. Please refill 1-peso coins.", dispensed, target);
+  sendSMSToRecipient(ADMIN_PHONE_1, msg);
   delay(2000);
-  sendLowCoinToNumber(ADMIN_PHONE_2, dispensed, target);
-  Serial.println(F("\n[GSM ALERT] SMS transmission cycle complete for all admins!"));
-}
-
-void sendTestSMS() {
-  Serial.println(F("[GSM] Sending test SMS to Admin 1..."));
-  gsm.println("AT+CMGF=1");
-  delay(400);
-  gsm.print("AT+CMGS=\"");
-  gsm.print(ADMIN_PHONE_1);
-  gsm.println("\"");
-  delay(400);
-  gsm.print("TEST: PCBCES GSM SMS Module is ONLINE & Functional on Demo Rig!");
-  delay(400);
-  gsm.write(26);
-  delay(3000);
-  Serial.println(F("[GSM] Test SMS dispatch sequence completed."));
+  sendSMSToRecipient(ADMIN_PHONE_2, msg);
+  Serial.println(F("\n[GSM ALERT] Low-Coin SMS transmission complete for all admins!"));
 }
 
 bool autoSyncGSMBaud() {
@@ -247,9 +259,14 @@ bool autoSyncGSMBaud() {
   }
 
   // Fallback: Default to 9600 and train autobaud
-  Serial.println(F("[WARN] No standard response. Defaulting to 9600 baud..."));
+  Serial.println(F("[WARN] No standard response. Training auto-baud at 9600 baud..."));
   gsm.begin(9600);
   delay(200);
+  for (int i = 0; i < 5; i++) {
+    gsm.print("AT\r\n");
+    delay(300);
+  }
+  while (gsm.available()) gsm.read();
   return false;
 }
 
@@ -344,11 +361,10 @@ void printDiagnostics() {
   Serial.println(F("--- [LIVE SENSOR DIAGNOSTICS] ---"));
   Serial.print(F("Ceiling-to-Object Distance : ")); Serial.print(d); Serial.println(F(" cm"));
   Serial.print(F("IR Entry Sensor (D4)       : ")); Serial.println(digitalRead(PIN_IR_ENTRY) == LOW ? F("BLOCKED (Bottle Present)") : F("CLEAR"));
-  Serial.print(F("IR Bin-Full Sensor (D5)    : ")); Serial.println(digitalRead(PIN_IR_BIN_FULL) == LOW ? F("BLOCKED (Bin Full)") : F("CLEAR"));
-  // Serial.print(F("Inductive Metal (D6)       : ")); Serial.println(digitalRead(PIN_IND_METAL) == LOW ? F("METAL DETECTED!") : F("NO METAL (Clear)"));
+  Serial.print(F("IR Bin-Full Sensor (D5)    : ")); Serial.println(digitalRead(PIN_IR_BIN_FULL) == LOW ? F("BLOCKED (Bin Full)") : F("CLEAR (OK)"));
+  Serial.println(F("Inductive Metal (D6)       : [COMMENTED OUT / NOT CONNECTED]"));
   Serial.print(F("Coin Pulse Line (D7)       : ")); Serial.println(digitalRead(PIN_COIN_PULSE) == HIGH ? F("HIGH (Idle)") : F("LOW (Coin Present)"));
   Serial.print(F("Hopper Relay (D8)          : ")); Serial.println(digitalRead(PIN_RELAY_HOPPER) == LOW ? F("ON (Dispensing)") : F("OFF (Standby)"));
-  Serial.print(F("GSM Serial Status          : ")); Serial.println(gsm.isListening() ? F("LISTENING (D11/A3 OK)") : F("STANDBY"));
   Serial.println(F("--------------------------------"));
 }
 
@@ -362,9 +378,9 @@ void setup() {
   pinMode(PIN_BTN_RED, INPUT_PULLUP);
 
   // Sensors
-  pinMode(PIN_IR_ENTRY, INPUT);     // Active LOW IR Entry Sensor
-  pinMode(PIN_IR_BIN_FULL, INPUT);  // Active LOW IR Bin-Full Sensor
-  // pinMode(PIN_IND_METAL, INPUT); // Commented out for sensor demonstration
+  pinMode(PIN_IR_ENTRY, INPUT);
+  pinMode(PIN_IR_BIN_FULL, INPUT); // IR Obstacle Avoidance Sensor: Storage Bin Full (Active LOW)
+  // pinMode(PIN_IND_METAL, INPUT); // Commented out: Metal sensor not installed on demo chassis
   pinMode(PIN_COIN_PULSE, INPUT_PULLUP);
   pinMode(PIN_ULTRASONIC_TRIG, OUTPUT);
   pinMode(PIN_ULTRASONIC_ECHO, INPUT);
@@ -396,14 +412,12 @@ void setup() {
   soundBeep(120);
   delay(1200);
 
-  // GSM Modem Setup & Auto-sync
-  autoSyncGSMBaud();
-
   // Calibrate empty chamber baseline
   long baseline = readChamberDistance();
   Serial.println(F("=================================================="));
   Serial.println(F(" PCBCES DEMO CHASSIS INTEGRATED CONTROLLER        "));
-  Serial.println(F(" Tests 01, 03, 05, 06, 07, 08 Active on Bench Rig "));
+  Serial.println(F(" Tests 01 + 03 + 05 + 06 + 07 + 08 Active         "));
+  Serial.println(F(" (Metal Sensor D6 Commented Out / Not Wired)      "));
   Serial.println(F("=================================================="));
   Serial.print(F("Empty Chamber Ultrasonic Baseline: "));
   Serial.print(baseline);
@@ -413,15 +427,43 @@ void setup() {
   Serial.println(F(" 'b' -> Select Blue  (290 ML Mode)"));
   Serial.println(F(" 'r' -> Select Red   (Cancel/Restart)"));
   Serial.println(F(" 'd' -> Print Live Sensor Diagnostics"));
-  Serial.println(F(" 's' -> Send Test SMS via GSM"));
-  Serial.println(F(" 't' -> Test Coin Hopper Payout (3 Coins)"));
+  Serial.println(F(" 'f' -> Manual Bin-Full SMS Test to Admins"));
+  Serial.println(F(" 'm' -> Manual Low-Coin SMS Test to Admins"));
+  Serial.println(F(" 's' -> Query GSM Signal Quality (AT+CSQ)"));
+  Serial.println(F(" 'n' -> Query GSM Network Status (AT+CREG?)"));
   Serial.println(F("--------------------------------------------------"));
+
+  // Synchronize GSM Module
+  autoSyncGSMBaud();
 
   showMenuLCD();
 }
 
 // --- MAIN LOOP ---
 void loop() {
+  // --- IR BIN-FULL SENSOR CONTINUOUS MONITORING (PIN D5) ---
+  // If the IR sensor is triggered (Active LOW) and STAYS triggered continuously for 10 SECONDS (10000ms),
+  // lock the system and dispatch automated emergency SMS to admins.
+  if (digitalRead(PIN_IR_BIN_FULL) == LOW) {
+    if (binBlockedStartTime == 0) {
+      binBlockedStartTime = millis();
+      Serial.println(F("[BIN SENSOR] IR Bin-Full Sensor (D5) triggered. Starting 10-second timer..."));
+    } else if (millis() - binBlockedStartTime >= BIN_FULL_HOLD_TIME_MS) {
+      if (currentState != STATE_BIN_FULL_LOCKED) {
+        Serial.println(F("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+        Serial.println(F(">>> [BIN FULL ALERT] IR Sensor BLOCKED for 10 SECONDS!"));
+        Serial.println(F(">>> Storage bin is FULL. Locking system and notifying admins."));
+        Serial.println(F("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+        currentState = STATE_BIN_FULL_LOCKED;
+      }
+    }
+  } else {
+    if (binBlockedStartTime != 0 && currentState != STATE_BIN_FULL_LOCKED) {
+      Serial.println(F("[BIN SENSOR] Object cleared before 10s elapsed. Timer reset."));
+      binBlockedStartTime = 0;
+    }
+  }
+
   // Handle Serial Key Shortcuts for testing without pressing physical buttons
   if (Serial.available()) {
     char ch = Serial.read();
@@ -454,13 +496,18 @@ void loop() {
       Serial.println(F("[SIM] Cancel / Reset via Serial."));
     } else if (ch == 'd' || ch == 'D') {
       printDiagnostics();
+    } else if (ch == 'f' || ch == 'F') {
+      Serial.println(F("[SIM] Triggering Manual Bin-Full SMS Test..."));
+      sendBinFullSMS();
+    } else if (ch == 'm' || ch == 'M') {
+      Serial.println(F("[SIM] Triggering Manual Low-Coin SMS Test..."));
+      sendLowCoinSMS(0, requiredCoinsPayout);
     } else if (ch == 's' || ch == 'S') {
-      sendTestSMS();
-    } else if (ch == 't' || ch == 'T') {
-      selectedType = TYPE_290ML;
-      requiredCoinsPayout = 3;
-      currentState = STATE_PAYOUT_COINS;
-      Serial.println(F("[SIM] Triggering Coin Hopper Payout Test (3 Coins)..."));
+      Serial.println(F("\n>> AT+CSQ (Signal Quality)"));
+      gsm.println("AT+CSQ");
+    } else if (ch == 'n' || ch == 'N') {
+      Serial.println(F("\n>> AT+CREG? (Network Status)"));
+      gsm.println("AT+CREG?");
     }
   }
 
@@ -537,42 +584,32 @@ void loop() {
     case STATE_WAIT_INSERTION: {
       if (checkCancelButton()) break;
 
-      // Check IR Entry Sensor (Active LOW when bottle blocks IR beam)
-      bool irBlocked = (digitalRead(PIN_IR_ENTRY) == LOW);
-
-      // Check Ultrasonic Sensor (Bottle insertion detected when distance drops below baseline)
-      long currentDist = singlePing();
-
-      // Detection condition: IR sensor beam is broken OR ultrasonic reads an object closer than chamber baseline
-      if (irBlocked || (currentDist >= 2 && currentDist <= 35 && (currentDist < (chamberTotalHeightCm - 2) || chamberTotalHeightCm <= 15))) {
+      // Check IR Entry Sensor (Active LOW when bottle blocks beam)
+      if (digitalRead(PIN_IR_ENTRY) == LOW) {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("BOTTLE DETECTED ");
         lcd.setCursor(0, 1);
-        if (irBlocked) {
-          lcd.print("IR Entry Beam OK");
-          Serial.println(F("[INSERTION] Bottle detected via IR Entry Sensor (D4) beam break."));
-        } else {
-          lcd.print("Dist: ");
-          lcd.print(currentDist);
-          lcd.print(" cm     ");
-          Serial.print(F("[INSERTION] Bottle detected via Ultrasonic (D2/D3): "));
-          Serial.print(currentDist);
-          Serial.println(F(" cm"));
-        }
+        lcd.print("Align Bottle 2s ");
         soundBeep(70);
-        delay(800); // Allow user hand to withdraw and bottle to stabilize on cradle
+        delay(1000);
 
+        lcd.setCursor(0, 1);
+        lcd.print("Scanning in 1s..");
+        delay(1000);
+
+        lcd.setCursor(0, 1);
+        lcd.print("Scanning Sensors");
         currentState = STATE_VALIDATE_BOTTLE;
       }
-      delay(80);
       break;
     }
 
     case STATE_VALIDATE_BOTTLE: {
-      Serial.println(F("[VALIDATION] Commencing sensor verification..."));
+      Serial.println(F("[VALIDATION] Commencing multi-sensor verification..."));
 
-      // 1. Metal Detection (LJ12A3 Sensor - Active LOW) - OPTIONAL BENCH DEMO
+      // 1. Metal Detection (LJ12A3 Sensor - Active LOW)
+      // [COMMENTED OUT FOR DEMO CHASSIS - Sensor not wired/installed]
       /*
       bool isMetal = (digitalRead(PIN_IND_METAL) == LOW);
       if (isMetal) {
@@ -581,7 +618,7 @@ void loop() {
         break;
       }
       */
-      Serial.println(F("[VALIDATION] Metal detector bypassed (Demo Mode)."));
+      Serial.println(F("[VALIDATION] Metal check bypassed (LJ12A3 not connected on demo rig)."));
 
       // 2. Ultrasonic Height Verification (Distance from ceiling down to bottle cap)
       long distToCap = readChamberDistance();
@@ -594,9 +631,6 @@ void loop() {
         validDimensions = true;
       } else if (selectedType == TYPE_290ML && distToCap >= dist290Min && distToCap <= dist290Max) {
         validDimensions = true;
-      } else if (distToCap >= 2 && distToCap <= 35) {
-        // Fallback for demo: any bottle detected under the ultrasonic sensor is accepted!
-        validDimensions = true;
       }
 
       if (!validDimensions) {
@@ -608,7 +642,7 @@ void loop() {
       }
 
       // PASSED SENSORS!
-      Serial.println(F("[VALIDATION] PASSED: Bottle verified via Ultrasonic."));
+      Serial.println(F("[VALIDATION] PASSED: Valid plastic bottle verified."));
       currentState = STATE_ACCEPT_DROP;
       break;
     }
@@ -654,14 +688,15 @@ void loop() {
       // Flap holds at 0 degrees
       trapdoor.write(SERVO_STANDBY_ANGLE);
 
-      // Flash Red LED warning and wait until user removes item from IR Entry sensor
+      // Flash Red LED until user retrieves the bottle
       unsigned long rejectStart = millis();
-      while ((digitalRead(PIN_IR_ENTRY) == LOW) && (millis() - rejectStart < 5000)) {
+      while (digitalRead(PIN_IR_ENTRY) == LOW && (millis() - rejectStart < 6000)) {
         digitalWrite(PIN_LED_RED, HIGH);
         delay(200);
         digitalWrite(PIN_LED_RED, LOW);
         delay(200);
       }
+      digitalWrite(PIN_LED_RED, LOW);
       delay(400);
 
       showProgressLCD();
@@ -702,6 +737,7 @@ void loop() {
           if ((now - payoutStart > 100) && (now - lastPulseTime > 35)) {
             coinsDispensed++;
             lastPulseTime = now;
+            soundBeep(40);
             Serial.print(F("--> [COIN DETECTED!] Count = "));
             Serial.print(coinsDispensed);
             Serial.print(F(" / "));
@@ -710,7 +746,7 @@ void loop() {
         }
         lastEdgeState = curState;
 
-        // 5-Second Auto-Cutoff Timeout Check (Test 08 Safety Logic)
+        // 5-Second Auto-Cutoff Timeout Check
         if (millis() - lastPulseTime >= COIN_TIMEOUT_MS) {
           timedOut = true;
           Serial.println();
@@ -732,21 +768,16 @@ void loop() {
         lcd.setCursor(0, 0);
         lcd.print("EMPTY HOPPER!   ");
         lcd.setCursor(0, 1);
-        lcd.print("SENDING SMS...  ");
+        lcd.print("REFILL 1P COINS ");
         Serial.print(F("[ALERT] Dispense incomplete: "));
         Serial.print(coinsDispensed);
         Serial.print(F(" / "));
         Serial.println(requiredCoinsPayout);
 
-        // Automated SMS dispatch to administrators via GSM module (Test 08 integration)
+        // Automated Emergency GSM SMS to Administrator phones
         sendLowCoinSMS(coinsDispensed, requiredCoinsPayout);
 
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("EMPTY HOPPER!   ");
-        lcd.setCursor(0, 1);
-        lcd.print("SMS DISPATCHED! ");
-        delay(3500);
+        delay(3000);
       } else {
         soundSuccess();
         lcd.clear();
@@ -763,5 +794,97 @@ void loop() {
       showMenuLCD();
       break;
     }
+
+    case STATE_BIN_FULL_LOCKED: {
+      // 1. Safe actuators
+      digitalWrite(PIN_RELAY_HOPPER, HIGH); // Ensure hopper motor is OFF
+      trapdoor.write(SERVO_STANDBY_ANGLE);  // Keep flap firmly closed (0 deg)
+      digitalWrite(PIN_LED_GREEN, LOW);
+      digitalWrite(PIN_LED_RED, HIGH);      // Red alert LED
+      soundAlarm();
+
+      // 2. LCD Notification
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("BIN IS FULL!    ");
+      lcd.setCursor(0, 1);
+      lcd.print("DISPATCHING SMS ");
+
+      // 3. Automated SMS alert to admins
+      sendBinFullSMS();
+
+      // 4. Update LCD prompt
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("BIN IS FULL!    ");
+      lcd.setCursor(0, 1);
+      lcd.print("HOLD RED: RESET ");
+
+      // 5. System Lock Loop: waits for bin empty & 2s hold on Red button
+      while (true) {
+        // Forward Serial / GSM passthrough
+        if (Serial.available()) {
+          char c = Serial.read();
+          if (c == 'd' || c == 'D') printDiagnostics();
+          else if (c == 's' || c == 'S') { Serial.println(F("\n>> AT+CSQ")); gsm.println("AT+CSQ"); }
+          else if (c == 'n' || c == 'N') { Serial.println(F("\n>> AT+CREG?")); gsm.println("AT+CREG?"); }
+          else gsm.write(c);
+        }
+        if (gsm.available()) Serial.write(gsm.read());
+
+        // Check if Red button is held for 2 seconds to reset
+        if (digitalRead(PIN_BTN_RED) == LOW) {
+          unsigned long holdStart = millis();
+          bool longPressed = false;
+          while (digitalRead(PIN_BTN_RED) == LOW) {
+            if (millis() - holdStart >= 2000) {
+              longPressed = true;
+              break;
+            }
+            delay(50);
+          }
+
+          if (longPressed) {
+            if (digitalRead(PIN_IR_BIN_FULL) == LOW) {
+              soundError();
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("BIN STILL FULL! ");
+              lcd.setCursor(0, 1);
+              lcd.print("Empty bin first!");
+              Serial.println(F("[RESET FAIL] Cannot reset: IR Bin-Full Sensor is still blocked!"));
+              delay(2500);
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("BIN IS FULL!    ");
+              lcd.setCursor(0, 1);
+              lcd.print("HOLD RED: RESET ");
+            } else {
+              soundSuccess();
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("SYSTEM RESET OK ");
+              lcd.setCursor(0, 1);
+              lcd.print("Resuming Normal ");
+              Serial.println(F("[RESET SUCCESS] Bin cleared and system reset to Standby."));
+              delay(1500);
+              binBlockedStartTime = 0;
+              currentDepositCount = 0;
+              currentState = STATE_STANDBY_MENU;
+              showMenuLCD();
+              while (digitalRead(PIN_BTN_RED) == LOW);
+              break;
+            }
+          }
+        }
+        delay(50);
+      }
+      break;
+    }
+  }
+
+  // Forward GSM responses to Serial Monitor
+  if (gsm.available()) {
+    Serial.write(gsm.read());
   }
 }

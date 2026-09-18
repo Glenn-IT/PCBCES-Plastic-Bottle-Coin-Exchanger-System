@@ -3,7 +3,7 @@
 
 // =============================================================================
 // PCBCES PIN CONFIGURATION MATRIX (Arduino Uno ATmega328P)
-// Last Updated: 2026-09-18 21:50:00 (+08:00)
+// Last Updated: 2026-09-18 23:20:00 (+08:00)
 // =============================================================================
 
 // Dedicated 3-Button User Interface Pins (INPUT_PULLUP to GND)
@@ -40,6 +40,7 @@
 #define COINS_PAYOUT_290ML      3    // 3 x 1.00 Peso coins = 3.00 PHP
 #define COINS_PAYOUT_TARGET     COINS_PAYOUT_290ML // Backward-compatible default (3 PHP)
 #define MAX_BIN_CAPACITY        30   // Trigger Bin-Full SMS when 30 bottles deposited
+#define BIN_FULL_HOLD_TIME_MS   10000 // IR Bin-Full sensor must stay continuously blocked for 10s to trigger SMS & lock
 
 // Servo Angles
 #define SERVO_STANDBY_ANGLE     0    // Flap Closed (Horizontal Cradle Rest & Scanning)

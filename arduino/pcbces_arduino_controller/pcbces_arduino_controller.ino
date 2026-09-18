@@ -1,7 +1,7 @@
 /*
  * PCBCES - Master Capstone Reverse Vending Machine Controller
  * Plastic Bottle Coin Exchanger System with 3-Button UI & GSM Telemetry
- * Last Updated: 2026-09-18 21:50:00 (+08:00)
+ * Last Updated: 2026-09-18 23:20:00 (+08:00)
  * 
  * Hardware Architecture:
  * - Arduino Uno R3
@@ -17,7 +17,7 @@
  * - MG996R Metal Gear Servo (Accept/Reject Trapdoor Flap)
  * - 220V/12V Coin Hopper & 5V Relay (20.00 PHP or 3.00 PHP Payout)
  * - SIM900A / SIM800L GSM Module (Storage Bin Full SMS Telemetry on 5VT->D11, 5VR<-A3)
- * - Pin D5: Spare / Unassigned GPIO (LJC18A3 Capacitive Sensor omitted)
+ * - Pin D5: IR Bin-Full Sensor (Active LOW: 10-Second continuous debounce trigger for SMS alert)
  */
 
 #include <Wire.h>
@@ -52,6 +52,7 @@ int requiredQuota = BOTTLE_1_5L_QUOTA;
 int requiredCoinsPayout = COINS_PAYOUT_1_5L;
 int totalBinBottles = 0;
 volatile int coinsDispensed = 0;
+unsigned long binBlockedStartTime = 0;
 
 // Coin Pulse state tracking
 int lastCoinPinState = HIGH;
@@ -254,6 +255,26 @@ void setup() {
 }
 
 void loop() {
+  // --- IR SENSOR BIN FULL CONTINUOUS MONITORING (PIN D5) ---
+  // If the IR sensor is triggered (Active LOW) and STAYS triggered continuously for 10 SECONDS (10000ms),
+  // lock the system and dispatch automated emergency SMS to admins.
+  if (digitalRead(PIN_IR_BIN_FULL) == LOW) {
+    if (binBlockedStartTime == 0) {
+      binBlockedStartTime = millis();
+      Serial.println(F("[BIN SENSOR] IR Bin-Full Sensor (D5) triggered. Starting 10-second timer..."));
+    } else if (millis() - binBlockedStartTime >= BIN_FULL_HOLD_TIME_MS) {
+      if (currentState != STATE_BIN_FULL_LOCKED) {
+        Serial.println(F("\n[BIN ALERT] Physical IR Bin-Full Sensor blocked for 10 seconds! Storage bin is full."));
+        currentState = STATE_BIN_FULL_LOCKED;
+      }
+    }
+  } else {
+    if (binBlockedStartTime != 0 && currentState != STATE_BIN_FULL_LOCKED) {
+      Serial.println(F("[BIN SENSOR] Object cleared before 10s elapsed. Timer reset."));
+      binBlockedStartTime = 0;
+    }
+  }
+
   switch (currentState) {
     case STATE_STANDBY_MENU: {
       digitalWrite(PIN_LED_GREEN, HIGH);
@@ -531,6 +552,7 @@ void loop() {
     case STATE_BIN_FULL_LOCKED: {
       Serial.println(F("[ALERT] Storage Bin is Full. System Locked."));
       digitalWrite(PIN_RELAY_HOPPER, HIGH);
+      trapdoor.write(SERVO_STANDBY_ANGLE);
       digitalWrite(PIN_LED_RED, HIGH);
       digitalWrite(PIN_LED_GREEN, LOW);
 
@@ -538,19 +560,49 @@ void loop() {
       lcd.setCursor(0, 0);
       lcd.print("BIN IS FULL!    ");
       lcd.setCursor(0, 1);
-      lcd.print("RED: System Rst ");
+      lcd.print("SENDING SMS...  ");
       soundError();
 
       sendBinFullSMS();
+
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("BIN IS FULL!    ");
+      lcd.setCursor(0, 1);
+      lcd.print("HOLD RED: RESET ");
 
       // Press RED button for 2 seconds to restart after emptying bin
       while (true) {
         if (digitalRead(PIN_BTN_RED) == LOW) {
           unsigned long holdStart = millis();
+          bool longPressed = false;
           while (digitalRead(PIN_BTN_RED) == LOW) {
             if (millis() - holdStart >= 2000) {
+              longPressed = true;
+              break;
+            }
+            delay(50);
+          }
+
+          if (longPressed) {
+            if (digitalRead(PIN_IR_BIN_FULL) == LOW) {
+              soundError();
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("BIN STILL FULL! ");
+              lcd.setCursor(0, 1);
+              lcd.print("Empty bin first!");
+              Serial.println(F("[RESET FAIL] Cannot reset: Physical IR Bin-Full Sensor is still blocked!"));
+              delay(2000);
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("BIN IS FULL!    ");
+              lcd.setCursor(0, 1);
+              lcd.print("HOLD RED: RESET ");
+            } else {
               totalBinBottles = 0;
               currentDepositCount = 0;
+              binBlockedStartTime = 0;
               soundSuccess();
               lcd.clear();
               lcd.setCursor(0, 0);
@@ -560,6 +612,7 @@ void loop() {
               delay(1500);
               currentState = STATE_STANDBY_MENU;
               showMenuLCD();
+              while (digitalRead(PIN_BTN_RED) == LOW);
               return;
             }
           }

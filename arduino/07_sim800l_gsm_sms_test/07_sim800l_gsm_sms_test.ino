@@ -1,13 +1,14 @@
 /*
  * PCBCES - Test 07: GSM Module SMS Bin-Full Notification Test
- * Hardware: Arduino Uno, SIMCom SIM900A (S2-1040U-Z1K0H) / SIM800L GSM/GPRS Module, 5V 2A Power Rail
- * Last Updated: 2026-09-18 22:20:00 (+08:00)
+ * Hardware: Arduino Uno, SIMCom SIM900A (S2-1040U-Z1K0H) / SIM800L GSM/GPRS Module, IR Obstacle Sensor, 5V 2A Power Rail
+ * Last Updated: 2026-09-18 23:20:00 (+08:00)
  * 
- * Pin Connections (SIM900A Mini V3.9.2 / V4.0):
- * - SIM900A 5VT (Module TX) -> Arduino Uno D11 (SoftwareSerial RX)
- * - SIM900A 5VR (Module RX) -> Arduino Uno A3  (SoftwareSerial TX)
- * - SIM900A VCC (5V / VCC5) -> LM2596 5.0V Buck Output (2A Peak, with 1000uF Buffer Cap)
- * - SIM900A GND             -> Common System Ground Rail (Arduino GND + LM2596 GND)
+ * Pin Connections:
+ * - Pin D5  -> IR Obstacle Sensor (Bin-Full detector: Active LOW, 10s debounce)
+ * - Pin D11 -> GSM TX Pin (SIM900A 5VT / SIM800L TX) -> SoftwareSerial RX
+ * - Pin A3  -> GSM RX Pin (SIM900A 5VR / SIM800L RX) -> SoftwareSerial TX
+ * - Pin VCC -> LM2596 5.0V Buck Output (2A Peak, with 1000uF Buffer Cap)
+ * - Pin GND -> Common System Ground Rail (Arduino GND + LM2596 GND)
  * 
  * Note for SIM800L Users (Alternative Module):
  * - SIM800L TX -> Arduino D11, SIM800L RX -> Arduino A3, VCC -> 4.3V Diode Drop Rail
@@ -16,16 +17,20 @@
  * - Automatically performs auto-baud rate synchronization on startup (9600 baud)
  * - Checks AT command communication and SIM card detection (AT+CPIN?)
  * - Checks signal strength (AT+CSQ) and network registration (AT+CREG?)
- * - Sends SMS alert: "ALERT: PCBCES Storage Bin is FULL! Please empty bin."
+ * - Monitors Pin D5 IR Sensor: if blocked for 10 continuous seconds, dispatches bin-full SMS!
  * - Interactive passthrough mode: Type any AT command into Serial Monitor!
  */
 
 #include <SoftwareSerial.h>
 
 // SoftwareSerial pins (RX on D11, TX on A3)
-// D11 connects to SIM900A 5VT pin
-// A3 connects to SIM900A 5VR pin
 SoftwareSerial gsm(11, A3);
+
+// Hardware Pins & Thresholds
+const int PIN_IR_BIN_FULL = 5; // IR Bin-Full Sensor (Active LOW)
+const unsigned long BIN_FULL_HOLD_TIME_MS = 10000; // 10 seconds continuous trigger threshold
+unsigned long binBlockedStartTime = 0;
+bool binFullAlertSent = false;
 
 // Target Administrator Phone Numbers (Philippines format: +639XXXXXXXXX or 09XXXXXXXXX)
 const char ADMIN_PHONE_1[] = "+639634299114";
@@ -173,10 +178,14 @@ bool autoSyncGSMBaud() {
 void setup() {
   Serial.begin(115200);
 
+  // Pin D5: IR Bin-Full Sensor (Active LOW)
+  pinMode(PIN_IR_BIN_FULL, INPUT);
+
   Serial.println(F("=================================================="));
   Serial.println(F(" PCBCES Test 07: SIM900A / SIM800L GSM Tester    "));
   Serial.println(F(" Module: SIMCom SIM900A (S2-1040U-Z1K0H)         "));
   Serial.println(F(" Pinout: 5VT -> Uno D11 (RX) | 5VR -> Uno A3 (TX)"));
+  Serial.println(F(" IR Bin: Pin D5 (Active LOW: 10s Trigger Test)   "));
   Serial.println(F(" Power : 5.0V from LM2596 Buck (2A Burst Capable) "));
   Serial.println(F(" Phone 1: +639634299114                           "));
   Serial.println(F(" Phone 2: +639242074903                           "));
@@ -227,11 +236,31 @@ void setup() {
   Serial.println(F("  'n' -> Query Network Registration (AT+CREG?)    "));
   Serial.println(F("  'c' -> Check SIM PIN Status (AT+CPIN?)          "));
   Serial.println(F("  'o' -> Check Network Operator / Carrier (AT+COPS?)"));
-  Serial.println(F("  Type any custom AT command directly (e.g. ATI)  "));
+  Serial.println(F("  [NOTE] Block IR Sensor on D5 for 10s to test auto-SMS!"));
   Serial.println(F("=================================================="));
 }
 
 void loop() {
+  // --- MONITOR PHYSICAL IR BIN-FULL SENSOR (PIN D5) ---
+  if (digitalRead(PIN_IR_BIN_FULL) == LOW) {
+    if (binBlockedStartTime == 0) {
+      binBlockedStartTime = millis();
+      Serial.println(F("\n[SENSOR] IR Bin-Full Sensor (D5) triggered! Debouncing for 10 seconds..."));
+    } else if (millis() - binBlockedStartTime >= BIN_FULL_HOLD_TIME_MS) {
+      if (!binFullAlertSent) {
+        Serial.println(F("\n[ALERT] IR Bin-Full Sensor (D5) stayed triggered for 10 seconds!"));
+        sendAllAdmins("ALERT: PCBCES Storage Bin is FULL! IR sensor blocked for 10s. Machine is locked. Please empty bin.");
+        binFullAlertSent = true;
+      }
+    }
+  } else {
+    if (binBlockedStartTime != 0) {
+      Serial.println(F("[SENSOR] IR Bin-Full Sensor cleared before 10s. Timer reset."));
+      binBlockedStartTime = 0;
+    }
+    binFullAlertSent = false;
+  }
+
   // Forward commands from Serial Monitor to GSM module
   if (Serial.available()) {
     char c = Serial.read();
