@@ -2,7 +2,7 @@
  * =============================================================================
  * PCBCES - Combined Demo Chassis Test Controller (Tests 01, 03, 05, 06, 07, 08)
  * Plastic Bottle Coin Exchanger System — Bench & Demo Rig Edition
- * Last Updated: 2026-09-18 23:20:00 (+08:00)
+ * Last Updated: 2026-09-19 11:15:00 (+08:00)
  * =============================================================================
  * 
  * Integrated Modules:
@@ -377,9 +377,9 @@ void setup() {
   pinMode(PIN_BTN_BLUE, INPUT_PULLUP);
   pinMode(PIN_BTN_RED, INPUT_PULLUP);
 
-  // Sensors
-  pinMode(PIN_IR_ENTRY, INPUT);
-  pinMode(PIN_IR_BIN_FULL, INPUT); // IR Obstacle Avoidance Sensor: Storage Bin Full (Active LOW)
+  // Sensors (INPUT_PULLUP ensures pins default to HIGH/CLEAR if unplugged or floating)
+  pinMode(PIN_IR_ENTRY, INPUT_PULLUP);
+  pinMode(PIN_IR_BIN_FULL, INPUT_PULLUP); // IR Obstacle Avoidance Sensor: Storage Bin Full (Active LOW)
   // pinMode(PIN_IND_METAL, INPUT); // Commented out: Metal sensor not installed on demo chassis
   pinMode(PIN_COIN_PULSE, INPUT_PULLUP);
   pinMode(PIN_ULTRASONIC_TRIG, OUTPUT);
@@ -422,6 +422,14 @@ void setup() {
   Serial.print(F("Empty Chamber Ultrasonic Baseline: "));
   Serial.print(baseline);
   Serial.println(F(" cm"));
+  Serial.print(F("Initial IR Entry (D4)            : "));
+  Serial.println(digitalRead(PIN_IR_ENTRY) == LOW ? F("[BLOCKED / ACTIVE]") : F("[CLEAR (OK)]"));
+  Serial.print(F("Initial IR Bin Full (D5)         : "));
+  Serial.println(digitalRead(PIN_IR_BIN_FULL) == LOW ? F("[BLOCKED / ACTIVE - CHECK WIRING/POT!]") : F("[CLEAR (OK)]"));
+  if (digitalRead(PIN_IR_BIN_FULL) == LOW) {
+    Serial.println(F("[WARNING] D5 is LOW at startup! If no bin sensor is installed, verify wiring or adjust potentiometer!"));
+  }
+  Serial.println(F("--------------------------------------------------"));
   Serial.println(F("Interactive Serial Commands:"));
   Serial.println(F(" 'g' -> Select Green (1.5L Mode)"));
   Serial.println(F(" 'b' -> Select Blue  (290 ML Mode)"));
