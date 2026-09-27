@@ -156,26 +156,38 @@ void soundSuccess() {
 // --- 360° CONTINUOUS ROTATION SERVO TIMED ACTIONS ---
 void trapdoorStop() {
   trapdoor.write(SERVO_STOP_CMD);
+  delay(60); // Allow servo internal controller to register stop
+  if (trapdoor.attached()) {
+    trapdoor.detach(); // Detach to silence Pin D9, preventing SoftwareSerial/GSM interrupt jitter from moving motor
+  }
 }
 
 void trapdoorAcceptDrop() {
+  if (!trapdoor.attached()) {
+    trapdoor.attach(PIN_SERVO_TRAPDOOR);
+  }
   Serial.print(F("[TRAPDOOR] Opening flap (driving for "));
   Serial.print(SERVO_PULSE_DURATION_MS);
   Serial.println(F(" ms)..."));
   trapdoor.write(SERVO_OPEN_CMD);
   delay(SERVO_PULSE_DURATION_MS);
-  trapdoorStop();
+  
+  trapdoor.write(SERVO_STOP_CMD);
+  delay(40);
+  trapdoor.detach();
 
   Serial.println(F("[TRAPDOOR] Flap open: Holding 1.5s for gravity drop..."));
   delay(1500); // Allow bottle to fall into internal storage bin
 
+  trapdoor.attach(PIN_SERVO_TRAPDOOR);
   Serial.print(F("[TRAPDOOR] Closing flap (driving reverse for "));
   Serial.print(SERVO_PULSE_DURATION_MS);
   Serial.println(F(" ms)..."));
   trapdoor.write(SERVO_CLOSE_CMD);
   delay(SERVO_PULSE_DURATION_MS);
+  
   trapdoorStop();
-  Serial.println(F("[TRAPDOOR] Flap returned to resting cradle. Motor stopped."));
+  Serial.println(F("[TRAPDOOR] Flap returned to resting cradle. Motor detached & locked."));
 }
 
 // --- GSM SMS DISPATCH FUNCTIONS ---

@@ -42,26 +42,36 @@ int pulseDurationMs = 650;   // Calibrated 650 ms for ~90 degrees swing
 
 void stopMotor() {
   trapdoorServo.write(STOP_CMD);
+  delay(60);
+  if (trapdoorServo.attached()) {
+    trapdoorServo.detach();
+  }
 }
 
 void openTrapdoor() {
+  if (!trapdoorServo.attached()) {
+    trapdoorServo.attach(SERVO_PIN);
+  }
   Serial.print(F(" -> Opening flap (driving for "));
   Serial.print(pulseDurationMs);
   Serial.println(F(" ms)..."));
   trapdoorServo.write(OPEN_CMD);
   delay(pulseDurationMs);
   stopMotor();
-  Serial.println(F(" -> Open motion finished. Motor stopped."));
+  Serial.println(F(" -> Open motion finished. Motor stopped & detached."));
 }
 
 void closeTrapdoor() {
+  if (!trapdoorServo.attached()) {
+    trapdoorServo.attach(SERVO_PIN);
+  }
   Serial.print(F(" -> Closing flap (driving reverse for "));
   Serial.print(pulseDurationMs);
   Serial.println(F(" ms)..."));
   trapdoorServo.write(CLOSE_CMD);
   delay(pulseDurationMs);
   stopMotor();
-  Serial.println(F(" -> Close motion finished. Flap locked at stop."));
+  Serial.println(F(" -> Close motion finished. Flap locked & detached."));
 }
 
 void setup() {
