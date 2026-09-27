@@ -10,7 +10,7 @@
  * - Test 01: 16x2 I2C LCD (0x27, A4/A5) + 3 Dedicated Buttons (D10, A0, A1) + Buzzer (D12) + LEDs (A2/D13)
  * - Test 03: Ultrasonic HC-SR04 (D2/D3) + IR Entry Sensor (D4) [Calibrated to 32 cm Chamber]
  * - Test 04: LJ12A3 Inductive Metal Proximity Sensor (D6) -> [COMMENTED OUT / NOT WIRED IN DEMO RIG]
- * - Test 05: MG995 360° Continuous Rotation Servo (D9, 650ms Timed Workaround)
+ * - Test 05: MG995 360° Continuous Rotation Servo (D9, 900ms Timed Workaround)
  * - Test 06: Coin Hopper Optical Pulse (D7) + 5V Relay (D8) with 5-Second Motor Auto-Cutoff
  * - Test 07: IR Bin-Full Sensor (D5) -> 10-Second Continuous Trigger Safety -> Automated SMS to Admins
  * - Test 08: SIM900A / SIM800L GSM Module (D11/A3) -> Automated Low-Coin & Bin-Full SMS Alerts
@@ -27,7 +27,7 @@
  * - D6  : LJ12A3 Inductive Metal Sensor [Commented Out / Unconnected]
  * - D7  : Coin Hopper Pulse Line (Falling edge detection via divider)
  * - D8  : 5V Single-Channel Relay (Hopper Motor Power, Active LOW)
- * - D9  : MG995 Servo PWM (360° Continuous: 650ms Timed Drive)
+ * - D9  : MG995 Servo PWM (360° Continuous: 900ms Timed Drive)
  * - D10 : Button Green (1.5L Mode -> 5 pcs quota = 20 PHP)
  * - D11 : SoftwareSerial RX (from GSM TX: SIM900A 5VT / SIM800L TX)
  * - D12 : Active 5V Buzzer
@@ -83,7 +83,8 @@ const int COINS_PAYOUT_290ML   = 3;   // 3 x 1-Peso coins
 const int SERVO_STOP_CMD          = 90;   // Neutral stop signal (cuts motor drive)
 const int SERVO_OPEN_CMD          = 70;   // Forward drive (swings flap open)
 const int SERVO_CLOSE_CMD         = 110;  // Reverse drive (swings flap back to cradle)
-const int SERVO_PULSE_DURATION_MS = 650;  // Calibrated 650 ms pulse for ~90 deg swing
+const int SERVO_OPEN_DURATION_MS  = 900;  // Calibrated 900 ms pulse for opening lid
+const int SERVO_CLOSE_DURATION_MS = 900;  // Calibrated 900 ms pulse for closing lid back to resting cradle
 const unsigned long COIN_TIMEOUT_MS = 5000; // 5-Second dry-run motor auto-cutoff
 
 // --- IR SENSOR BIN FULL TRIGGER THRESHOLD ---
@@ -167,10 +168,10 @@ void trapdoorAcceptDrop() {
     trapdoor.attach(PIN_SERVO_TRAPDOOR);
   }
   Serial.print(F("[TRAPDOOR] Opening flap (driving for "));
-  Serial.print(SERVO_PULSE_DURATION_MS);
+  Serial.print(SERVO_OPEN_DURATION_MS);
   Serial.println(F(" ms)..."));
   trapdoor.write(SERVO_OPEN_CMD);
-  delay(SERVO_PULSE_DURATION_MS);
+  delay(SERVO_OPEN_DURATION_MS);
   
   trapdoor.write(SERVO_STOP_CMD);
   delay(40);
@@ -181,10 +182,10 @@ void trapdoorAcceptDrop() {
 
   trapdoor.attach(PIN_SERVO_TRAPDOOR);
   Serial.print(F("[TRAPDOOR] Closing flap (driving reverse for "));
-  Serial.print(SERVO_PULSE_DURATION_MS);
+  Serial.print(SERVO_CLOSE_DURATION_MS);
   Serial.println(F(" ms)..."));
   trapdoor.write(SERVO_CLOSE_CMD);
-  delay(SERVO_PULSE_DURATION_MS);
+  delay(SERVO_CLOSE_DURATION_MS);
   
   trapdoorStop();
   Serial.println(F("[TRAPDOOR] Flap returned to resting cradle. Motor detached & locked."));
@@ -559,7 +560,7 @@ void loop() {
       Serial.println(F("\n>> AT+CREG? (Network Status)"));
       gsm.println("AT+CREG?");
     } else if (ch == 't' || ch == 'T') {
-      Serial.println(F("[SIM] Testing Trapdoor Drop Cycle (650 ms)..."));
+      Serial.println(F("[SIM] Testing Trapdoor Drop Cycle (900 ms)..."));
       trapdoorAcceptDrop();
     }
   }

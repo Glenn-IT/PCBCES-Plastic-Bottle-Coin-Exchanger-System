@@ -24,7 +24,7 @@
  * Send '+' -> Increase rotation pulse duration (+50ms)
  * Send '-' -> Decrease rotation pulse duration (-50ms)
  * 
- * Last Updated: 2026-09-27 14:26:00 (+08:00)
+ * Last Updated: 2026-09-27 15:35:00 (+08:00)
  */
 
 #include <Servo.h>
@@ -38,7 +38,7 @@ const int OPEN_CMD   = 70;   // Forward rotation speed (toward 90° open)
 const int CLOSE_CMD  = 110;  // Reverse rotation speed (toward 0° closed)
 
 // Timing: Calibrated by user on real chassis
-int pulseDurationMs = 650;   // Calibrated 650 ms for ~90 degrees swing
+int pulseDurationMs = 900;   // Calibrated 900 ms for ~90 degrees swing
 
 void stopMotor() {
   trapdoorServo.write(STOP_CMD);

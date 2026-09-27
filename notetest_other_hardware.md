@@ -62,7 +62,7 @@
      - `write(90)` = Neutral Stop (keeps motor idle on boot and standby).
      - `write(70)` = Forward rotation (swings flap open).
      - `write(110)` = Reverse rotation (swings flap back to resting cradle).
-     - **Chassis Calibrated Duration:** **650 ms** pulse opens/closes the flap by ~90° in the demo rig.
+     - **Chassis Calibrated Duration:** **900 ms** pulse opens/closes the flap by ~90° in the demo rig.
 3. **Mechanical Stopper & Strain Relief:**
    - Install a small mechanical bumper or ledge under the flap at 0° so that heavy 1.5L bottles filled with liquid rest on the frame, **NOT solely on the servo gear teeth**.
 4. **Power Rail Decoupling:**
