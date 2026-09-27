@@ -82,9 +82,9 @@ const int COINS_PAYOUT_290ML   = 3;   // 3 x 1-Peso coins
 // --- 360° CONTINUOUS ROTATION SERVO TIMED CONTROL (TRIAL WORKAROUND) ---
 const int SERVO_STOP_CMD          = 90;   // Neutral stop signal (cuts motor drive)
 const int SERVO_OPEN_CMD          = 70;   // Forward drive (swings flap open)
-const int SERVO_CLOSE_CMD         = 110;  // Reverse drive (swings flap back to cradle)
+const int SERVO_CLOSE_CMD         = 115;  // Reverse drive (swings flap back to cradle)
 const int SERVO_OPEN_DURATION_MS  = 900;  // Calibrated 900 ms pulse for opening lid
-const int SERVO_CLOSE_DURATION_MS = 900;  // Calibrated 900 ms pulse for closing lid back to resting cradle
+const int SERVO_CLOSE_DURATION_MS = 1000;  // Calibrated 900 ms pulse for closing lid back to resting cradle
 const unsigned long COIN_TIMEOUT_MS = 5000; // 5-Second dry-run motor auto-cutoff
 
 // --- IR SENSOR BIN FULL TRIGGER THRESHOLD ---
@@ -93,8 +93,8 @@ unsigned long binBlockedStartTime = 0;
 
 // --- DEMO CHAMBER HEIGHT CALIBRATION ---
 int chamberTotalHeightCm = 32;
-int dist15LMin  = 11;   // Cap is 11 to 12 cm from ceiling sensor
-int dist15LMax  = 12;  // Generous range for demo chassis tolerance
+int dist15LMin  = 15;   // Cap is 11 to 12 cm from ceiling sensor
+int dist15LMax  = 16;  // Generous range for demo chassis tolerance
 int dist290Min  = 23;  // Cap is 23 to 24 cm from ceiling sensor
 int dist290Max  = 24;
 
