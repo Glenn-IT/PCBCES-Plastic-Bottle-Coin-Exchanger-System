@@ -93,9 +93,9 @@ unsigned long binBlockedStartTime = 0;
 
 // --- DEMO CHAMBER HEIGHT CALIBRATION ---
 int chamberTotalHeightCm = 32;
-int dist15LMin  = 15;   // Cap is 11 to 12 cm from ceiling sensor
-int dist15LMax  = 16;  // Generous range for demo chassis tolerance
-int dist290Min  = 23;  // Cap is 23 to 24 cm from ceiling sensor
+int dist15LMin  = 13;   // Cap is 11 to 12 cm from ceiling sensor
+int dist15LMax  = 14;  // Generous range for demo chassis tolerance
+int dist290Min  = 22;  // Cap is 23 to 24 cm from ceiling sensor
 int dist290Max  = 24;
 
 // --- STATE MACHINE ---
