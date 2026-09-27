@@ -45,22 +45,29 @@
 
 ---
 
-## 3. Test 05: MG996R Metal Gear Trapdoor Servo
+## 3. Test 05: MG995 / MG996R Metal Gear Trapdoor Servo
 
 ### Hardware Components:
-* TowerPro MG996R High-Torque Metal Gear Servo (0° Standby/Reject, 90° Accept)
-* 5V Regulated Power Rail (minimum 2.5A peak current capacity)
+* TowerPro MG995 / MG996R High-Torque Metal Gear Servo (0° Standby/Reject, 90° Accept)
+* 5V Regulated Power Rail (minimum 2.0A–2.5A peak current capacity)
+* 1000 µF 16V–50V Low-ESR Decoupling Capacitor across 5V and GND
 
 ### Real Chassis Installation & Calibration:
-1. **Horn Alignment & Angle Calibration:**
+1. **Horn Alignment & Angle Calibration (180° Positional Standard):**
    - **0° (Standby & Reject Position):** Trapdoor flap must be **100% horizontal**, perfectly supporting the inserted bottle on the cradle. If the bottle is rejected (metal detected, size mismatch), the flap **holds firmly at 0° (stays closed)** so the customer can manually retrieve the item from the entry chute while the buzzer sounds and Red LED blinks.
    - **90° (Accept Position):** Flap swings down/open completely to let the verified plastic bottle drop into the internal collection bin under gravity, then immediately returns to 0° Standby.
    - **Note on 180°:** The previous 180° forward tilt is retired in favor of front-chute manual retrieval at 0° closed flap.
-2. **Mechanical Stopper & Strain Relief:**
+2. **MG995 360° Continuous Rotation Servo Workaround (Bench/Rig Trial):**
+   - If a 360° continuous rotation version is used:
+     - `write(90)` = Neutral Stop (keeps motor idle on boot and standby).
+     - `write(70)` = Forward rotation (swings flap open).
+     - `write(110)` = Reverse rotation (swings flap back to resting cradle).
+     - **Chassis Calibrated Duration:** **650 ms** pulse opens/closes the flap by ~90° in the demo rig.
+3. **Mechanical Stopper & Strain Relief:**
    - Install a small mechanical bumper or ledge under the flap at 0° so that heavy 1.5L bottles filled with liquid rest on the frame, **NOT solely on the servo gear teeth**.
-3. **Power Rail Decoupling:**
-   - **NEVER power the MG996R directly from the Arduino 5V pin!** Use the LM2596 buck converter 5V rail.
-   - Place a **470 µF to 1000 µF 16V electrolytic capacitor** across the servo 5V and GND terminals to prevent power brownouts during rapid flap rotation.
+4. **Power Rail Decoupling:**
+   - **NEVER power the servo directly from the Arduino 5V pin!** Use the LM2596 buck converter 5V rail.
+   - Place a **1000 µF 16V–50V electrolytic capacitor** across the servo 5V and GND terminals to prevent power brownouts during rapid flap rotation.
 
 ---
 

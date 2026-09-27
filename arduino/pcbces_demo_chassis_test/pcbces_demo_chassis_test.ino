@@ -2,14 +2,15 @@
  * =============================================================================
  * PCBCES - Combined Demo Chassis Test Controller (Tests 01, 03, 05, 06, 07, 08)
  * Plastic Bottle Coin Exchanger System — Bench & Demo Rig Edition
- * Last Updated: 2026-09-19 11:15:00 (+08:00)
+ * Last Updated: 2026-09-27 14:25:00 (+08:00)
  * =============================================================================
  * 
  * Integrated Modules:
+ * 
  * - Test 01: 16x2 I2C LCD (0x27, A4/A5) + 3 Dedicated Buttons (D10, A0, A1) + Buzzer (D12) + LEDs (A2/D13)
  * - Test 03: Ultrasonic HC-SR04 (D2/D3) + IR Entry Sensor (D4) [Calibrated to 32 cm Chamber]
  * - Test 04: LJ12A3 Inductive Metal Proximity Sensor (D6) -> [COMMENTED OUT / NOT WIRED IN DEMO RIG]
- * - Test 05: MG996R Metal Gear Sorting Servo (D9, 0° Standby/Reject, 90° Accept)
+ * - Test 05: MG995 360° Continuous Rotation Servo (D9, 650ms Timed Workaround)
  * - Test 06: Coin Hopper Optical Pulse (D7) + 5V Relay (D8) with 5-Second Motor Auto-Cutoff
  * - Test 07: IR Bin-Full Sensor (D5) -> 10-Second Continuous Trigger Safety -> Automated SMS to Admins
  * - Test 08: SIM900A / SIM800L GSM Module (D11/A3) -> Automated Low-Coin & Bin-Full SMS Alerts
@@ -26,8 +27,8 @@
  * - D6  : LJ12A3 Inductive Metal Sensor [Commented Out / Unconnected]
  * - D7  : Coin Hopper Pulse Line (Falling edge detection via divider)
  * - D8  : 5V Single-Channel Relay (Hopper Motor Power, Active LOW)
- * - D9  : MG996R Servo PWM (0° Standby / 90° Drop)
- * - D10 : Button Green (1.5L / 1.75L Mode -> 5 pcs quota = 20 PHP)
+ * - D9  : MG995 Servo PWM (360° Continuous: 650ms Timed Drive)
+ * - D10 : Button Green (1.5L Mode -> 5 pcs quota = 20 PHP)
  * - D11 : SoftwareSerial RX (from GSM TX: SIM900A 5VT / SIM800L TX)
  * - D12 : Active 5V Buzzer
  * - D13 : Red LED (Fault / Reject Indicator)
@@ -77,8 +78,12 @@ const int BOTTLE_1_5L_QUOTA    = 5;   // 5 bottles = 20.00 PHP
 const int BOTTLE_290ML_QUOTA   = 10;  // 10 bottles = 3.00 PHP
 const int COINS_PAYOUT_1_5L    = 20;  // 20 x 1-Peso coins
 const int COINS_PAYOUT_290ML   = 3;   // 3 x 1-Peso coins
-const int SERVO_STANDBY_ANGLE  = 0;   // Closed / Cradle Rest / Rejection Hold
-const int SERVO_ACCEPT_ANGLE   = 90;  // Open / Drop into collection bin
+
+// --- 360° CONTINUOUS ROTATION SERVO TIMED CONTROL (TRIAL WORKAROUND) ---
+const int SERVO_STOP_CMD          = 90;   // Neutral stop signal (cuts motor drive)
+const int SERVO_OPEN_CMD          = 70;   // Forward drive (swings flap open)
+const int SERVO_CLOSE_CMD         = 110;  // Reverse drive (swings flap back to cradle)
+const int SERVO_PULSE_DURATION_MS = 650;  // Calibrated 650 ms pulse for ~90 deg swing
 const unsigned long COIN_TIMEOUT_MS = 5000; // 5-Second dry-run motor auto-cutoff
 
 // --- IR SENSOR BIN FULL TRIGGER THRESHOLD ---
@@ -148,19 +153,44 @@ void soundSuccess() {
   soundBeep(100); delay(60); soundBeep(180);
 }
 
+// --- 360° CONTINUOUS ROTATION SERVO TIMED ACTIONS ---
+void trapdoorStop() {
+  trapdoor.write(SERVO_STOP_CMD);
+}
+
+void trapdoorAcceptDrop() {
+  Serial.print(F("[TRAPDOOR] Opening flap (driving for "));
+  Serial.print(SERVO_PULSE_DURATION_MS);
+  Serial.println(F(" ms)..."));
+  trapdoor.write(SERVO_OPEN_CMD);
+  delay(SERVO_PULSE_DURATION_MS);
+  trapdoorStop();
+
+  Serial.println(F("[TRAPDOOR] Flap open: Holding 1.5s for gravity drop..."));
+  delay(1500); // Allow bottle to fall into internal storage bin
+
+  Serial.print(F("[TRAPDOOR] Closing flap (driving reverse for "));
+  Serial.print(SERVO_PULSE_DURATION_MS);
+  Serial.println(F(" ms)..."));
+  trapdoor.write(SERVO_CLOSE_CMD);
+  delay(SERVO_PULSE_DURATION_MS);
+  trapdoorStop();
+  Serial.println(F("[TRAPDOOR] Flap returned to resting cradle. Motor stopped."));
+}
+
 // --- GSM SMS DISPATCH FUNCTIONS ---
 void sendSMSToRecipient(const char* recipient, const char* message) {
   Serial.print(F("[GSM ALERT] Recipient: "));
   Serial.println(recipient);
 
   // Switch GSM to text mode
-  gsm.println("AT+CMGF=1");
+  gsm.println(F("AT+CMGF=1"));
   delay(400);
 
   // Set recipient phone number
-  gsm.print("AT+CMGS=\"");
+  gsm.print(F("AT+CMGS=\""));
   gsm.print(recipient);
-  gsm.println("\"");
+  gsm.println(F("\""));
   delay(400);
 
   // Compose SMS body
@@ -221,7 +251,7 @@ bool autoSyncGSMBaud() {
 
     bool detected = false;
     for (int attempt = 0; attempt < 3; attempt++) {
-      gsm.print("AT\r\n");
+      gsm.print(F("AT\r\n"));
       unsigned long start = millis();
       String resp = "";
       while (millis() - start < 450) {
@@ -243,9 +273,9 @@ bool autoSyncGSMBaud() {
       Serial.println(F("[LOCKED! Handshake OK]"));
       if (testBaud != 9600) {
         Serial.println(F("  -> Reconfiguring module to 9600 baud for stable SoftwareSerial..."));
-        gsm.print("AT+IPR=9600\r\n");
+        gsm.print(F("AT+IPR=9600\r\n"));
         delay(250);
-        gsm.print("AT&W\r\n");
+        gsm.print(F("AT&W\r\n"));
         delay(250);
         gsm.begin(9600);
         delay(150);
@@ -263,7 +293,7 @@ bool autoSyncGSMBaud() {
   gsm.begin(9600);
   delay(200);
   for (int i = 0; i < 5; i++) {
-    gsm.print("AT\r\n");
+    gsm.print(F("AT\r\n"));
     delay(300);
   }
   while (gsm.available()) gsm.read();
@@ -311,25 +341,25 @@ long readChamberDistance() {
 void showMenuLCD() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("GRN:1.5L BLU:290");
+  lcd.print(F("BLU:290 GRN:1.5L"));
   lcd.setCursor(0, 1);
-  lcd.print("RED:Cancel/Reset");
+  lcd.print(F("RED:Cancel/Reset"));
 }
 
 void showProgressLCD() {
   lcd.clear();
   lcd.setCursor(0, 0);
   if (selectedType == TYPE_1_5L) {
-    lcd.print("1.5L/1.75L(5pcs)");
+    lcd.print(F("1.5L     (5 pcs)"));
   } else {
-    lcd.print("290 ML  (10 pcs)");
+    lcd.print(F("290 ML  (10 pcs)"));
   }
   lcd.setCursor(0, 1);
-  lcd.print("Count: ");
+  lcd.print(F("Count: "));
   lcd.print(currentDepositCount);
-  lcd.print("/");
+  lcd.print(F("/"));
   lcd.print(requiredQuota);
-  lcd.print(" [RED:X]");
+  lcd.print(F(" [RED:X]"));
 }
 
 // --- RED BUTTON CANCEL CHECK ---
@@ -341,9 +371,9 @@ bool checkCancelButton() {
       soundBeep(250);
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print(" TRANSACTION    ");
+      lcd.print(F(" TRANSACTION    "));
       lcd.setCursor(0, 1);
-      lcd.print(" CANCELLED / RST");
+      lcd.print(F(" CANCELLED / RST"));
       delay(1200);
       currentDepositCount = 0;
       currentState = STATE_STANDBY_MENU;
@@ -400,15 +430,15 @@ void setup() {
 
   // Servo Setup
   trapdoor.attach(PIN_SERVO_TRAPDOOR);
-  trapdoor.write(SERVO_STANDBY_ANGLE);
+  trapdoorStop();
 
   // LCD Setup
   lcd.init();
   lcd.backlight();
   lcd.setCursor(0, 0);
-  lcd.print(" PCBCES DEMO RIG");
+  lcd.print(F(" PCBCES DEMO RIG"));
   lcd.setCursor(0, 1);
-  lcd.print("Bench Controller");
+  lcd.print(F("Bench Controller"));
   soundBeep(120);
   delay(1200);
 
@@ -484,7 +514,7 @@ void loop() {
       soundBeep(100);
       currentState = STATE_WAIT_INSERTION;
       showProgressLCD();
-      Serial.println(F("[SIM] 1.5L / 1.75L Mode selected via Serial."));
+      Serial.println(F("[SIM] 1.5L Mode selected via Serial."));
     } else if (ch == 'b' || ch == 'B') {
       // Simulate Blue Button
       selectedType = TYPE_290ML;
@@ -516,6 +546,9 @@ void loop() {
     } else if (ch == 'n' || ch == 'N') {
       Serial.println(F("\n>> AT+CREG? (Network Status)"));
       gsm.println("AT+CREG?");
+    } else if (ch == 't' || ch == 'T') {
+      Serial.println(F("[SIM] Testing Trapdoor Drop Cycle (650 ms)..."));
+      trapdoorAcceptDrop();
     }
   }
 
@@ -534,13 +567,13 @@ void loop() {
           requiredCoinsPayout = COINS_PAYOUT_1_5L;
           currentDepositCount = 0;
           soundBeep(100);
-          Serial.println(F("[MENU] GREEN Pressed: 1.5L / 1.75L Mode Selected (5 pcs = 20 PHP)"));
+          Serial.println(F("[MENU] GREEN Pressed: 1.5L Mode Selected (5 pcs = 20 PHP)"));
 
           lcd.clear();
           lcd.setCursor(0, 0);
-          lcd.print("MODE: 1.5L/1.75L");
+          lcd.print(F("MODE: 1.5L PET  "));
           lcd.setCursor(0, 1);
-          lcd.print("Target: 5 (20P) ");
+          lcd.print(F("Target: 5 (20P) "));
           delay(1000);
 
           currentState = STATE_WAIT_INSERTION;
@@ -563,9 +596,9 @@ void loop() {
 
           lcd.clear();
           lcd.setCursor(0, 0);
-          lcd.print("MODE: 290 ML PET");
+          lcd.print(F("MODE: 290 ML PET"));
           lcd.setCursor(0, 1);
-          lcd.print("Target: 10 (3P) ");
+          lcd.print(F("Target: 10 (3P) "));
           delay(1000);
 
           currentState = STATE_WAIT_INSERTION;
@@ -596,18 +629,18 @@ void loop() {
       if (digitalRead(PIN_IR_ENTRY) == LOW) {
         lcd.clear();
         lcd.setCursor(0, 0);
-        lcd.print("BOTTLE DETECTED ");
+        lcd.print(F("BOTTLE DETECTED "));
         lcd.setCursor(0, 1);
-        lcd.print("Align Bottle 2s ");
+        lcd.print(F("Align Bottle 2s "));
         soundBeep(70);
         delay(1000);
 
         lcd.setCursor(0, 1);
-        lcd.print("Scanning in 1s..");
+        lcd.print(F("Scanning in 1s.."));
         delay(1000);
 
         lcd.setCursor(0, 1);
-        lcd.print("Scanning Sensors");
+        lcd.print(F("Scanning Sensors"));
         currentState = STATE_VALIDATE_BOTTLE;
       }
       break;
@@ -656,18 +689,15 @@ void loop() {
     }
 
     case STATE_ACCEPT_DROP: {
-      Serial.println(F("[TRAPDOOR] Opening flap (90 deg) to accept bottle..."));
+      Serial.println(F("[TRAPDOOR] Bottle accepted. Triggering drop cycle..."));
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("BOTTLE ACCEPTED!");
+      lcd.print(F("BOTTLE ACCEPTED!"));
       digitalWrite(PIN_LED_GREEN, HIGH);
       soundSuccess();
 
-      // Open servo trapdoor to 90 degrees
-      trapdoor.write(SERVO_ACCEPT_ANGLE);
-      delay(1500); // Allow bottle to drop into collection bin
-      trapdoor.write(SERVO_STANDBY_ANGLE);
-      delay(500);
+      // 360° Continuous Servo: Drive forward 650ms to open, wait 1.5s, drive reverse 650ms to close
+      trapdoorAcceptDrop();
 
       currentDepositCount++;
       Serial.print(F("[PROGRESS] Deposit Count: "));
@@ -685,16 +715,16 @@ void loop() {
     }
 
     case STATE_REJECT_EJECT: {
-      Serial.println(F("[TRAPDOOR] Rejection triggered: Flap holds at 0 deg (Item remains on cradle for manual removal)."));
+      Serial.println(F("[TRAPDOOR] Rejection triggered: Flap holds at cradle (Item remains on cradle for manual removal)."));
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("BOTTLE REJECTED!");
+      lcd.print(F("BOTTLE REJECTED!"));
       lcd.setCursor(0, 1);
-      lcd.print("Pls Remove Item ");
+      lcd.print(F("Pls Remove Item "));
       soundError();
 
-      // Flap holds at 0 degrees
-      trapdoor.write(SERVO_STANDBY_ANGLE);
+      // Flap holds at resting cradle (motor stopped)
+      trapdoorStop();
 
       // Flash Red LED until user retrieves the bottle
       unsigned long rejectStart = millis();
@@ -719,12 +749,12 @@ void loop() {
 
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("QUOTA REACHED!  ");
+      lcd.print(F("QUOTA REACHED!  "));
       lcd.setCursor(0, 1);
       if (requiredCoinsPayout >= 10) {
-        lcd.print("Dispensing 20PHP");
+        lcd.print(F("Dispensing 20PHP"));
       } else {
-        lcd.print("Dispensing 3 PHP");
+        lcd.print(F("Dispensing 3 PHP"));
       }
 
       coinsDispensed = 0;
@@ -774,9 +804,9 @@ void loop() {
         soundError();
         lcd.clear();
         lcd.setCursor(0, 0);
-        lcd.print("EMPTY HOPPER!   ");
+        lcd.print(F("EMPTY HOPPER!   "));
         lcd.setCursor(0, 1);
-        lcd.print("REFILL 1P COINS ");
+        lcd.print(F("REFILL 1P COINS "));
         Serial.print(F("[ALERT] Dispense incomplete: "));
         Serial.print(coinsDispensed);
         Serial.print(F(" / "));
@@ -790,9 +820,9 @@ void loop() {
         soundSuccess();
         lcd.clear();
         lcd.setCursor(0, 0);
-        lcd.print("PAYOUT COMPLETE!");
+        lcd.print(F("PAYOUT COMPLETE!"));
         lcd.setCursor(0, 1);
-        lcd.print("Thank You! :)   ");
+        lcd.print(F("Thank You! :)   "));
         Serial.println(F("[PAYOUT] Success! All coins dispensed."));
         delay(3000);
       }
@@ -806,7 +836,7 @@ void loop() {
     case STATE_BIN_FULL_LOCKED: {
       // 1. Safe actuators
       digitalWrite(PIN_RELAY_HOPPER, HIGH); // Ensure hopper motor is OFF
-      trapdoor.write(SERVO_STANDBY_ANGLE);  // Keep flap firmly closed (0 deg)
+      trapdoorStop();                       // Keep flap stationary (motor stopped)
       digitalWrite(PIN_LED_GREEN, LOW);
       digitalWrite(PIN_LED_RED, HIGH);      // Red alert LED
       soundAlarm();
@@ -814,9 +844,9 @@ void loop() {
       // 2. LCD Notification
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("BIN IS FULL!    ");
+      lcd.print(F("BIN IS FULL!    "));
       lcd.setCursor(0, 1);
-      lcd.print("DISPATCHING SMS ");
+      lcd.print(F("DISPATCHING SMS "));
 
       // 3. Automated SMS alert to admins
       sendBinFullSMS();
@@ -824,9 +854,9 @@ void loop() {
       // 4. Update LCD prompt
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print("BIN IS FULL!    ");
+      lcd.print(F("BIN IS FULL!    "));
       lcd.setCursor(0, 1);
-      lcd.print("HOLD RED: RESET ");
+      lcd.print(F("HOLD RED: RESET "));
 
       // 5. System Lock Loop: waits for bin empty & 2s hold on Red button
       while (true) {
@@ -834,8 +864,8 @@ void loop() {
         if (Serial.available()) {
           char c = Serial.read();
           if (c == 'd' || c == 'D') printDiagnostics();
-          else if (c == 's' || c == 'S') { Serial.println(F("\n>> AT+CSQ")); gsm.println("AT+CSQ"); }
-          else if (c == 'n' || c == 'N') { Serial.println(F("\n>> AT+CREG?")); gsm.println("AT+CREG?"); }
+          else if (c == 's' || c == 'S') { Serial.println(F("\n>> AT+CSQ")); gsm.println(F("AT+CSQ")); }
+          else if (c == 'n' || c == 'N') { Serial.println(F("\n>> AT+CREG?")); gsm.println(F("AT+CREG?")); }
           else gsm.write(c);
         }
         if (gsm.available()) Serial.write(gsm.read());
@@ -857,23 +887,23 @@ void loop() {
               soundError();
               lcd.clear();
               lcd.setCursor(0, 0);
-              lcd.print("BIN STILL FULL! ");
+              lcd.print(F("BIN STILL FULL! "));
               lcd.setCursor(0, 1);
-              lcd.print("Empty bin first!");
+              lcd.print(F("Empty bin first!"));
               Serial.println(F("[RESET FAIL] Cannot reset: IR Bin-Full Sensor is still blocked!"));
               delay(2500);
               lcd.clear();
               lcd.setCursor(0, 0);
-              lcd.print("BIN IS FULL!    ");
+              lcd.print(F("BIN IS FULL!    "));
               lcd.setCursor(0, 1);
-              lcd.print("HOLD RED: RESET ");
+              lcd.print(F("HOLD RED: RESET "));
             } else {
               soundSuccess();
               lcd.clear();
               lcd.setCursor(0, 0);
-              lcd.print("SYSTEM RESET OK ");
+              lcd.print(F("SYSTEM RESET OK "));
               lcd.setCursor(0, 1);
-              lcd.print("Resuming Normal ");
+              lcd.print(F("Resuming Normal "));
               Serial.println(F("[RESET SUCCESS] Bin cleared and system reset to Standby."));
               delay(1500);
               binBlockedStartTime = 0;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test 05: MG996R Metal Gear Servo Trapdoor — PCBCES</title>
+    <title>Test 05: MG995 Metal Gear Servo Trapdoor — PCBCES</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -185,8 +185,8 @@
     <!-- Header -->
     <header>
         <span class="badge">Isolated Bench Test 05</span>
-        <h1>MG996R Metal Gear Sorting Trapdoor Mechanism</h1>
-        <p class="subtitle">Hardware: MG996R High-Torque Servo &bull; D9 (PWM) &bull; LM2596 5V Rail &bull; 1000µF 16V–50V Decoupling Buffer</p>
+        <h1>MG995 Metal Gear Sorting Trapdoor Mechanism</h1>
+        <p class="subtitle">Hardware: TowerPro MG995 High-Torque Servo &bull; D9 (PWM) &bull; LM2596 5V Rail &bull; 1000µF 16V–50V Decoupling Buffer</p>
     </header>
 
     <!-- Navigation Bar -->
@@ -196,7 +196,7 @@
         <a href="../02_load_cell_hx711_test/wiring_guide.html" class="nav-link">Test 02: Weight (Archived)</a>
         <a href="../03_ultrasonic_ir_dimension_test/wiring_guide.html" class="nav-link">Test 03: Height & Entry</a>
         <a href="../04_proximity_metal_plastic_test/wiring_guide.html" class="nav-link">Test 04: Metal Sensor</a>
-        <a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link active">Test 05: Servo Trapdoor</a>
+        <a href="../05_mg996r_servo_trapdoor_test/wiring_guide.html" class="nav-link active">Test 05: Servo Trapdoor (MG995)</a>
         <a href="../06_coin_hopper_relay_test/wiring_guide.html" class="nav-link">Test 06: Coin Hopper</a>
         <a href="../07_sim800l_gsm_sms_test/wiring_guide.html" class="nav-link">Test 07: GSM SMS Alert</a>
         <a href="../08_coin_hopper_gsm_low_coin_test/wiring_guide.html" class="nav-link">Test 08: Hopper + GSM Alert</a>
@@ -207,7 +207,7 @@
     <div class="card">
         <div class="card-title">
             <div class="icon">&#128269;</div>
-            MG996R Servo Specifications & 1000µF 50V Capacitor Compatibility
+            MG995 Servo Specifications & 1000µF 50V Capacitor Compatibility
         </div>
 
         <div class="specs-grid">
@@ -231,8 +231,34 @@
 
             <div class="spec-box" style="border-left: 4px solid #ec4899;">
                 <div class="spec-label">Peak Inrush Current</div>
-                <div class="spec-val" style="color: #f472b6;">1.5A &ndash; 2.5A Peak</div>
-                <div class="spec-sub">Metal gears moving under bottle load draw sudden current spikes when starting.</div>
+                <div class="spec-val" style="color: #f472b6;">1.5A &ndash; 2.0A Peak</div>
+                <div class="spec-sub">High-torque metal gears moving under bottle load draw sudden current spikes when accelerating.</div>
+            </div>
+        </div>
+
+        <div class="specs-grid" style="margin-top: 1rem;">
+            <div class="spec-box" style="border-left: 4px solid #10b981;">
+                <div class="spec-label">Motor Model</div>
+                <div class="spec-val" style="color: #34d399;">TowerPro MG995</div>
+                <div class="spec-sub">High-Torque Metal Gear Servo (fully backwards-compatible drop-in with MG996R).</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #3b82f6;">
+                <div class="spec-label">Stall Torque</div>
+                <div class="spec-val" style="color: #60a5fa;">8.5 &ndash; 10.0 kg&middot;cm</div>
+                <div class="spec-sub">Rated at 4.8V&ndash;6.0V. Provides strong retention torque for trapdoor gate control.</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #8b5cf6;">
+                <div class="spec-label">Operating Speed</div>
+                <div class="spec-val" style="color: #a78bfa;">0.20s / 60&deg; (at 4.8V)</div>
+                <div class="spec-sub">Swift 90° rotation in ~300ms to instantly drop accepted bottle into internal bin.</div>
+            </div>
+
+            <div class="spec-box" style="border-left: 4px solid #06b6d4;">
+                <div class="spec-label">Dead Bandwidth</div>
+                <div class="spec-val" style="color: #67e8f9;">~5 &micro;s</div>
+                <div class="spec-sub">Standard servo deadband. Keep resting ledge installed at 0° to avoid continuous holding strain.</div>
             </div>
         </div>
 
@@ -254,7 +280,7 @@
     <div class="card">
         <div class="card-title">
             <div class="icon">&#9889;</div>
-            Interactive Wiring Schematic (MG996R, 1000µF Buffer, & Arduino Uno)
+            Interactive Wiring Schematic (MG995, 1000µF Buffer, & Arduino Uno)
         </div>
 
         <div class="svg-container">
@@ -294,9 +320,9 @@
                 <text x="550" y="245" fill="#ffffff" font-size="8" font-weight="800">+</text>
                 <text x="570" y="335" fill="#bae6fd" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle">1000µF 50V</text>
 
-                <!-- MG996R Servo Body -->
+                <!-- MG995 Servo Body -->
                 <rect x="730" y="90" width="290" height="340" rx="14" fill="#1e1b4b" stroke="#ec4899" stroke-width="2.5"/>
-                <text x="875" y="125" fill="#fbcfe8" font-size="15" font-weight="800" text-anchor="middle">MG996R METAL GEAR SERVO</text>
+                <text x="875" y="125" fill="#fbcfe8" font-size="15" font-weight="800" text-anchor="middle">MG995 METAL GEAR SERVO</text>
                 <text x="875" y="145" fill="#9ca3af" font-size="10.5" text-anchor="middle">High-Torque Sorting Trapdoor Flap</text>
 
                 <!-- Servo Rotating Horn Graphic -->
@@ -366,7 +392,7 @@
                     <td><strong>Servo Motor Power (+)</strong></td>
                     <td><span class="pin-tag tag-pwr">Red Wire</span></td>
                     <td><span class="pin-tag tag-pwr">LM2596 5.0V Buck Rail</span></td>
-                    <td>5.0V DC (1.5A–2.5A)</td>
+                    <td>5.0V DC (1.5A–2.0A)</td>
                     <td>Dedicated regulated power for high-torque servo motor and gearbox</td>
                 </tr>
                 <tr>
@@ -446,8 +472,8 @@
         <div class="alert-box">
             <h4>&#9888; CRITICAL CHASSIS MECHANICAL WARNING:</h4>
             <ul>
-                <li><strong>Provide a mechanical resting ledge under the flap at 0°!</strong> A full 1.5L bottle filled with liquid weighs ~1.5 kg. Never allow that entire weight to hang solely on the servo internal plastic/metal spline. A small physical shelf or stop beneath the flap will absorb the impact force and protect your servo gears forever.</li>
-                <li><strong>Never power the servo from Arduino 5V pin!</strong> The onboard Arduino 5V regulator can only provide ~400mA, but the MG996R pulls up to 2.5A during sudden moves. Powering it from the Arduino will instantly brown out and reboot the microcontroller.</li>
+                <li><strong>Provide a mechanical resting ledge under the flap at 0°!</strong> A full 1.5L bottle filled with liquid weighs ~1.5 kg. Never allow that entire weight to hang solely on the servo internal metal gear spline. A small physical shelf or stop beneath the flap will absorb the impact force, prevent gear wear, and eliminate any 5µs deadband motor buzz.</li>
+                <li><strong>Never power the servo from Arduino 5V pin!</strong> The onboard Arduino 5V regulator can only provide ~400mA, but the MG995 pulls up to 2.0A during sudden moves. Powering it from the Arduino will instantly brown out and reboot the microcontroller.</li>
             </ul>
         </div>
     </div>
@@ -456,7 +482,7 @@
     <div class="card">
         <div class="card-title">
             <div class="icon">&#9989;</div>
-            Step-by-Step Bench Testing Procedure
+            Step-by-Step Bench Testing Procedure (Supports 360° Continuous & 180° Positional)
         </div>
 
         <div class="step-grid">
@@ -474,32 +500,50 @@
 
             <div class="step-box">
                 <div class="step-num">3</div>
-                <h4>Upload Sketch & Align Horn</h4>
-                <p>Upload <code>05_mg996r_servo_trapdoor_test.ino</code> to Arduino Uno. When it powers up, the servo writes <code>0°</code>. Press the servo horn onto the spline so the flap is <strong>100% horizontal flat</strong>, then tighten the center retaining screw.</p>
+                <h4>Upload Timed Control Sketch</h4>
+                <p>Upload <code>05_mg996r_servo_trapdoor_test.ino</code> to Arduino Uno. On startup, the firmware sends <code>write(90)</code> immediately so the 360° motor halts in place without spinning continuously!</p>
             </div>
 
             <div class="step-box">
                 <div class="step-num">4</div>
                 <h4>Interactive Serial Testing</h4>
-                <p>Open Serial Monitor at <strong>115200 baud</strong>. Type <code>0</code> to hold Standby/Reject (0°), <code>1</code> to trigger Accept Drop (90° then returns to 0°), or <code>a</code> to run the automated cycle!</p>
+                <p>Open Serial Monitor at <strong>115200 baud</strong>. Type <code>1</code> to execute a full timed drop cycle (opens for 300ms, waits 1.5s, reverses for 300ms to close). Use <code>+</code> or <code>-</code> to calibrate timing!</p>
             </div>
+        </div>
+
+        <div class="info-card" style="margin-top: 1.5rem;">
+            <h4 style="color: #38bdf8; margin-bottom: 0.5rem;">&#128295; 360° Continuous Servo Control Standard:</h4>
+            <ul style="padding-left: 1.25rem; color: var(--text-secondary); font-size: 0.9rem;">
+                <li><strong><code>write(90)</code> = STOP (Neutral):</strong> Cuts motor drive. Always sent on startup and between actions.</li>
+                <li><strong><code>write(70)</code> = OPEN:</strong> Drives motor forward for configured duration (default: 300ms for ~90° swing).</li>
+                <li><strong><code>write(110)</code> = CLOSE:</strong> Drives motor in reverse for configured duration back to horizontal resting position.</li>
+                <li><strong><code>+</code> and <code>-</code> Tuning:</strong> Adjust pulse duration in 50ms increments to achieve the exact flap open angle.</li>
+            </ul>
         </div>
 
         <div style="margin-top: 1.5rem;">
             <h4 style="color: #fff; margin-bottom: 0.5rem;">Expected Serial Monitor Output (115200 baud):</h4>
             <div class="code-box">
-================================================<br>
- PCBCES Test 05: MG996R Sorting Servo Mechanism <br>
-================================================<br>
-Send via Serial Monitor:<br>
- '0' -&gt; Standby / Reject Hold (0 deg - Flap Closed)<br>
- '1' -&gt; Accept Drop (90 deg -&gt; returns to 0 deg)<br>
- 'a' -&gt; Auto-cycle test (Standby 0° -&gt; Reject 0° -&gt; Accept 90° -&gt; 0°)<br>
-Command '1': ACCEPT SEQUENCE TRIGGERED<br>
- -&gt; Opening trapdoor to 90 deg (dropping bottle into bin)...<br>
- -&gt; Returning trapdoor to 0 deg (Standby closed position)...<br>
- -&gt; Flap locked at 0 deg. Ready for next bottle.<br>
-Command '0': STANDBY / REJECT HOLD (0 deg - Flap Closed)
+==================================================<br>
+ PCBCES Test 05: MG995 360° Continuous Trapdoor  <br>
+==================================================<br>
+Motor Status: STOPPED (Neutral 90 sent)<br>
+Current Rotation Pulse Duration: 300 ms<br>
+Commands:<br>
+ '1' -&gt; Full Drop Cycle (Open -&gt; Wait 1.5s -&gt; Close)<br>
+ 'o' -&gt; Test OPEN pulse<br>
+ 'c' -&gt; Test CLOSE pulse<br>
+ 's' -&gt; Emergency STOP (write 90)<br>
+ '+' -&gt; Increase pulse duration (+50ms)<br>
+ '-' -&gt; Decrease pulse duration (-50ms)<br>
+==================================================<br>
+[ACTION] Triggering Full Bottle Acceptance Drop...<br>
+ -&gt; Opening flap (driving for 300 ms)...<br>
+ -&gt; Open motion finished. Motor stopped.<br>
+ -&gt; Waiting 1.5s for bottle to drop under gravity...<br>
+ -&gt; Closing flap (driving reverse for 300 ms)...<br>
+ -&gt; Close motion finished. Flap locked at stop.<br>
+[CYCLE COMPLETE] Ready for next bottle.
             </div>
         </div>
     </div>

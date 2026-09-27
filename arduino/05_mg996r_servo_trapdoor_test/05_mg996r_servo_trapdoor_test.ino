@@ -1,25 +1,30 @@
 /*
- * PCBCES - Test 05: MG996R Metal Gear Servo Trapdoor Angle Test
- * Hardware: Arduino Uno, MG996R High-Torque Servo, LM2596 5V Rail + 1000uF Cap
+ * PCBCES - Test 05: MG995 360° Continuous Rotation Servo Timed Workaround
+ * Hardware: Arduino Uno, MG995 360° Continuous Servo, LM2596 5V Rail + 1000uF Cap
  * 
  * Pin Connections:
  * - Servo Signal (Orange/White) -> D9 (PWM)
  * - Servo Power  (Red)          -> LM2596 5V Rail (NOT Arduino 5V pin!)
- * - Servo Ground (Brown/Black)  -> Common GND Rail
+ * - Servo Ground (Brown/Black)  -> Common Star GND Rail
  * 
- * Safety:
- * - 1000uF (16V to 50V rated) electrolytic capacitor connected across Servo +5V and GND to absorb 2.5A current spikes.
+ * Safety & Decoupling:
+ * - 1000uF (16V to 50V rated) electrolytic capacitor connected across Servo +5V and GND.
  * 
- * Sorting Motion Standard:
- * - 0°  -> Standby / Scanning / Rejection Hold (Flap closed: supports bottle; invalid items stay on cradle for manual removal)
- * - 90° -> Accept Drop (Flap swings down to drop valid bottle into lower storage bin, then returns to 0°)
+ * 360° Continuous Servo Principle:
+ * - write(90) -> STOP / Neutral (Motor cuts drive)
+ * - write(<90) (e.g. 70)  -> Rotate forward (Opening direction)
+ * - write(>90) (e.g. 110) -> Rotate reverse (Closing direction)
+ * - Because a 360° motor lacks angle feedback, movement is controlled by TIMING (e.g. 300ms).
  * 
- * Interactive Console:
- * Send '0' -> Standby / Rejection Hold (0 degrees)
- * Send '1' -> Accept Sequence (90 degrees drop -> returns to 0 degrees standby)
- * Send 'a' -> Auto-cycle test (0° Standby -> 0° Reject Hold -> 90° Accept Drop -> 0° Standby)
+ * Interactive Console Commands:
+ * Send '1' -> Full Drop Cycle: Open (300ms) -> Pause 1.5s -> Close (300ms) -> Stop
+ * Send 'o' -> Open pulse only (rotates forward for configured duration, then stops)
+ * Send 'c' -> Close pulse only (rotates reverse for configured duration, then stops)
+ * Send 's' -> Emergency STOP (write 90 immediately)
+ * Send '+' -> Increase rotation pulse duration (+50ms)
+ * Send '-' -> Decrease rotation pulse duration (-50ms)
  * 
- * Last Updated: 2026-09-06 18:15:00 (+08:00)
+ * Last Updated: 2026-09-27 14:26:00 (+08:00)
  */
 
 #include <Servo.h>
@@ -27,64 +32,97 @@
 Servo trapdoorServo;
 const int SERVO_PIN = 9;
 
+// Continuous Servo Calibration Settings
+const int STOP_CMD   = 90;   // Neutral stop signal (typically 90)
+const int OPEN_CMD   = 70;   // Forward rotation speed (toward 90° open)
+const int CLOSE_CMD  = 110;  // Reverse rotation speed (toward 0° closed)
+
+// Timing: Calibrated by user on real chassis
+int pulseDurationMs = 650;   // Calibrated 650 ms for ~90 degrees swing
+
+void stopMotor() {
+  trapdoorServo.write(STOP_CMD);
+}
+
+void openTrapdoor() {
+  Serial.print(F(" -> Opening flap (driving for "));
+  Serial.print(pulseDurationMs);
+  Serial.println(F(" ms)..."));
+  trapdoorServo.write(OPEN_CMD);
+  delay(pulseDurationMs);
+  stopMotor();
+  Serial.println(F(" -> Open motion finished. Motor stopped."));
+}
+
+void closeTrapdoor() {
+  Serial.print(F(" -> Closing flap (driving reverse for "));
+  Serial.print(pulseDurationMs);
+  Serial.println(F(" ms)..."));
+  trapdoorServo.write(CLOSE_CMD);
+  delay(pulseDurationMs);
+  stopMotor();
+  Serial.println(F(" -> Close motion finished. Flap locked at stop."));
+}
+
 void setup() {
   Serial.begin(115200);
   trapdoorServo.attach(SERVO_PIN);
   
-  // Start at Standby closed position (0 degrees)
-  trapdoorServo.write(0);
+  // Immediately send STOP command so the 360° servo does not spin on boot!
+  stopMotor();
 
-  Serial.println(F("================================================"));
-  Serial.println(F(" PCBCES Test 05: MG996R Sorting Servo Mechanism "));
-  Serial.println(F("================================================"));
-  Serial.println(F("Send via Serial Monitor:"));
-  Serial.println(F(" '0' -> Standby / Reject Hold (0 deg - Flap Closed)"));
-  Serial.println(F(" '1' -> Accept Drop (90 deg -> returns to 0 deg)"));
-  Serial.println(F(" 'a' -> Auto-cycle test (Standby 0° -> Reject 0° -> Accept 90° -> 0°)"));
+  Serial.println(F("=================================================="));
+  Serial.println(F(" PCBCES Test 05: MG995 360° Continuous Trapdoor  "));
+  Serial.println(F("=================================================="));
+  Serial.println(F("Motor Status: STOPPED (Neutral 90 sent)"));
+  Serial.print(F("Current Rotation Pulse Duration: "));
+  Serial.print(pulseDurationMs);
+  Serial.println(F(" ms"));
+  Serial.println(F("Commands:"));
+  Serial.println(F(" '1' -> Full Drop Cycle (Open -> Wait 1.5s -> Close)"));
+  Serial.println(F(" 'o' -> Test OPEN pulse"));
+  Serial.println(F(" 'c' -> Test CLOSE pulse"));
+  Serial.println(F(" 's' -> Emergency STOP (write 90)"));
+  Serial.println(F(" '+' -> Increase pulse duration (+50ms)"));
+  Serial.println(F(" '-' -> Decrease pulse duration (-50ms)"));
+  Serial.println(F("=================================================="));
 }
 
 void loop() {
   if (Serial.available()) {
     char cmd = Serial.read();
 
-    if (cmd == '0') {
-      Serial.println(F("Command '0': STANDBY / REJECT HOLD (0 deg - Flap Closed)"));
-      trapdoorServo.write(0);
-    } else if (cmd == '1') {
-      Serial.println(F("Command '1': ACCEPT SEQUENCE TRIGGERED"));
-      Serial.println(F(" -> Opening trapdoor to 90 deg (dropping bottle into bin)..."));
-      trapdoorServo.write(90);
-      delay(1500); // Hold open for bottle to fall into internal storage bin
-      Serial.println(F(" -> Returning trapdoor to 0 deg (Standby closed position)..."));
-      trapdoorServo.write(0);
-      Serial.println(F(" -> Flap locked at 0 deg. Ready for next bottle."));
-    } else if (cmd == '2') {
-      Serial.println(F("[NOTICE] 180 deg tilt is RETIRED. Rejection holds at 0 deg (closed cradle) for manual user retrieval."));
-      trapdoorServo.write(0);
-    } else if (cmd == 'a' || cmd == 'A') {
-      Serial.println(F("------------------------------------------------"));
-      Serial.println(F("Starting Auto-Cycle Test..."));
-      
-      Serial.println(F("Step 1: Standby / Scanning State (0 deg)"));
-      trapdoorServo.write(0);
-      delay(1000);
-
-      Serial.println(F("Step 2: Rejection Simulation (Invalid Item Detected)"));
-      Serial.println(F(" -> Flap STAYS at 0 deg (Item remains on cradle for manual removal)"));
-      trapdoorServo.write(0);
-      delay(2000);
-
-      Serial.println(F("Step 3: Acceptance Simulation (Valid Plastic Bottle)"));
-      Serial.println(F(" -> Flap rotates to 90 deg (Drop into bin)..."));
-      trapdoorServo.write(90);
+    if (cmd == '1') {
+      Serial.println(F("\n[ACTION] Triggering Full Bottle Acceptance Drop..."));
+      openTrapdoor();
+      Serial.println(F(" -> Waiting 1.5s for bottle to drop under gravity..."));
       delay(1500);
-
-      Serial.println(F("Step 4: Returning Flap to 0 deg Standby..."));
-      trapdoorServo.write(0);
-      delay(1000);
-      
-      Serial.println(F("Auto-cycle test complete. Ready for next command."));
-      Serial.println(F("------------------------------------------------"));
+      closeTrapdoor();
+      Serial.println(F("[CYCLE COMPLETE] Ready for next bottle."));
+    } 
+    else if (cmd == 'o' || cmd == 'O') {
+      Serial.println(F("\n[MANUAL] Open Pulse:"));
+      openTrapdoor();
+    } 
+    else if (cmd == 'c' || cmd == 'C') {
+      Serial.println(F("\n[MANUAL] Close Pulse:"));
+      closeTrapdoor();
+    } 
+    else if (cmd == 's' || cmd == 'S') {
+      Serial.println(F("\n[EMERGENCY] STOP command sent!"));
+      stopMotor();
+    } 
+    else if (cmd == '+') {
+      pulseDurationMs += 50;
+      Serial.print(F("[CALIBRATION] Pulse duration increased to: "));
+      Serial.print(pulseDurationMs);
+      Serial.println(F(" ms"));
+    } 
+    else if (cmd == '-') {
+      if (pulseDurationMs > 50) pulseDurationMs -= 50;
+      Serial.print(F("[CALIBRATION] Pulse duration decreased to: "));
+      Serial.print(pulseDurationMs);
+      Serial.println(F(" ms"));
     }
   }
 }
